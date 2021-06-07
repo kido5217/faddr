@@ -10,6 +10,10 @@ def parse_args():
     return args
 
 
+def check_rancid_dir(rancid_path):
+    pass
+
+
 def faddr_db():
     args = parse_args()
     print(args)
