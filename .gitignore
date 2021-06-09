@@ -154,4 +154,4 @@ cython_debug/
 
 
 # Dir for test configurations and rancid dir mockup
-.data/
+data/
