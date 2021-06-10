@@ -33,7 +33,6 @@ class RancidDir:
         return groups
 
     def parse_configs(self, group):
-        data = {}
         try:
             router_db = open(self.path / group / "router.db", mode="r")
             devices_list = router_db.readlines()
@@ -41,7 +40,7 @@ class RancidDir:
         except Exception:
             return None
 
-        devices = []
+        devices = {}
         for line in devices_list:
             if len(line.strip()) == 0:
                 continue
@@ -54,11 +53,15 @@ class RancidDir:
             elif device_data[2] != "up":
                 continue
             else:
-                devices.append(device_data[0])
+                devices[device_data[0]] = device_data[1]
 
-        for device_name in devices:
+        data = {}
+        for device_name, device_type in devices.items():
             config_path = self.path / group / "configs" / device_name
-            device = Device(config_path)
+            try:
+                device = Device(config_path, device_type=device_type)
+            except Exception:
+                continue
             data[device_name] = device.parse_config()
 
-        print(data)
+        # print(data)
