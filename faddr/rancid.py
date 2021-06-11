@@ -64,4 +64,4 @@ class RancidDir:
                 continue
             data[device_name] = device.parse_config()
 
-        # print(data)
+        print(data)

@@ -48,17 +48,25 @@ class Device:
         parse = CiscoConfParse(self.config, syntax="ios")
         for intf_obj in parse.find_objects("^interface"):
             intf_name = intf_obj.re_match_typed("^interface\s+(\S.+?)$")
-            data[intf_name] = {}
 
             intf_ip_addrs = intf_obj.re_search_children(regex_ipv4)
             if len(intf_ip_addrs) > 0:
+                data[intf_name] = {}
                 for intf_ip_addr in intf_ip_addrs:
                     _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
-                    print(ipaddr, mask)
+                    data[intf_name][self.__calculate_net(ipaddr, mask)] = (
+                        ipaddr + "/" + mask
+                    )
+                intf_vrf = intf_obj.re_search_children(regex_vrf)
+                if len(intf_vrf) > 0:
+                    _, _, vrf = intf_vrf[0].text.strip().split()
+                    data[intf_name]["vrf"] = vrf
 
-            intf_vrf = intf_obj.re_search_children(regex_vrf)
-            if len(intf_vrf) > 0:
-                _, _, vrf = intf_vrf[0].text.strip().split()
-                print(vrf)
+        return data
 
-        print(data)
+    def __calculate_net(self, ipaddr, mask):
+        try:
+            network = ipaddress.ip_network((ipaddr + "/" + mask), strict=False)
+        except Exception:
+            return None
+        return str(network)
