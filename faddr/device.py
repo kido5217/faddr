@@ -68,5 +68,5 @@ class Device:
         try:
             network = ipaddress.ip_network((ipaddr + "/" + mask), strict=False)
         except Exception:
-            return None
+            return {}
         return str(network)

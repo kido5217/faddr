@@ -2,9 +2,10 @@ import argparse
 import sys
 
 from faddr.rancid import RancidDir
+from faddr.database import Database
 
 
-def parse_args():
+def parse_args_db():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -20,14 +21,23 @@ def parse_args():
         help="Rancid groups to parse, separated bu coma(,)",
     )
 
+    parser.add_argument(
+        "-d",
+        "--database-file",
+        default="/var/db/faddr/faddr.json",
+        help="TinyDB file location",
+    )
+
     args = parser.parse_args()
     return vars(args)
 
 
 def faddr_db():
-    args = parse_args()
+    args = parse_args_db()
 
     rancid = RancidDir(args["rancid_path"])
+
+    db = Database(args["database_file"])
 
     if rancid.is_valid() is False:
         error = (
@@ -41,4 +51,6 @@ def faddr_db():
     groups = rancid.load_groups(args["rancid_groups"])
 
     for group in groups:
-        rancid.parse_configs(group)
+        data = rancid.parse_configs(group)
+        if len(data) > 0:
+            db.insert(data)

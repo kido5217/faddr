@@ -8,6 +8,7 @@ authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.6.2"
 ciscoconfparse = "^1.5.30"
+tinydb = "^4.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
