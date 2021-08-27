@@ -39,7 +39,7 @@ def faddr_db():
 
     db = Database(args["database_file"])
 
-    if rancid.is_valid() is False:
+    if not rancid.is_valid():
         error = (
             f'"{args["rancid_path"]}" is not a valid rancid BASEDIR '
             "or was not properly initialised with rancid-csv utility"

@@ -1,3 +1,7 @@
+"""
+Parse network devices' configuration
+"""
+
 import ipaddress
 import re
 
@@ -5,6 +9,10 @@ from ciscoconfparse import CiscoConfParse
 
 
 class Device:
+    """
+    Read device's configuration, sanitize and parse it
+    """
+
     def __init__(self, config_path, device_type="guess"):
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
         with open(config_path, mode="r", errors="ignore") as config_file:
@@ -38,6 +46,9 @@ class Device:
 
     # TODO: separate different dev types to different subclasses
     def parse_config_ios(self):
+        """
+        Get device's interfaces and their configuration
+        """
         data = {}
 
         regex_ipv4 = re.compile(
@@ -46,17 +57,24 @@ class Device:
         regex_vrf = re.compile(r"vrf\sforwarding\s(\S+)")
 
         parse = CiscoConfParse(self.config, syntax="ios")
-        for intf_obj in parse.find_objects("^interface"):
-            intf_name = intf_obj.re_match_typed("^interface\s+(\S.+?)$")
 
+        # TODO: Use dataclasses
+        # Find all interfaces
+        for intf_obj in parse.find_objects(r"^interface"):
+            intf_name = intf_obj.re_match_typed(r"^interface\s+(\S.+?)$")
+
+            # Get L3 interface data
             intf_ip_addrs = intf_obj.re_search_children(regex_ipv4)
             if len(intf_ip_addrs) > 0:
                 data[intf_name] = {}
+                # Get ipv4 addressrs
                 for intf_ip_addr in intf_ip_addrs:
                     _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
+                    # I don't like this, need to change
                     data[intf_name][self.__calculate_net(ipaddr, mask)] = (
                         ipaddr + "/" + mask
                     )
+                # Get VRF name
                 intf_vrf = intf_obj.re_search_children(regex_vrf)
                 if len(intf_vrf) > 0:
                     _, _, vrf = intf_vrf[0].text.strip().split()
