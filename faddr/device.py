@@ -1,6 +1,4 @@
-"""
-Parse network devices' configuration
-"""
+"""Parse network devices' configuration"""
 
 import ipaddress
 import re
@@ -9,11 +7,8 @@ from ciscoconfparse import CiscoConfParse
 
 
 class Device:
-    """
-    Read device's configuration, sanitize and parse it
-    """
-
     def __init__(self, config_path, device_type="guess"):
+        """Read device's raw configuration and sanitize it"""
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
         with open(config_path, mode="r", errors="ignore") as config_file:
             self.raw_config = config_file.readlines()
