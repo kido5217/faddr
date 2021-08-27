@@ -1,10 +1,9 @@
-import pathlib
-
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 # TODO: redo this, maybe use SQL
 class Database:
     def __init__(self, db_file):
+        """Create database file, erase previous one if exists."""
         self.db = TinyDB(db_file)
         # TODO: implement db files rotation, for now just replace all data
         self.db.truncate()
