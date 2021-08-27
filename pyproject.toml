@@ -2,13 +2,22 @@
 name = "faddr"
 version = "0.1.0"
 description = "Tool to parse configuration of network devices such as Juniper routers and store gathered data in database"
+license = "MIT"
 authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.2"
+ciscoconfparse = "^1.5.30"
+tinydb = "^4.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+black = "^21.5b2"
+mypy = "^0.812"
+pylint = "^2.8.3"
+
+[tool.poetry.scripts]
+faddr-db = 'faddr.cli:faddr_db'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
