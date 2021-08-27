@@ -6,7 +6,7 @@ from faddr.device import Device
 
 class RancidDir:
     def __init__(self, rancid_path):
-        """Open rancid dir and parse it's content"""
+        """Open rancid dir and parse it's content."""
         self.path = pathlib.Path(rancid_path)
 
     def is_valid(self):

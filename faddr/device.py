@@ -1,4 +1,4 @@
-"""Parse network devices' configuration"""
+"""Parse network devices' configuration."""
 
 import ipaddress
 import re
@@ -8,7 +8,7 @@ from ciscoconfparse import CiscoConfParse
 
 class Device:
     def __init__(self, config_path, device_type="guess"):
-        """Read device's raw configuration and sanitize it"""
+        """Read device's raw configuration and sanitize it."""
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
         with open(config_path, mode="r", errors="ignore") as config_file:
             self.raw_config = config_file.readlines()
@@ -41,9 +41,7 @@ class Device:
 
     # TODO: separate different dev types to different subclasses
     def parse_config_ios(self):
-        """
-        Get device's interfaces and their configuration
-        """
+        """Get device's interfaces and their configuration."""
         data = {}
 
         regex_ipv4 = re.compile(

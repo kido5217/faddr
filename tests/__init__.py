@@ -1,1 +1,1 @@
-"""Unit tests for faddr package"""
+"""Unit tests for faddr package."""

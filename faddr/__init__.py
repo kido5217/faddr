@@ -1,4 +1,4 @@
-"""Parse network devices' configuration and store in database"""
+"""Parse network devices' configuration and store in database."""
 
 from faddr.device import Device
 from faddr.rancid import RancidDir
