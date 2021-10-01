@@ -34,7 +34,7 @@ class CiscoIOSDevice:
         self.config = self.sanitize_config()
 
     def sanitize_config(self):
-        """Delete empty and comment strings and garbage"""
+        """Delete empty and comment strings and garbage."""
         config = []
         for line in self.raw_config:
             line = line.rstrip()
