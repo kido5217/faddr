@@ -6,6 +6,14 @@ import re
 from ciscoconfparse import CiscoConfParse
 
 
+def calculate_net(ipaddr, mask):
+    try:
+        network = ipaddress.ip_network((ipaddr + "/" + mask), strict=False)
+    except Exception:
+        return {}
+    return str(network)
+
+
 class Device:
     def __init__(self, config_path, device_type="guess"):
         """Read device's raw configuration and sanitize it."""
@@ -64,9 +72,7 @@ class Device:
                 for intf_ip_addr in intf_ip_addrs:
                     _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
                     # I don't like this, need to change
-                    data[intf_name][self.__calculate_net(ipaddr, mask)] = (
-                        ipaddr + "/" + mask
-                    )
+                    data[intf_name][calculate_net(ipaddr, mask)] = ipaddr + "/" + mask
                 # Get VRF name
                 intf_vrf = intf_obj.re_search_children(regex_vrf)
                 if len(intf_vrf) > 0:
@@ -74,10 +80,3 @@ class Device:
                     data[intf_name]["vrf"] = vrf
 
         return data
-
-    def __calculate_net(self, ipaddr, mask):
-        try:
-            network = ipaddress.ip_network((ipaddr + "/" + mask), strict=False)
-        except Exception:
-            return {}
-        return str(network)
