@@ -5,6 +5,8 @@ import re
 
 from ciscoconfparse import CiscoConfParse
 
+from faddr.exceptions import FaddrDeviceUnsupportedType
+
 
 def calculate_net(ipaddr, mask):
     try:
@@ -32,6 +34,7 @@ class CiscoIOSDevice:
         self.config = self.sanitize_config()
 
     def sanitize_config(self):
+        """Delete empty and comment strings and garbage"""
         config = []
         for line in self.raw_config:
             line = line.rstrip()
@@ -85,7 +88,7 @@ def Device(*args, **kwargs):
     device_type = kwargs["device_type"]
     if device_type not in CLASS_MAPPER:
         # TODO: Use custom Exception
-        raise ValueError(
+        raise FaddrDeviceUnsupportedType(
             "Unsupported 'device_type' "
             f"currently supported platforms are: {str(CLASS_MAPPER)}"
         )
