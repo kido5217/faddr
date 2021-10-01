@@ -62,8 +62,11 @@ class RancidDir:
             config_path = self.path / group / "configs" / device_name
             try:
                 device = Device(config_path, device_type=device_type)
-            except Exception:
+                device.read_config()
+                device.parse_config()
+            except ValueError:
+                # TODO: Use custom Exception
                 continue
-            data[device_name] = device.parse_config()
+            data[device_name] = device.data
 
         return data

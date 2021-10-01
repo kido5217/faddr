@@ -1,4 +1,4 @@
-"""Parse network devices' configuration."""
+"""Read, sanitize and parse network devices' configuration."""
 
 import ipaddress
 import re
@@ -14,27 +14,24 @@ def calculate_net(ipaddr, mask):
     return str(network)
 
 
-class Device:
-    def __init__(self, config_path, device_type="guess"):
-        """Read device's raw configuration and sanitize it."""
-        # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
-        with open(config_path, mode="r", errors="ignore") as config_file:
-            self.raw_config = config_file.readlines()
+class CiscoIOSDevice:
+    """Load, sanitize and parse Cisco IOS configuration files"""
 
-        if device_type == "guess":
-            # TODO: make "guess" function
-            pass
-        else:
-            self.device_type = device_type
+    # TODO: make loading from file optional, add reading from variable
+    def __init__(self, config_path, device_type="cisco_ios"):
+        """Read device's raw configuration and sanitize it."""
+        self.device_type = device_type
+        self.config_path = config_path
+        self.data = None
+
+    def read_config(self):
+        # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
+        with open(self.config_path, mode="r", errors="ignore") as config_file:
+            self.raw_config = config_file.readlines()
 
         self.config = self.sanitize_config()
 
     def sanitize_config(self):
-        if self.device_type == "cisco":
-            config = self.sanitize_config_ios()
-        return config
-
-    def sanitize_config_ios(self):
         config = []
         for line in self.raw_config:
             line = line.rstrip()
@@ -43,12 +40,6 @@ class Device:
         return config
 
     def parse_config(self):
-        if self.device_type == "cisco":
-            data = self.parse_config_ios()
-        return data
-
-    # TODO: separate different dev types to different subclasses
-    def parse_config_ios(self):
         """Get device's interfaces and their configuration."""
         data = {}
 
@@ -79,4 +70,24 @@ class Device:
                     _, _, vrf = intf_vrf[0].text.strip().split()
                     data[intf_name]["vrf"] = vrf
 
-        return data
+        self.data = data
+
+
+# Map device_type value to real device Class
+CLASS_MAPPER = {
+    "cisco": CiscoIOSDevice,
+    "cisco_ios": CiscoIOSDevice,
+}
+
+
+def Device(*args, **kwargs):
+    """Factory function selects the proper class and creates object based on device_type."""
+    device_type = kwargs["device_type"]
+    if device_type not in CLASS_MAPPER:
+        # TODO: Use custom Exception
+        raise ValueError(
+            "Unsupported 'device_type' "
+            f"currently supported platforms are: {str(CLASS_MAPPER)}"
+        )
+    DeviceClass = CLASS_MAPPER[device_type]
+    return DeviceClass(*args, **kwargs)
