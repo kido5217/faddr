@@ -1,9 +1,8 @@
 import pathlib
-from typing import List
 
 import pytest
 
-from faddr import Device, CiscoIOSDevice, device
+from faddr import Device, CiscoIOSDevice
 from faddr.exceptions import FaddrDeviceUnsupportedType
 
 
