@@ -15,6 +15,7 @@ pytest = "^5.2"
 black = "^21.5b2"
 mypy = "^0.812"
 pylint = "^2.8.3"
+pytest-cov = "^2.12.1"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.cli:faddr_db'
