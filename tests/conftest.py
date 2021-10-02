@@ -5,7 +5,7 @@ import pathlib
 
 import pytest
 
-from faddr.dataclasses import Interface, IPv4, ACL, Vlan, XConnect
+from faddr.dataclasses import Interface, IPv4, Vlan
 
 
 @pytest.fixture

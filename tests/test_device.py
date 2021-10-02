@@ -25,7 +25,7 @@ def test_cisco_ios_create_object(cisco_ios_simple_config_path):
     device = CiscoIOSDevice(cisco_ios_simple_config_path)
     assert device.device_type == "cisco_ios"
     assert device.config_path == cisco_ios_simple_config_path
-    assert device.data == None
+    assert device.data is None
 
 
 def test_cisco_ios_read_config(
