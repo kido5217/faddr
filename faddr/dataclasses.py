@@ -1,6 +1,6 @@
 """Dataclass objects for faddr's internal usage"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 
@@ -8,12 +8,13 @@ from typing import List
 class IPv4:
     address: str
     mask: str
-    attr: List[str]
+    attr: List[str] = field(default_factory=list)
 
 
 @dataclass
 class Interface:
     name: str
-    ipv4: List[IPv4]
-    description: str
-    mtu: int
+    description: str = None
+    ipv4: List[IPv4] = field(default_factory=list)
+    mtu: int = None
+    vrf: str = None

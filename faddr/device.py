@@ -1,10 +1,12 @@
 """Read, sanitize and parse network devices' configuration."""
 
+import dataclasses
 import ipaddress
 import re
 
 from ciscoconfparse import CiscoConfParse
 
+from faddr.dataclasses import Interface, IPv4
 from faddr.exceptions import FaddrDeviceUnsupportedType
 
 
@@ -56,37 +58,34 @@ class CiscoIOSDevice:
         return parser.find_objects(self.regex_intf)
 
     def __parse_interface(self, interface):
-        pass
+        intf_data = Interface(interface.re_match_typed(self.regex_intf_name))
+        # Get L3 interface data
+        intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
+        if len(intf_ip_addrs) > 0:
+            # Get ipv4 addresses
+            for intf_ip_addr in intf_ip_addrs:
+                # I don't like this, need to change
+                _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
+                ipv4 = IPv4(ipaddr, mask)
+                intf_data.ipv4.append(ipv4)
+            # Get VRF name
+            intf_vrf = interface.re_search_children(self.regex_vrf)
+            if len(intf_vrf) > 0:
+                _, _, vrf = intf_vrf[0].text.strip().split()
+                intf_data.vrf = vrf
+
+        return intf_data
 
     def parse_config(self):
         """Get device's interfaces and their configuration."""
 
-        dev_data = {}
+        dev_data = []
 
         parser = self.__get_parser()
 
-        # TODO: Use dataclasses
         # Find all interfaces
         for interface in self.__get_interfaces(parser):
-            intf_name = interface.re_match_typed(self.regex_intf_name)
-            dev_data[intf_name] = self.__parse_interface(interface)
-
-            # Get L3 interface data
-            intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
-            if len(intf_ip_addrs) > 0:
-                dev_data[intf_name] = {}
-                # Get ipv4 addressrs
-                for intf_ip_addr in intf_ip_addrs:
-                    _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
-                    # I don't like this, need to change
-                    dev_data[intf_name][calculate_net(ipaddr, mask)] = (
-                        ipaddr + "/" + mask
-                    )
-                # Get VRF name
-                intf_vrf = interface.re_search_children(self.regex_vrf)
-                if len(intf_vrf) > 0:
-                    _, _, vrf = intf_vrf[0].text.strip().split()
-                    dev_data[intf_name]["vrf"] = vrf
+            dev_data.append(dataclasses.asdict(self.__parse_interface(interface)))
 
         if len(dev_data) > 0:
             self.data = dev_data
