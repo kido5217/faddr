@@ -1,5 +1,4 @@
 import argparse
-import dataclasses
 import sys
 
 from faddr.rancid import RancidDir
