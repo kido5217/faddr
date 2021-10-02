@@ -19,6 +19,12 @@ def calculate_net(ipaddr, mask):
 class CiscoIOSDevice:
     """Load, sanitize and parse Cisco IOS configuration files"""
 
+    regex_intf = re.compile(r"^interface")
+    regex_intf_name = re.compile(r"^interface\s+(\S.+?)$")
+
+    regex_ipv4 = re.compile(r"ip\saddress\s(\d+\.\d+\.\d+\.\d+\s\d+\.\d+\.\d+\.\d+)")
+    regex_vrf = re.compile(r"vrf\sforwarding\s(\S+)")
+
     # TODO: make loading from file optional, add reading from variable
     def __init__(self, config_path, device_type="cisco_ios"):
         """Read device's raw configuration and sanitize it."""
@@ -27,6 +33,7 @@ class CiscoIOSDevice:
         self.data = None
 
     def read_config(self):
+        """Read config from file."""
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
         with open(self.config_path, mode="r", errors="ignore") as config_file:
             self.raw_config = config_file.readlines()
@@ -42,38 +49,47 @@ class CiscoIOSDevice:
                 config.append(line)
         return config
 
+    def __get_parser(self):
+        return CiscoConfParse(self.config, syntax="ios")
+
+    def __get_interfaces(self, parser):
+        return parser.find_objects(self.regex_intf)
+
+    def __parse_interface(self, interface):
+        pass
+
     def parse_config(self):
         """Get device's interfaces and their configuration."""
-        data = {}
 
-        regex_ipv4 = re.compile(
-            r"ip\saddress\s(\d+\.\d+\.\d+\.\d+\s\d+\.\d+\.\d+\.\d+)"
-        )
-        regex_vrf = re.compile(r"vrf\sforwarding\s(\S+)")
+        dev_data = {}
 
-        parse = CiscoConfParse(self.config, syntax="ios")
+        parser = self.__get_parser()
 
         # TODO: Use dataclasses
         # Find all interfaces
-        for intf_obj in parse.find_objects(r"^interface"):
-            intf_name = intf_obj.re_match_typed(r"^interface\s+(\S.+?)$")
+        for interface in self.__get_interfaces(parser):
+            intf_name = interface.re_match_typed(self.regex_intf_name)
+            dev_data[intf_name] = self.__parse_interface(interface)
 
             # Get L3 interface data
-            intf_ip_addrs = intf_obj.re_search_children(regex_ipv4)
+            intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
             if len(intf_ip_addrs) > 0:
-                data[intf_name] = {}
+                dev_data[intf_name] = {}
                 # Get ipv4 addressrs
                 for intf_ip_addr in intf_ip_addrs:
                     _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
                     # I don't like this, need to change
-                    data[intf_name][calculate_net(ipaddr, mask)] = ipaddr + "/" + mask
+                    dev_data[intf_name][calculate_net(ipaddr, mask)] = (
+                        ipaddr + "/" + mask
+                    )
                 # Get VRF name
-                intf_vrf = intf_obj.re_search_children(regex_vrf)
+                intf_vrf = interface.re_search_children(self.regex_vrf)
                 if len(intf_vrf) > 0:
                     _, _, vrf = intf_vrf[0].text.strip().split()
-                    data[intf_name]["vrf"] = vrf
+                    dev_data[intf_name]["vrf"] = vrf
 
-        self.data = data
+        if len(dev_data) > 0:
+            self.data = dev_data
 
 
 # Map device_type value to real device Class
