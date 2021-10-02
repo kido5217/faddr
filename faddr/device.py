@@ -6,16 +6,8 @@ import re
 
 from ciscoconfparse import CiscoConfParse
 
-from faddr.dataclasses import Interface, IPv4, ACL, XConnect
+from faddr.dataclasses import Interface, IPv4, ACL, Vlan, XConnect
 from faddr.exceptions import FaddrDeviceUnsupportedType
-
-
-def calculate_net(ipaddr, mask):
-    try:
-        network = ipaddress.ip_network((ipaddr + "/" + mask), strict=False)
-    except Exception:
-        return {}
-    return str(network)
 
 
 class CiscoIOSDevice:
@@ -25,12 +17,12 @@ class CiscoIOSDevice:
     regex_intf_name = re.compile(r"^interface\s+(\S.+?)$")
 
     regex_intf_descr = re.compile(r"description\s(\S+)")
+    regex_vlan = re.compile(r"encapsulation\s(\S+)\s(\d+)")
     regex_ipv4 = re.compile(r"ip\saddress\s(\d+\.\d+\.\d+\.\d+\s\d+\.\d+\.\d+\.\d+)")
     regex_vrf = re.compile(r"vrf\sforwarding\s(\S+)")
     regex_ipv4_acl = re.compile(r"ip\saccess-group\s(\S+)\s(in|out)")
     regex_shutdown = re.compile(r"^ shutdown$")
     regex_mtu = re.compile(r"mtu\s(\d+)")
-
     regex_xconnect = re.compile(r"xconnect\s(\S+)\s(\S+)\sencapsulation\s(\S+)")
 
     # TODO: make loading from file optional, add reading from variable
@@ -60,16 +52,26 @@ class CiscoIOSDevice:
     def __get_parser(self):
         return CiscoConfParse(self.config, syntax="ios")
 
-    def __get_interfaces(self, parser):
-        return parser.find_objects(self.regex_intf)
-
     def __parse_interface(self, interface):
         intf_data = Interface(interface.re_match_typed(self.regex_intf_name))
+
         # Get description
         intf_descr = interface.re_search_children(self.regex_intf_descr)
         if len(intf_descr) > 0:
             _, description = intf_descr[0].text.strip().split(" ", 1)
             intf_data.description = description
+
+        # Get vlan
+        intf_vlan = interface.re_search_children(self.regex_vlan)
+        if len(intf_vlan) > 0:
+            vlan_arr = intf_vlan[0].text.strip().split()
+            vlan = Vlan(vlan_arr[2], encapsulation=vlan_arr[1])
+            intf_data.vlans.append(vlan)
+            if len(vlan_arr) == 5:
+                second_vlan = Vlan(
+                    vlan_arr[4], encapsulation=vlan_arr[1], secondary=True
+                )
+                intf_data.vlans.append(second_vlan)
 
         # Get ipv4 addresses
         intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
@@ -123,7 +125,7 @@ class CiscoIOSDevice:
         parser = self.__get_parser()
 
         # Find all interfaces
-        for interface in self.__get_interfaces(parser):
+        for interface in parser.find_objects(self.regex_intf):
             dev_data.append(dataclasses.asdict(self.__parse_interface(interface)))
 
         if len(dev_data) > 0:
