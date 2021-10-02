@@ -6,7 +6,7 @@ import re
 
 from ciscoconfparse import CiscoConfParse
 
-from faddr.dataclasses import Interface, IPv4
+from faddr.dataclasses import Interface, IPv4, ACL, XConnect
 from faddr.exceptions import FaddrDeviceUnsupportedType
 
 
@@ -24,8 +24,14 @@ class CiscoIOSDevice:
     regex_intf = re.compile(r"^interface")
     regex_intf_name = re.compile(r"^interface\s+(\S.+?)$")
 
+    regex_intf_descr = re.compile(r"description\s(\S+)")
     regex_ipv4 = re.compile(r"ip\saddress\s(\d+\.\d+\.\d+\.\d+\s\d+\.\d+\.\d+\.\d+)")
     regex_vrf = re.compile(r"vrf\sforwarding\s(\S+)")
+    regex_ipv4_acl = re.compile(r"ip\saccess-group\s(\S+)\s(in|out)")
+    regex_shutdown = re.compile(r"^ shutdown$")
+    regex_mtu = re.compile(r"mtu\s(\d+)")
+
+    regex_xconnect = re.compile(r"xconnect\s(\S+)\s(\S+)\sencapsulation\s(\S+)")
 
     # TODO: make loading from file optional, add reading from variable
     def __init__(self, config_path, device_type="cisco_ios"):
@@ -59,20 +65,53 @@ class CiscoIOSDevice:
 
     def __parse_interface(self, interface):
         intf_data = Interface(interface.re_match_typed(self.regex_intf_name))
-        # Get L3 interface data
+        # Get description
+        intf_descr = interface.re_search_children(self.regex_intf_descr)
+        if len(intf_descr) > 0:
+            _, description = intf_descr[0].text.strip().split(" ", 1)
+            intf_data.description = description
+
+        # Get ipv4 addresses
         intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
         if len(intf_ip_addrs) > 0:
-            # Get ipv4 addresses
             for intf_ip_addr in intf_ip_addrs:
                 # I don't like this, need to change
                 _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
                 ipv4 = IPv4(ipaddr, mask)
                 intf_data.ipv4.append(ipv4)
-            # Get VRF name
-            intf_vrf = interface.re_search_children(self.regex_vrf)
-            if len(intf_vrf) > 0:
-                _, _, vrf = intf_vrf[0].text.strip().split()
-                intf_data.vrf = vrf
+
+        # Get VRF name
+        intf_vrf = interface.re_search_children(self.regex_vrf)
+        if len(intf_vrf) > 0:
+            _, _, _, vrf_name = intf_vrf[0].text.strip().split()
+            intf_data.vrf = vrf_name
+
+        # Get ACL
+        intf_acls = interface.re_search_children(self.regex_ipv4_acl)
+        if len(intf_acls) > 0:
+            for intf_acl in intf_acls:
+                _, _, acl_name, direction = intf_acl.text.strip().split()
+                acl = ACL(acl_name, direction=direction)
+                intf_data.acl.append(acl)
+
+        # Check if shutdown command present
+        intf_shutdown = interface.re_search_children(self.regex_shutdown)
+        if len(intf_shutdown) > 0:
+            intf_data.shutdown = True
+
+        # Get XC configuration
+        intf_xc = interface.re_search_children(self.regex_xconnect)
+        if len(intf_xc) > 0:
+            _, neighbous, vcid, _, encapsulation = intf_xc[0].text.strip().split()
+            xc = XConnect(neighbous, vcid, encapsulation=encapsulation)
+
+            # Get additional XC params
+            intf_xc_mtu = intf_xc[0].re_search_children(self.regex_mtu)
+            if len(intf_xc_mtu) > 0:
+                _, xc_mtu = intf_xc_mtu[0].text.strip().split()
+                xc.mtu = xc_mtu
+
+            intf_data.xconnect = xc
 
         return intf_data
 
