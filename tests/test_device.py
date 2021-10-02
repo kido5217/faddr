@@ -1,4 +1,4 @@
-"""PyTest tests for Device Classes"""
+"""PyTest tests for Device Classes."""
 
 import pytest
 

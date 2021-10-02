@@ -10,7 +10,7 @@ from faddr.exceptions import FaddrDeviceUnsupportedType
 
 
 class CiscoIOSDevice:
-    """Load, sanitize and parse Cisco IOS configuration files"""
+    """Load, sanitize and parse Cisco IOS configuration files."""
 
     regex_intf = re.compile(r"^interface")
     regex_intf_name = re.compile(r"^interface\s+(\S.+?)$")
@@ -118,7 +118,6 @@ class CiscoIOSDevice:
 
     def parse_config(self):
         """Get device's interfaces and their configuration."""
-
         dev_data = []
 
         parser = self.__get_parser()

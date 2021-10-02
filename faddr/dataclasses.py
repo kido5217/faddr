@@ -1,4 +1,4 @@
-"""Dataclass objects for faddr's internal usage"""
+"""Dataclass objects for faddr's internal usage."""
 
 from dataclasses import dataclass, field
 from typing import List
