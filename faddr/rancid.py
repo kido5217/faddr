@@ -1,5 +1,6 @@
 import pathlib
 import re
+import traceback
 
 from faddr.device import Device
 
@@ -38,9 +39,8 @@ class RancidDir:
         data = {}
 
         try:
-            router_db = open(self.path / group / "router.db", mode="r")
-            devices_list = router_db.readlines()
-            router_db.close()
+            with open(self.path / group / "router.db", mode="r") as router_db:
+                devices_list = router_db.readlines()
         except Exception:
             return {}
 
@@ -62,8 +62,11 @@ class RancidDir:
             config_path = self.path / group / "configs" / device_name
             try:
                 device = Device(config_path, device_type=device_type)
-            except Exception:
-                continue
-            data[device_name] = device.parse_config()
+                device.read_config()
+                device.parse_config()
+            # TODO: Use custom Exception
+            except ValueError:
+                traceback.print_exc()
+            data[device_name] = device.data
 
         return data

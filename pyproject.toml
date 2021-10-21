@@ -7,6 +7,7 @@ authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
+dataclasses = { version = "^0.8", python = "3.6.*" }
 ciscoconfparse = "^1.5.30"
 tinydb = "^4.4.0"
 
@@ -15,6 +16,8 @@ pytest = "^5.2"
 black = "^21.5b2"
 mypy = "^0.812"
 pylint = "^2.8.3"
+pytest-cov = "^2.12.1"
+pre-commit = "^2.15.0"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.cli:faddr_db'
@@ -22,3 +25,9 @@ faddr-db = 'faddr.cli:faddr_db'
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--cov=faddr"
+testpaths = [
+    "tests",
+]

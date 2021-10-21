@@ -1,5 +1,6 @@
 from tinydb import TinyDB
 
+
 # TODO: redo this, maybe use SQL
 class Database:
     def __init__(self, db_file):
