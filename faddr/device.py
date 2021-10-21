@@ -77,9 +77,14 @@ class CiscoIOSDevice:
         if len(intf_ip_addrs) > 0:
             for intf_ip_addr in intf_ip_addrs:
                 # I don't like this, need to change
-                _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
-                ipv4 = IPv4(ipaddr, mask)
-                intf_data.ipv4.append(ipv4)
+                ipaddr = intf_ip_addr.text.strip().split()
+                # _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
+                if len(ipaddr) == 4:
+                    ipv4 = IPv4(ipaddr[2], mask=ipaddr[3])
+                    intf_data.ipv4.append(ipv4)
+                elif len(ipaddr) == 5:
+                    ipv4 = IPv4(ipaddr[2], mask=ipaddr[3], attr=[ipaddr[4]])
+                    intf_data.ipv4.append(ipv4)
 
         # Get VRF name
         intf_vrf = interface.re_search_children(self.regex_vrf)

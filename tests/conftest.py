@@ -11,10 +11,10 @@ from faddr.dataclasses import Interface, IPv4, Vlan, ACL
 @pytest.fixture
 def cisco_ios_simple_config_path():
     """Returns Path-object for default test config."""
-    cisco_ios_simple_config_path = pathlib.Path(
+    config_path = pathlib.Path(
         "tests/fixtures/config_snippets/cisco_ios/simple_config.conf"
     )
-    return cisco_ios_simple_config_path
+    return config_path
 
 
 @pytest.fixture
@@ -127,8 +127,34 @@ def cisco_ios_l3_acl_parsed():
 
 
 @pytest.fixture
-def cisco_ios_l3_multiple_ipv4():
-    return None
+def cisco_ios_l3_multiple_ipv4_raw():
+    """Cisco ISO L3 Interface with multiple ip addresses, description and vlan"""
+    raw_config = [
+        "interface FastEthernet0/0.444",
+        ' description "Test logical subinterface"',
+        " encapsulation dot1Q 444",
+        " ip address 10.4.4.1 255.255.255.252",
+        " ip address 20.4.4.1 255.255.255.0 secondary",
+        " ip address 30.4.4.1 255.255.0.0 secondary",
+    ]
+    return raw_config
+
+
+@pytest.fixture
+def cisco_ios_l3_multiple_ipv4_parsed():
+    """Cisco ISO L3 Interface with multiple ip addresses, description and vlan"""
+    vlan = Vlan("444", encapsulation="dot1Q")
+    ipv4 = IPv4("10.4.4.1", mask="255.255.255.252")
+    ipv4_sec1 = IPv4("20.4.4.1", mask="255.255.255.0", attr=["secondary"])
+    ipv4_sec2 = IPv4("30.4.4.1", mask="255.255.0.0", attr=["secondary"])
+    interface = Interface(
+        "FastEthernet0/0.444",
+        description='"Test logical subinterface"',
+        vlans=[vlan],
+        ipv4=[ipv4, ipv4_sec1, ipv4_sec2],
+    )
+    parsed_config = dataclasses.asdict(interface)
+    return parsed_config
 
 
 @pytest.fixture
