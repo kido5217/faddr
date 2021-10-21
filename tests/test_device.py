@@ -52,6 +52,10 @@ def test_cisco_ios_create_parser():
         ("cisco_ios_l3_vrf_raw", "cisco_ios_l3_vrf_parsed"),
         ("cisco_ios_l3_acl_raw", "cisco_ios_l3_acl_parsed"),
         ("cisco_ios_l3_multiple_ipv4_raw", "cisco_ios_l3_multiple_ipv4_parsed"),
+        ("cisco_ios_l3_shutdown_raw", "cisco_ios_l3_shutdown_parsed"),
+        ("cisco_ios_xconnect_simple_raw", "cisco_ios_xconnect_simple_parsed"),
+        ("cisco_ios_xconnect_mtu_raw", "cisco_ios_xconnect_mtu_parsed"),
+        ("cisco_ios_qinq_unpack_raw", "cisco_ios_qinq_unpack_parsed"),
     ],
 )
 def test_cisco_ios_parse_config(raw_config, parsed_config, request):

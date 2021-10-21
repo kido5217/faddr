@@ -24,7 +24,7 @@ class Vlan:
 class ACL:
     name: str
     direction: str = None
-    version: int = "ipv4"
+    version: str = "ipv4"
 
 
 @dataclass

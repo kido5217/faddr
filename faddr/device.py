@@ -76,9 +76,8 @@ class CiscoIOSDevice:
         intf_ip_addrs = interface.re_search_children(self.regex_ipv4)
         if len(intf_ip_addrs) > 0:
             for intf_ip_addr in intf_ip_addrs:
-                # I don't like this, need to change
                 ipaddr = intf_ip_addr.text.strip().split()
-                # _, _, ipaddr, mask = intf_ip_addr.text.strip().split()
+                # TODO: log if len isn't 4 or 5
                 if len(ipaddr) == 4:
                     ipv4 = IPv4(ipaddr[2], mask=ipaddr[3])
                     intf_data.ipv4.append(ipv4)
@@ -108,14 +107,14 @@ class CiscoIOSDevice:
         # Get XC configuration
         intf_xc = interface.re_search_children(self.regex_xconnect)
         if len(intf_xc) > 0:
-            _, neighbous, vcid, _, encapsulation = intf_xc[0].text.strip().split()
-            xc = XConnect(neighbous, vcid, encapsulation=encapsulation)
+            xc_data = intf_xc[0].text.strip().split()
+            xc = XConnect(xc_data[1], int(xc_data[2]), encapsulation=xc_data[4])
 
             # Get additional XC params
             intf_xc_mtu = intf_xc[0].re_search_children(self.regex_mtu)
             if len(intf_xc_mtu) > 0:
                 _, xc_mtu = intf_xc_mtu[0].text.strip().split()
-                xc.mtu = xc_mtu
+                xc.mtu = int(xc_mtu)
 
             intf_data.xconnect = xc
 
