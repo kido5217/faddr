@@ -49,6 +49,8 @@ def test_cisco_ios_create_parser():
     "raw_config,parsed_config",
     [
         ("cisco_ios_l3_simple_raw", "cisco_ios_l3_simple_parsed"),
+        ("cisco_ios_l3_vrf_raw", "cisco_ios_l3_vrf_parsed"),
+        ("cisco_ios_l3_acl_raw", "cisco_ios_l3_acl_parsed"),
     ],
 )
 def test_cisco_ios_parse_config(raw_config, parsed_config, request):
