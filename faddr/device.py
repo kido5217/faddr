@@ -34,7 +34,9 @@ class CiscoIOSDevice:
     def read_config(self):
         """Read config from file."""
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
-        with open(self.config_path, mode="r", errors="ignore") as config_file:
+        with open(
+            self.config_path, mode="r", errors="ignore", encoding="ascii"
+        ) as config_file:
             self.raw_config = config_file.readlines()
 
         self.config = self.sanitize_config()

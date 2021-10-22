@@ -8,27 +8,34 @@ import pytest
 from faddr.dataclasses import Interface, IPv4, Vlan, ACL, XConnect
 
 
+CISCO_IOS_SIMPLE_CONFIG_PATH = (
+    "tests/fixtures/config_snippets/cisco_ios/simple_config.conf"
+)
+
+
 @pytest.fixture
 def cisco_ios_simple_config_path():
     """Returns Path-object for default test config."""
-    config_path = pathlib.Path(
-        "tests/fixtures/config_snippets/cisco_ios/simple_config.conf"
-    )
+    config_path = pathlib.Path(CISCO_IOS_SIMPLE_CONFIG_PATH)
     return config_path
 
 
 @pytest.fixture
-def cisco_ios_simple_config_raw(cisco_ios_simple_config_path):
+def cisco_ios_simple_config_raw():
     """Reads config from file to list of strings."""
-    with open(cisco_ios_simple_config_path, mode="r", errors="ignore") as config_file:
+    with open(
+        CISCO_IOS_SIMPLE_CONFIG_PATH, mode="r", errors="ignore", encoding="ascii"
+    ) as config_file:
         raw_config = config_file.readlines()
     return raw_config
 
 
 @pytest.fixture
-def cisco_ios_simple_config(cisco_ios_simple_config_path):
+def cisco_ios_simple_config():
     """Creares raw cisco config of comments etc."""
-    with open(cisco_ios_simple_config_path, mode="r", errors="ignore") as config_file:
+    with open(
+        CISCO_IOS_SIMPLE_CONFIG_PATH, mode="r", errors="ignore", encoding="ascii"
+    ) as config_file:
         raw_config = config_file.readlines()
     config = []
     for line in raw_config:
