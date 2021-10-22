@@ -32,3 +32,6 @@ addopts = "--cov=faddr"
 testpaths = [
     "tests",
 ]
+
+[tool.pydocstyle]
+ignore = "D203"
