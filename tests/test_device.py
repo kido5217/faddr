@@ -11,18 +11,18 @@ from faddr.exceptions import FaddrDeviceUnsupportedType
     [("cisco", CiscoIOSDevice), ("cisco_ios", CiscoIOSDevice)],
 )
 def test_device_factory(device_type, device_class):
-    """Testing creation of class object according to device_type"""
+    """Testing creation of class object according to device_type."""
     assert isinstance(Device(None, device_type=device_type), device_class)
 
 
 def test_device_factory_exception():
-    """Testing error exception generation for Device object crearion"""
+    """Testing error exception generation for Device object crearion."""
     with pytest.raises(FaddrDeviceUnsupportedType):
         Device(None, device_type="some_random_device")
 
 
 def test_cisco_ios_create_object(cisco_ios_simple_config_path):
-    """Testing CiscoIOSDevice creation"""
+    """Testing CiscoIOSDevice creation."""
     device = CiscoIOSDevice(cisco_ios_simple_config_path)
     assert device.device_type == "cisco_ios"
     assert device.config_path == cisco_ios_simple_config_path
@@ -32,7 +32,7 @@ def test_cisco_ios_create_object(cisco_ios_simple_config_path):
 def test_cisco_ios_read_config(
     cisco_ios_simple_config_path, cisco_ios_simple_config_raw, cisco_ios_simple_config
 ):
-    """Testing simplke config reading"""
+    """Testing simple config reading."""
     device = CiscoIOSDevice(cisco_ios_simple_config_path)
     device.read_config()
     assert device.raw_config == cisco_ios_simple_config_raw
@@ -53,7 +53,7 @@ def test_cisco_ios_read_config(
     ],
 )
 def test_cisco_ios_parse_config(raw_config, parsed_config, request):
-    """Testing pasring of different config snippets"""
+    """Testing pasring of different config snippets."""
     raw_config = request.getfixturevalue(raw_config)
     parsed_config = request.getfixturevalue(parsed_config)
     device = CiscoIOSDevice(None)
