@@ -40,7 +40,7 @@ def cisco_ios_simple_config(cisco_ios_simple_config_path):
 
 @pytest.fixture
 def cisco_ios_l3_simple_raw():
-    """Cisco IOS L3 Interface with ip address, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, description and vlan."""
     raw_config = [
         "interface FastEthernet0/0.100",
         ' description "Test logical subinterface"',
@@ -52,7 +52,7 @@ def cisco_ios_l3_simple_raw():
 
 @pytest.fixture
 def cisco_ios_l3_simple_parsed():
-    """Cisco IOS L3 Interface with ip address, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, description and vlan."""
     vlan = Vlan("100", encapsulation="dot1Q")
     ipv4 = IPv4("10.1.1.1", mask="255.255.255.252")
     interface = Interface(
@@ -67,7 +67,7 @@ def cisco_ios_l3_simple_parsed():
 
 @pytest.fixture
 def cisco_ios_l3_vrf_raw():
-    """Cisco IOS L3 Interface with ip address, vrf, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, vrf, description and vlan."""
     raw_config = [
         "interface FastEthernet0/0.200",
         ' description "Test logical subinterface 2"',
@@ -80,7 +80,7 @@ def cisco_ios_l3_vrf_raw():
 
 @pytest.fixture
 def cisco_ios_l3_vrf_parsed():
-    """Cisco IOS L3 Interface with ip address, vrf, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, vrf, description and vlan."""
     vlan = Vlan("200", encapsulation="dot1Q")
     ipv4 = IPv4("10.2.2.10", mask="255.255.255.0")
     interface = Interface(
@@ -96,7 +96,7 @@ def cisco_ios_l3_vrf_parsed():
 
 @pytest.fixture
 def cisco_ios_l3_acl_raw():
-    """Cisco IOS L3 Interface with ip address, acl, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, acl, description and vlan."""
     raw_config = [
         "interface FastEthernet0/0.300",
         ' description "Test logical subinterface 3"',
@@ -110,7 +110,7 @@ def cisco_ios_l3_acl_raw():
 
 @pytest.fixture
 def cisco_ios_l3_acl_parsed():
-    """Cisco IOS L3 Interface with ip address, acl, description and vlan"""
+    """Cisco IOS L3 Interface with ip address, acl, description and vlan."""
     vlan = Vlan("300", encapsulation="dot1Q")
     ipv4 = IPv4("10.3.3.13", mask="255.255.255.128")
     acl_in = ACL("Common_Client_IN", direction="in")
@@ -128,7 +128,7 @@ def cisco_ios_l3_acl_parsed():
 
 @pytest.fixture
 def cisco_ios_l3_multiple_ipv4_raw():
-    """Cisco IOS L3 Interface with multiple ip addresses, description and vlan"""
+    """Cisco IOS L3 Interface with multiple ip addresses, description and vlan."""
     raw_config = [
         "interface FastEthernet0/0.444",
         ' description "Test logical subinterface"',
@@ -142,7 +142,7 @@ def cisco_ios_l3_multiple_ipv4_raw():
 
 @pytest.fixture
 def cisco_ios_l3_multiple_ipv4_parsed():
-    """Cisco IOS L3 Interface with multiple ip addresses, description and vlan"""
+    """Cisco IOS L3 Interface with multiple ip addresses, description and vlan."""
     vlan = Vlan("444", encapsulation="dot1Q")
     ipv4 = IPv4("10.4.4.1", mask="255.255.255.252")
     ipv4_sec1 = IPv4("20.4.4.1", mask="255.255.255.0", attr=["secondary"])
@@ -159,7 +159,7 @@ def cisco_ios_l3_multiple_ipv4_parsed():
 
 @pytest.fixture
 def cisco_ios_l3_shutdown_raw():
-    """Cisco IOS L3 Interface with ip address, description and vlan in shutdown"""
+    """Cisco IOS L3 Interface with ip address, description and vlan in shutdown."""
     raw_config = [
         "interface FastEthernet0/0.100",
         ' description "Test logical subinterface"',
@@ -172,7 +172,7 @@ def cisco_ios_l3_shutdown_raw():
 
 @pytest.fixture
 def cisco_ios_l3_shutdown_parsed():
-    """Cisco IOS L3 Interface with ip address, description and vlan in shutdown"""
+    """Cisco IOS L3 Interface with ip address, description and vlan in shutdown."""
     vlan = Vlan("100", encapsulation="dot1Q")
     ipv4 = IPv4("10.1.1.1", mask="255.255.255.252")
     interface = Interface(
@@ -188,7 +188,7 @@ def cisco_ios_l3_shutdown_parsed():
 
 @pytest.fixture
 def cisco_ios_xconnect_simple_raw():
-    """Cisco IOS L2 Interface with simple xconnect"""
+    """Cisco IOS L2 Interface with simple xconnect."""
     raw_config = [
         "interface GigabitEthernet2/2.555",
         ' description "Test logical subinterface with XC"',
@@ -200,7 +200,7 @@ def cisco_ios_xconnect_simple_raw():
 
 @pytest.fixture
 def cisco_ios_xconnect_simple_parsed():
-    """Cisco IOS L2 Interface with simple xconnect"""
+    """Cisco IOS L2 Interface with simple xconnect."""
     vlan = Vlan("555", encapsulation="dot1Q")
     xconnect = XConnect("5.5.5.5", 555001, encapsulation="mpls")
     interface = Interface(
@@ -215,7 +215,7 @@ def cisco_ios_xconnect_simple_parsed():
 
 @pytest.fixture
 def cisco_ios_xconnect_mtu_raw():
-    """Cisco IOS L2 Interface with xconnect and mtu"""
+    """Cisco IOS L2 Interface with xconnect and mtu."""
     raw_config = [
         "interface GigabitEthernet2/2.666",
         ' description "Test logical subinterface with XC an XC mtu"',
@@ -228,7 +228,7 @@ def cisco_ios_xconnect_mtu_raw():
 
 @pytest.fixture
 def cisco_ios_xconnect_mtu_parsed():
-    """Cisco IOS L2 Interface with xconnect and mtu"""
+    """Cisco IOS L2 Interface with xconnect and mtu."""
     vlan = Vlan("666", encapsulation="dot1Q")
     xconnect = XConnect("6.6.6.6", 666001, encapsulation="mpls", mtu=1600)
     interface = Interface(
@@ -243,7 +243,7 @@ def cisco_ios_xconnect_mtu_parsed():
 
 @pytest.fixture
 def cisco_ios_qinq_unpack_raw():
-    """CISCO IOS Interface with QinQ"""
+    """CISCO IOS Interface with QinQ."""
     raw_config = [
         "interface GigabitEthernet2/2.777",
         ' description "Test logical subinterface with QinQ"',
@@ -254,7 +254,7 @@ def cisco_ios_qinq_unpack_raw():
 
 @pytest.fixture
 def cisco_ios_qinq_unpack_parsed():
-    """CISCO IOS Interface with QinQ"""
+    """CISCO IOS Interface with QinQ."""
     vlan_1 = Vlan("1777", encapsulation="dot1Q")
     vlan_2 = Vlan("2777", encapsulation="dot1Q", secondary=True)
     interface = Interface(
