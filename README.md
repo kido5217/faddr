@@ -9,7 +9,7 @@ FAddr is a Python program for parsing configuration of network devices such as J
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install faddr.
 
 ```bash
 pip install faddr
