@@ -6,6 +6,8 @@ from typing import List
 
 @dataclass
 class IPv4:
+    """Simple ipv4 address dataclass"""
+
     address: str
     mask: str = "255.255.255.255"
     attr: List[str] = field(default_factory=list)
@@ -14,6 +16,8 @@ class IPv4:
 # TODO: Add support for vlan list, stacking etc.
 @dataclass
 class Vlan:
+    """Vlan dataclass"""
+
     id: str
     name: str = None
     encapsulation: str = None
@@ -22,6 +26,8 @@ class Vlan:
 
 @dataclass
 class ACL:
+    """ACL dataclass"""
+
     name: str
     direction: str = None
     version: str = "ipv4"
@@ -29,6 +35,8 @@ class ACL:
 
 @dataclass
 class XConnect:
+    """Xconnect aka l2citcuit dataclass"""
+
     neighbour: str
     vcid: int
     description: str = None
@@ -38,6 +46,8 @@ class XConnect:
 
 @dataclass
 class Interface:
+    """Interface dataclass"""
+
     name: str
     description: str = None
     vlans: List[Vlan] = field(default_factory=list)
