@@ -14,8 +14,12 @@ class RancidDir:
         is_valid = False
         if self.path.exists():
             for child in self.path.iterdir():
-                if child.is_dir() and (child / "router.db").exists():
-                    is_valid = True
+                # TODO: Add logging and more specific exception handling
+                try:
+                    if child.is_dir() and (child / "router.db").exists():
+                        is_valid = True
+                except Exception:
+                    print(f"Couldn't open {child}")
         return is_valid
 
     def load_groups(self, rancid_groups=None):
