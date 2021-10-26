@@ -1,7 +1,9 @@
+"""Read and parse rancid inventory files."""
+
 import pathlib
 import re
-import traceback
 
+from faddr import logger
 from faddr.device import Device
 
 
@@ -19,7 +21,7 @@ class RancidDir:
                     if child.is_dir() and (child / "router.db").exists():
                         is_valid = True
                 except Exception:
-                    print(f"Couldn't open {child}")
+                    logger.exception(f"Couldn't open {child}")
         return is_valid
 
     def load_groups(self, rancid_groups=None):
@@ -65,12 +67,11 @@ class RancidDir:
         for device_name, device_type in devices.items():
             config_path = self.path / group / "configs" / device_name
             try:
-                device = Device(config_path, device_type=device_type)
-                device.read_config()
+                device = Device(device_name, config_path, device_type=device_type)
                 device.parse_config()
             # TODO: Use custom Exception
             except ValueError:
-                traceback.print_exc()
+                logger.exception(f"Caught Exception: Unknown device_type {device_type}")
             data[device_name] = device.data
 
         return data
