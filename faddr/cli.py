@@ -3,8 +3,7 @@
 import argparse
 import sys
 
-from loguru import logger
-
+from faddr import logger
 from faddr.rancid import RancidDir
 from faddr.database import Database
 
