@@ -6,7 +6,7 @@ from faddr import Device, CiscoIOSDevice
 from faddr.exceptions import FaddrDeviceUnsupportedType
 
 
-EMPTY_CONFIG = "data/empty_config.txt"
+EMPTY_CONFIG = "tests/fixtures/config_snippets/empty_config.txt"
 
 
 @pytest.mark.parametrize(
