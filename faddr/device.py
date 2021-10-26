@@ -5,6 +5,7 @@ import re
 
 from ciscoconfparse import CiscoConfParse
 
+from faddr import logger
 from faddr.dataclasses import Interface, IPv4, ACL, Vlan, XConnect
 from faddr.exceptions import FaddrDeviceUnsupportedType
 
@@ -25,20 +26,19 @@ class CiscoIOSDevice:
     regex_xconnect = re.compile(r"xconnect\s(\S+)\s(\S+)\sencapsulation\s(\S+)")
 
     # TODO: make loading from file optional, add reading from variable
-    def __init__(self, config_path, device_type="cisco_ios"):
+    def __init__(self, device_name, config_path, device_type="cisco_ios"):
         """Read device's raw configuration and sanitize it."""
+        self.name = device_name
         self.device_type = device_type
         self.config_path = config_path
         self.data = None
 
-    def read_config(self):
-        """Read config from file."""
         # Set "errors" to "ignore" to ignore mangled utf8 in junos and huawey configs
         with open(
             self.config_path, mode="r", errors="ignore", encoding="ascii"
         ) as config_file:
             self.raw_config = config_file.readlines()
-
+        logger.debug(f"Loaded config file {self.config_path}")
         self.config = self.sanitize_config()
 
     def sanitize_config(self):
@@ -55,23 +55,27 @@ class CiscoIOSDevice:
 
     def __parse_interface(self, interface):
         intf_data = Interface(interface.re_match_typed(self.regex_intf_name))
+        logger.debug(f"Parsing interface: {intf_data.name}")
 
         # Get description
         intf_descr = interface.re_search_children(self.regex_intf_descr)
         if len(intf_descr) > 0:
             _, description = intf_descr[0].text.strip().split(" ", 1)
             intf_data.description = description
+            logger.debug(f"Found description: {intf_data.description}")
 
         # Get vlan
         intf_vlan = interface.re_search_children(self.regex_vlan)
         if len(intf_vlan) > 0:
             vlan_arr = intf_vlan[0].text.strip().split()
             vlan = Vlan(vlan_arr[2], encapsulation=vlan_arr[1])
+            logger.debug(f"Found vlan: {vlan.id}")
             intf_data.vlans.append(vlan)
             if len(vlan_arr) == 5:
                 second_vlan = Vlan(
                     vlan_arr[4], encapsulation=vlan_arr[1], secondary=True
                 )
+                logger.debug(f"Found second vlan: {second_vlan.id}")
                 intf_data.vlans.append(second_vlan)
 
         # Get ipv4 addresses
@@ -82,16 +86,21 @@ class CiscoIOSDevice:
                 # TODO: log if len isn't 4 or 5
                 if len(ipaddr) == 4:
                     ipv4 = IPv4(ipaddr[2], mask=ipaddr[3])
+                    logger.debug(f"Found ipv4: {ipv4}")
                     intf_data.ipv4.append(ipv4)
                 elif len(ipaddr) == 5:
                     ipv4 = IPv4(ipaddr[2], mask=ipaddr[3], attr=[ipaddr[4]])
+                    logger.debug(f"Found ipv4: {ipv4}")
                     intf_data.ipv4.append(ipv4)
+                else:
+                    logger.warning(f"Found anomaly while parsing ipv4 string: {ipaddr}")
 
         # Get VRF name
         intf_vrf = interface.re_search_children(self.regex_vrf)
         if len(intf_vrf) > 0:
             _, _, _, vrf_name = intf_vrf[0].text.strip().split()
             intf_data.vrf = vrf_name
+            logger.debug(f"Found vrf: {intf_data.vrf}")
 
         # Get ACL
         intf_acls = interface.re_search_children(self.regex_ipv4_acl)
@@ -100,11 +109,13 @@ class CiscoIOSDevice:
                 _, _, acl_name, direction = intf_acl.text.strip().split()
                 acl = ACL(acl_name, direction=direction)
                 intf_data.acl.append(acl)
+                logger.debug(f"Found ACL: {acl}")
 
         # Check if shutdown command present
         intf_shutdown = interface.re_search_children(self.regex_shutdown)
         if len(intf_shutdown) > 0:
             intf_data.shutdown = True
+            logger.debug("Found 'shutdown' command")
 
         # Get XC configuration
         intf_xc = interface.re_search_children(self.regex_xconnect)
@@ -119,11 +130,13 @@ class CiscoIOSDevice:
                 xc.mtu = int(xc_mtu)
 
             intf_data.xconnect = xc
+            logger.debug(f"Found XConnect: {intf_data.xconnect}")
 
         return intf_data
 
     def parse_config(self):
         """Get device's interfaces and their configuration."""
+        logger.info(f"Parsing device: {self.name}")
         dev_data = []
 
         parser = self.__get_parser()
@@ -134,6 +147,9 @@ class CiscoIOSDevice:
 
         if len(dev_data) > 0:
             self.data = dev_data
+
+        logger.info(f"Finished parsing device: {self.name}")
+        logger.info(f"Interfaces found: {len(self.data)}")
 
 
 # Map device_type value to real device Class
@@ -147,7 +163,6 @@ def Device(*args, **kwargs):
     """Factory function selects the proper class and creates object based on device_type."""
     device_type = kwargs["device_type"]
     if device_type not in CLASS_MAPPER:
-        # TODO: Use custom Exception
         raise FaddrDeviceUnsupportedType(
             "Unsupported 'device_type' "
             f"currently supported platforms are: {str(CLASS_MAPPER)}"
