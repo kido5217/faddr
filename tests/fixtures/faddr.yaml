@@ -1,0 +1,9 @@
+---
+database:
+    database_dir: "data/"
+    database_file: "faddr-db.json"
+
+rancid:
+    rancid_dir: "tests/fixtures/rancid_dir/"
+    mapping:
+        "cisco-mf": "cisco_ios"

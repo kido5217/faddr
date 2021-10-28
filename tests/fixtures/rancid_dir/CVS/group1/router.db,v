@@ -1,0 +1,42 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2021.06.08.21.48.05;	author rancid;	state Exp;
+branches;
+next	1.1;
+commitid	10060BFE5950DC1923C;
+
+1.1
+date	2021.06.08.21.43.06;	author rancid;	state Exp;
+branches;
+next	;
+commitid	10060BFE46A0CA96752;
+
+
+desc
+@@
+
+
+1.2
+log
+@updates
+@
+text
+@192.168.100.2;cisco;up
+
+@
+
+
+1.1
+log
+@new
+@
+text
+@d1 2
+@
+
