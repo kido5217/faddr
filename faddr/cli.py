@@ -2,6 +2,7 @@
 
 import argparse
 import pathlib
+import sys
 
 from faddr import logger
 from faddr.config import LoadConfig
