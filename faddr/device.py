@@ -54,7 +54,7 @@ class CiscoIOSDevice:
         return CiscoConfParse(self.config, syntax="ios")
 
     def __parse_interface(self, interface):
-        intf_data = Interface(interface.re_match_typed(self.regex_intf_name))
+        intf_data = Interface(name=interface.re_match_typed(self.regex_intf_name))
         logger.debug(f"Parsing interface: {intf_data.name}")
 
         # Get description
@@ -68,12 +68,14 @@ class CiscoIOSDevice:
         intf_vlan = interface.re_search_children(self.regex_vlan)
         if len(intf_vlan) > 0:
             vlan_arr = intf_vlan[0].text.strip().split()
-            vlan = Vlan(vlan_arr[2], encapsulation=vlan_arr[1])
+            vlan = Vlan(id=vlan_arr[2], encapsulation=vlan_arr[1])
             logger.debug(f"Found vlan: {vlan.id}")
             intf_data.vlans.append(vlan)
             if len(vlan_arr) == 5:
                 second_vlan = Vlan(
-                    vlan_arr[4], encapsulation=vlan_arr[1], secondary=True
+                    id=vlan_arr[4],
+                    encapsulation=vlan_arr[1],
+                    secondary=True,
                 )
                 logger.debug(f"Found second vlan: {second_vlan.id}")
                 intf_data.vlans.append(second_vlan)
@@ -85,11 +87,11 @@ class CiscoIOSDevice:
                 ipaddr = intf_ip_addr.text.strip().split()
                 # TODO: log if len isn't 4 or 5
                 if len(ipaddr) == 4:
-                    ipv4 = IPv4(ipaddr[2], mask=ipaddr[3])
+                    ipv4 = IPv4(address=ipaddr[2], mask=ipaddr[3])
                     logger.debug(f"Found ipv4: {ipv4}")
                     intf_data.ipv4.append(ipv4)
                 elif len(ipaddr) == 5:
-                    ipv4 = IPv4(ipaddr[2], mask=ipaddr[3], attr=[ipaddr[4]])
+                    ipv4 = IPv4(address=ipaddr[2], mask=ipaddr[3], attr=[ipaddr[4]])
                     logger.debug(f"Found ipv4: {ipv4}")
                     intf_data.ipv4.append(ipv4)
                 else:
@@ -107,7 +109,7 @@ class CiscoIOSDevice:
         if len(intf_acls) > 0:
             for intf_acl in intf_acls:
                 _, _, acl_name, direction = intf_acl.text.strip().split()
-                acl = ACL(acl_name, direction=direction)
+                acl = ACL(name=acl_name, direction=direction)
                 intf_data.acl.append(acl)
                 logger.debug(f"Found ACL: {acl}")
 
@@ -121,7 +123,9 @@ class CiscoIOSDevice:
         intf_xc = interface.re_search_children(self.regex_xconnect)
         if len(intf_xc) > 0:
             xc_data = intf_xc[0].text.strip().split()
-            xc = XConnect(xc_data[1], int(xc_data[2]), encapsulation=xc_data[4])
+            xc = XConnect(
+                neighbour=xc_data[1], vcid=xc_data[2], encapsulation=xc_data[4]
+            )
 
             # Get additional XC params
             intf_xc_mtu = intf_xc[0].re_search_children(self.regex_mtu)
@@ -143,7 +147,7 @@ class CiscoIOSDevice:
 
         # Find all interfaces
         for interface in parser.find_objects(self.regex_intf):
-            dev_data.append(dataclasses.asdict(self.__parse_interface(interface)))
+            dev_data.append(self.__parse_interface(interface).dict())
 
         if len(dev_data) > 0:
             self.data = dev_data

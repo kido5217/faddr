@@ -5,7 +5,7 @@ import pathlib
 import sys
 
 from faddr import logger
-from faddr.config import LoadConfig
+from faddr.config import load_config
 from faddr.rancid import RancidDir
 from faddr.database import Database
 
@@ -53,8 +53,7 @@ def faddr_db():
     args = parse_args_db()
     logger.debug(f"Arguments parsed: {args}")
 
-    config = LoadConfig(cmd_args=args)
-    print(config.rancid)
+    config = load_config(cmd_args=args)
 
     rancid = RancidDir(config.rancid.rancid_dir)
 

@@ -5,7 +5,7 @@ import pathlib
 
 import yaml
 
-from dataclasses import dataclass, field
+from pydantic import BaseModel
 
 from faddr import logger
 
@@ -60,42 +60,39 @@ def parse_cmd_args(cmd_args):
     return config
 
 
-@dataclass
-class Database:
+class Database(BaseModel):
     """Datavase type, location, credentials etc."""
 
-    db_type: str = None
+    database_type: str
+    database_dir: str
+    database_file: str
 
 
-@dataclass
-class Rancid:
+class Rancid(BaseModel):
     """Racnid dir location, profile mapping etc."""
 
     rancid_dir: str = None
-    profile_mapping: dict = field(default_factory=dict)
+    profile_mapping: dict = {}
 
 
-@dataclass
-class FaddrConfig:
+class FaddrConfig(BaseModel):
     """Faddr configuration."""
 
     database: Database
     rancid: Rancid
 
 
-class LoadConfig:
+def load_config(cmd_args):
     """Dummy class for config init with default values."""
 
-    def __new__(cls, cmd_args=None):
-        logger.debug(f"Default config: {DEFAULT_CONFIG}")
+    logger.debug(f"Default config: {DEFAULT_CONFIG}")
 
-        if cmd_args is not None:
-            logger.debug(f"CMD arguments: {cmd_args}")
-            new_config = parse_cmd_args(cmd_args)
-        else:
-            new_config = load_config_from_file(DEFAULT_SYSTEM_CONFIG_PATH)
-        logger.debug(f"Generated config: {new_config}")
+    if cmd_args is not None:
+        logger.debug(f"CMD arguments: {cmd_args}")
+        new_config = parse_cmd_args(cmd_args)
+    else:
+        new_config = load_config_from_file(DEFAULT_SYSTEM_CONFIG_PATH)
+    logger.debug(f"Generated config: {new_config}")
 
-        class_obj = FaddrConfig(**DEFAULT_CONFIG)
-
-        return class_obj
+    class_obj = FaddrConfig(**new_config)
+    return class_obj

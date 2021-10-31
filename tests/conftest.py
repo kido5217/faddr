@@ -60,15 +60,15 @@ def cisco_ios_l3_simple_raw():
 @pytest.fixture
 def cisco_ios_l3_simple_parsed():
     """Cisco IOS L3 Interface with ip address, description and vlan."""
-    vlan = Vlan("100", encapsulation="dot1Q")
-    ipv4 = IPv4("10.1.1.1", mask="255.255.255.252")
+    vlan = Vlan(id="100", encapsulation="dot1Q")
+    ipv4 = IPv4(address="10.1.1.1", mask="255.255.255.252")
     interface = Interface(
-        "FastEthernet0/0.100",
+        name="FastEthernet0/0.100",
         description='"Test logical subinterface"',
         vlans=[vlan],
         ipv4=[ipv4],
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -88,16 +88,16 @@ def cisco_ios_l3_vrf_raw():
 @pytest.fixture
 def cisco_ios_l3_vrf_parsed():
     """Cisco IOS L3 Interface with ip address, vrf, description and vlan."""
-    vlan = Vlan("200", encapsulation="dot1Q")
-    ipv4 = IPv4("10.2.2.10", mask="255.255.255.0")
+    vlan = Vlan(id="200", encapsulation="dot1Q")
+    ipv4 = IPv4(address="10.2.2.10", mask="255.255.255.0")
     interface = Interface(
-        "FastEthernet0/0.200",
+        name="FastEthernet0/0.200",
         description='"Test logical subinterface 2"',
         vlans=[vlan],
         ipv4=[ipv4],
         vrf="VoIP",
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -118,18 +118,18 @@ def cisco_ios_l3_acl_raw():
 @pytest.fixture
 def cisco_ios_l3_acl_parsed():
     """Cisco IOS L3 Interface with ip address, acl, description and vlan."""
-    vlan = Vlan("300", encapsulation="dot1Q")
-    ipv4 = IPv4("10.3.3.13", mask="255.255.255.128")
-    acl_in = ACL("Common_Client_IN", direction="in")
-    acl_out = ACL("TEST_ACL_03", direction="out")
+    vlan = Vlan(id="300", encapsulation="dot1Q")
+    ipv4 = IPv4(address="10.3.3.13", mask="255.255.255.128")
+    acl_in = ACL(name="Common_Client_IN", direction="in")
+    acl_out = ACL(name="TEST_ACL_03", direction="out")
     interface = Interface(
-        "FastEthernet0/0.300",
+        name="FastEthernet0/0.300",
         description='"Test logical subinterface 3"',
         vlans=[vlan],
         ipv4=[ipv4],
         acl=[acl_in, acl_out],
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -150,17 +150,17 @@ def cisco_ios_l3_multiple_ipv4_raw():
 @pytest.fixture
 def cisco_ios_l3_multiple_ipv4_parsed():
     """Cisco IOS L3 Interface with multiple ip addresses, description and vlan."""
-    vlan = Vlan("444", encapsulation="dot1Q")
-    ipv4 = IPv4("10.4.4.1", mask="255.255.255.252")
-    ipv4_sec1 = IPv4("20.4.4.1", mask="255.255.255.0", attr=["secondary"])
-    ipv4_sec2 = IPv4("30.4.4.1", mask="255.255.0.0", attr=["secondary"])
+    vlan = Vlan(id="444", encapsulation="dot1Q")
+    ipv4 = IPv4(address="10.4.4.1", mask="255.255.255.252")
+    ipv4_sec1 = IPv4(address="20.4.4.1", mask="255.255.255.0", attr=["secondary"])
+    ipv4_sec2 = IPv4(address="30.4.4.1", mask="255.255.0.0", attr=["secondary"])
     interface = Interface(
-        "FastEthernet0/0.444",
+        name="FastEthernet0/0.444",
         description='"Test logical subinterface"',
         vlans=[vlan],
         ipv4=[ipv4, ipv4_sec1, ipv4_sec2],
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -180,16 +180,16 @@ def cisco_ios_l3_shutdown_raw():
 @pytest.fixture
 def cisco_ios_l3_shutdown_parsed():
     """Cisco IOS L3 Interface with ip address, description and vlan in shutdown."""
-    vlan = Vlan("100", encapsulation="dot1Q")
-    ipv4 = IPv4("10.1.1.1", mask="255.255.255.252")
+    vlan = Vlan(id="100", encapsulation="dot1Q")
+    ipv4 = IPv4(address="10.1.1.1", mask="255.255.255.252")
     interface = Interface(
-        "FastEthernet0/0.100",
+        name="FastEthernet0/0.100",
         description='"Test logical subinterface"',
         vlans=[vlan],
         ipv4=[ipv4],
         shutdown=True,
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -208,15 +208,15 @@ def cisco_ios_xconnect_simple_raw():
 @pytest.fixture
 def cisco_ios_xconnect_simple_parsed():
     """Cisco IOS L2 Interface with simple xconnect."""
-    vlan = Vlan("555", encapsulation="dot1Q")
-    xconnect = XConnect("5.5.5.5", 555001, encapsulation="mpls")
+    vlan = Vlan(id="555", encapsulation="dot1Q")
+    xconnect = XConnect(neighbour="5.5.5.5", vcid=555001, encapsulation="mpls")
     interface = Interface(
-        "GigabitEthernet2/2.555",
+        name="GigabitEthernet2/2.555",
         description='"Test logical subinterface with XC"',
         vlans=[vlan],
         xconnect=xconnect,
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -236,15 +236,17 @@ def cisco_ios_xconnect_mtu_raw():
 @pytest.fixture
 def cisco_ios_xconnect_mtu_parsed():
     """Cisco IOS L2 Interface with xconnect and mtu."""
-    vlan = Vlan("666", encapsulation="dot1Q")
-    xconnect = XConnect("6.6.6.6", 666001, encapsulation="mpls", mtu=1600)
+    vlan = Vlan(id="666", encapsulation="dot1Q")
+    xconnect = XConnect(
+        neighbour="6.6.6.6", vcid=666001, encapsulation="mpls", mtu=1600
+    )
     interface = Interface(
-        "GigabitEthernet2/2.666",
+        name="GigabitEthernet2/2.666",
         description='"Test logical subinterface with XC an XC mtu"',
         vlans=[vlan],
         xconnect=xconnect,
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
 
 
@@ -262,12 +264,12 @@ def cisco_ios_qinq_unpack_raw():
 @pytest.fixture
 def cisco_ios_qinq_unpack_parsed():
     """CISCO IOS Interface with QinQ."""
-    vlan_1 = Vlan("1777", encapsulation="dot1Q")
-    vlan_2 = Vlan("2777", encapsulation="dot1Q", secondary=True)
+    vlan_1 = Vlan(id="1777", encapsulation="dot1Q")
+    vlan_2 = Vlan(id="2777", encapsulation="dot1Q", secondary=True)
     interface = Interface(
-        "GigabitEthernet2/2.777",
+        name="GigabitEthernet2/2.777",
         description='"Test logical subinterface with QinQ"',
         vlans=[vlan_1, vlan_2],
     )
-    parsed_config = dataclasses.asdict(interface)
+    parsed_config = interface.dict()
     return parsed_config
