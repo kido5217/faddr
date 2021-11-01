@@ -1,6 +1,5 @@
 """PyTest fixtures that are accessible by all tests."""
 
-import dataclasses
 import pathlib
 
 import pytest
