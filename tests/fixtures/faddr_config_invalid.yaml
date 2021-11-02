@@ -1,7 +1,7 @@
 ---
-database:
-    dir: "data/"
-    file: "faddr-db.json"
+database
+                  dir: "data/"
+    file: "faddr-db.json
 
 rancid:
     dir: "tests/fixtures/rancid_dir/"

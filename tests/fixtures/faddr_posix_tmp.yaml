@@ -1,6 +1,6 @@
 ---
 database:
-    dir: "data/"
+    dir: "/tmp/"
     file: "faddr-db.json"
 
 rancid:

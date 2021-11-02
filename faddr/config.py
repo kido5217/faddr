@@ -1,6 +1,7 @@
 """Init default configuration and read configuration from file."""
 
 import copy
+import os
 import pathlib
 
 import yaml
@@ -12,16 +13,36 @@ from faddr import logger
 
 DEFAULT_CONFIG = {
     "database": {
-        "database_type": "tynidb",
-        "database_dir": "/var/db/faddr/",
-        "database_file": "faddr.json",
+        "dir": "/var/db/faddr/",
+        "file": "faddr.json",
     },
     "rancid": {
-        "rancid_dir": "/var/lib/rancid/",
+        "dir": "/var/lib/rancid/",
     },
 }
 
 DEFAULT_SYSTEM_CONFIG_PATH = "/etc/faddr/faddr.yaml"
+
+
+class Database(BaseModel):
+    """Datavase type, location, credentials etc."""
+
+    dir: str
+    file: str
+
+
+class Rancid(BaseModel):
+    """Racnid dir location, profile mapping etc."""
+
+    dir: str = None
+    profile_mapping: dict = {}
+
+
+class FaddrConfig(BaseModel):
+    """Faddr configuration."""
+
+    database: Database
+    rancid: Rancid
 
 
 def load_config_from_file(config_path):
@@ -40,13 +61,31 @@ def load_config_from_file(config_path):
     return config
 
 
-def parse_cmd_args(cmd_args):
-    """Parse arguments from cmd and return FaddrConfig-compatible dict."""
-    config = load_config_from_file(DEFAULT_SYSTEM_CONFIG_PATH)
+def load_config_from_variables(variables):
+    """Parse FADDR_* enviroment variables and return FaddrConfig-compatible dict."""
+    config = {}
 
-    if cmd_args.get("confguration_file") is not None:
-        system_config = load_config_from_file(cmd_args.get("confguration_file"))
-        config.update(system_config)
+    for var in variables:
+        if var.startswith("FADDR_") and var != "FADDR_DEBUG":
+            var_string = str(var)[6:].casefold()
+            var_list = var_string.split("_")
+            var_value = variables[var]
+            if len(var_list) == 2:
+                if var_list[0] in config:
+                    config[var_list[0]][var_list[1]] = var_value
+                else:
+                    config[var_list[0]] = {var_list[1]: var_value}
+            else:
+                logger.warning(
+                    f'Unrecognized variable "{var}" with value "{variables[var]}"'
+                )
+
+    return config
+
+
+def load_config_from_enviroment_cmd(cmd_args):
+    """Parse arguments from cmd and return FaddrConfig-compatible dict."""
+    config = {}
 
     if cmd_args.get("rancid_dir") is not None:
         config["rancid"]["rancid_dir"] = cmd_args.get("rancid_dir")
@@ -60,39 +99,19 @@ def parse_cmd_args(cmd_args):
     return config
 
 
-class Database(BaseModel):
-    """Datavase type, location, credentials etc."""
+def load_config(cmd_args=None, system_config_path=DEFAULT_SYSTEM_CONFIG_PATH):
+    """Load config from all available sources and generate FaddrConfig object."""
 
-    database_type: str
-    database_dir: str
-    database_file: str
+    if isinstance(cmd_args, dict):
+        if cmd_args.get("confguration_file") is not None:
+            system_config_path = cmd_args.get("confguration_file")
 
+    # Load default config
+    generated_config = copy.deepcopy(DEFAULT_CONFIG)
+    # Update config values from system config
+    generated_config.update(load_config_from_file(system_config_path))
+    # Update config values from enviroment variables
+    generated_config.update(load_config_from_variables(os.environ))
 
-class Rancid(BaseModel):
-    """Racnid dir location, profile mapping etc."""
-
-    rancid_dir: str = None
-    profile_mapping: dict = {}
-
-
-class FaddrConfig(BaseModel):
-    """Faddr configuration."""
-
-    database: Database
-    rancid: Rancid
-
-
-def load_config(cmd_args):
-    """Dummy class for config init with default values."""
-
-    logger.debug(f"Default config: {DEFAULT_CONFIG}")
-
-    if cmd_args is not None:
-        logger.debug(f"CMD arguments: {cmd_args}")
-        new_config = parse_cmd_args(cmd_args)
-    else:
-        new_config = load_config_from_file(DEFAULT_SYSTEM_CONFIG_PATH)
-    logger.debug(f"Generated config: {new_config}")
-
-    class_obj = FaddrConfig(**new_config)
+    class_obj = FaddrConfig(**generated_config)
     return class_obj

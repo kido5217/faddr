@@ -55,15 +55,15 @@ def faddr_db():
 
     config = load_config(cmd_args=args)
 
-    rancid = RancidDir(config.rancid.rancid_dir)
+    rancid = RancidDir(config.rancid.dir)
 
     db = Database(
-        pathlib.Path(config.database.database_dir / config.database.database_file)
+        pathlib.Path(config.database.dir) / pathlib.Path(config.database.file)
     )
 
     if not rancid.is_valid():
         error = (
-            f'"{config.rancid.rancid_dir}" is not a valid rancid BASEDIR '
+            f'"{config.rancid.dir}" is not a valid rancid BASEDIR '
             "or was not properly initialised with rancid-csv utility"
         )
         logger.error(error)
