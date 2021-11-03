@@ -3,10 +3,12 @@
 import copy
 import os
 import pathlib
+import sys
 
 import yaml
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
+from pydantic.utils import deep_update
 
 from faddr import logger
 
@@ -22,6 +24,8 @@ DEFAULT_CONFIG = {
 }
 
 DEFAULT_SYSTEM_CONFIG_PATH = "/etc/faddr/faddr.yaml"
+
+EXCLUDE_VARS = ("FADDR_DEBUG", "confguration_file")
 
 
 class Database(BaseModel):
@@ -61,13 +65,13 @@ def load_config_from_file(config_path):
     return config
 
 
-def load_config_from_variables(variables):
+def load_config_from_variables(variables, prefix="", exclude_vars=EXCLUDE_VARS):
     """Parse FADDR_* enviroment variables and return FaddrConfig-compatible dict."""
     config = {}
 
     for var in variables:
-        if var.startswith("FADDR_") and var != "FADDR_DEBUG":
-            var_string = str(var)[6:].casefold()
+        if var.startswith(prefix) and var not in exclude_vars:
+            var_string = str(var)[len(prefix) :].casefold()
             var_list = var_string.split("_")
             var_value = variables[var]
             if len(var_list) == 2:
@@ -83,35 +87,63 @@ def load_config_from_variables(variables):
     return config
 
 
-def load_config_from_enviroment_cmd(cmd_args):
-    """Parse arguments from cmd and return FaddrConfig-compatible dict."""
-    config = {}
-
-    if cmd_args.get("rancid_dir") is not None:
-        config["rancid"]["rancid_dir"] = cmd_args.get("rancid_dir")
-
-    if cmd_args.get("database_dir") is not None:
-        config["database"]["database_dir"] = cmd_args.get("database_dir")
-
-    if cmd_args.get("database_file") is not None:
-        config["database"]["database_file"] = cmd_args.get("database_file")
-
-    return config
-
-
-def load_config(cmd_args=None, system_config_path=DEFAULT_SYSTEM_CONFIG_PATH):
+def load_config(
+    cmd_args=None,
+    default_config=DEFAULT_CONFIG,
+    system_config_path=DEFAULT_SYSTEM_CONFIG_PATH,
+    env_vars=os.environ,
+):
     """Load config from all available sources and generate FaddrConfig object."""
 
     if isinstance(cmd_args, dict):
         if cmd_args.get("confguration_file") is not None:
             system_config_path = cmd_args.get("confguration_file")
 
-    # Load default config
-    generated_config = copy.deepcopy(DEFAULT_CONFIG)
-    # Update config values from system config
-    generated_config.update(load_config_from_file(system_config_path))
-    # Update config values from enviroment variables
-    generated_config.update(load_config_from_variables(os.environ))
+    config_order = (
+        "default_config",
+        "system_config",
+        "enviroment_config",
+        "cmd_config",
+    )
 
-    class_obj = FaddrConfig(**generated_config)
-    return class_obj
+    config_data = {}
+
+    # Load default config
+    config_data["default_config"] = copy.deepcopy(default_config)
+    logger.debug(f'Loaded default config values: {config_data["default_config"]}')
+
+    # Get config values from system config
+    config_data["system_config"] = load_config_from_file(system_config_path)
+    logger.debug(f'Loaded config values from file: {config_data["system_config"]}')
+
+    # Get config values from enviroment variables
+    config_data["enviroment_config"] = load_config_from_variables(
+        env_vars, prefix="FADDR_"
+    )
+    logger.debug(
+        f'Updated config with values from enviroment variables: {config_data["enviroment_config"]}'
+    )
+
+    # Get config values from enviroment variables
+    config_data["cmd_config"] = load_config_from_variables(cmd_args)
+    logger.debug(
+        f'Updated config with values from CMD arguments: {config_data["cmd_config"]}'
+    )
+
+    # config = {}
+    for config_source in config_order:
+        try:
+            config = FaddrConfig(
+                **deep_update(config.dict(), config_data[config_source])
+            )
+        except NameError:
+            config = FaddrConfig(**config_data[config_source])
+        except ValidationError as err:
+            logger.warning(
+                f"Config data validation for {config_source} failed: {err.errors()}"
+            )
+            sys.exit(1)
+
+    logger.debug(f"Successfully validated combined config data: {config.dict()}")
+
+    return config

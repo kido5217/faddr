@@ -12,7 +12,7 @@ from faddr.database import Database
 
 def parse_args_db():
     """Parsing CMD keys."""
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
     # TODO: Replave hardcoded unix-like path with OS-independent.
     parser.add_argument(
@@ -51,7 +51,7 @@ def parse_args_db():
 def faddr_db():
     """Parsing devices' config files and writing data to database."""
     args = parse_args_db()
-    logger.debug(f"Arguments parsed: {args}")
+    logger.debug(f"Arguments from CMD: {args}")
 
     config = load_config(cmd_args=args)
 
@@ -70,7 +70,7 @@ def faddr_db():
         sys.exit(1)
 
     # Get groups list found in rancid's base dir
-    groups = rancid.load_groups(args["rancid_groups"])
+    groups = ("group1", "group2")
     logger.debug(f"Found rancid groups: {groups}")
 
     for group in groups:
