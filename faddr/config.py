@@ -130,7 +130,7 @@ def load_config(
         f'Updated config with values from CMD arguments: {config_data["cmd_config"]}'
     )
 
-    # config = {}
+    # Validate config data and create FaddrConfig object
     for config_source in config_order:
         try:
             config = FaddrConfig(
@@ -139,7 +139,7 @@ def load_config(
         except NameError:
             config = FaddrConfig(**config_data[config_source])
         except ValidationError as err:
-            logger.warning(
+            logger.error(
                 f"Config data validation for {config_source} failed: {err.errors()}"
             )
             sys.exit(1)

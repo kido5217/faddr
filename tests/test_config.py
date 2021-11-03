@@ -44,3 +44,7 @@ def test_load_config_from_file(config_file_path, config, request):
     config = request.getfixturevalue(config)
     loaded_config = load_config_from_file(config_file_path)
     assert loaded_config == config
+
+
+def test_load_config_from_variables():
+    pass
