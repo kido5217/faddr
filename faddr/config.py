@@ -1,5 +1,8 @@
 """Init default configuration and read configuration from file."""
 
+# TODO: Apparently pyndatic has special class for managing settings - BaseSettings
+# TODO: Use it: https://pydantic-docs.helpmanual.io/usage/settings/
+
 import copy
 import os
 import pathlib

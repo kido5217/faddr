@@ -23,7 +23,7 @@ def test_validate_default_config():
 
 
 def test_validate_default_system_config_path():
-    """Test if default systemc config path can be parsed with pathlib."""
+    """Test if default system config path can be parsed with pathlib."""
     try:
         pathlib.Path(DEFAULT_SYSTEM_CONFIG_PATH)
     except Exception as err:
