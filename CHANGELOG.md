@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CHANGELOD.md
 - poetry module as dev dependency
+- tox-poetry module fox better tox integration
 
 ## Fixed
 
