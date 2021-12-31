@@ -11,7 +11,10 @@ EMPTY_CONFIG = "tests/fixtures/config_snippets/empty_config.txt"
 
 @pytest.mark.parametrize(
     "device_type,device_class",
-    [("cisco", CiscoIOSDevice), ("cisco_ios", CiscoIOSDevice)],
+    [
+        ("cisco", CiscoIOSDevice),
+        ("cisco_ios", CiscoIOSDevice),
+    ],
 )
 def test_device_factory(device_type, device_class):
     """Testing creation of class object according to device_type."""

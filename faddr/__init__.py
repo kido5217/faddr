@@ -10,7 +10,7 @@ from faddr.device import Device
 from faddr.device import CiscoIOSDevice
 
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __all__ = (
     "RancidDir",
     "Device",

@@ -1,0 +1,226 @@
+#! /bin/sh
+##
+## $Id: rancid-cvs.in 3763 2018-02-02 19:38:21Z heas $
+##
+## rancid 3.9
+## Copyright (c) 1997-2018 by Henry Kilmer and John Heasley
+## All rights reserved.
+##
+## This code is derived from software contributed to and maintained by
+## Henry Kilmer, John Heasley, Andrew Partan,
+## Pete Whiting, Austin Schutz, and Andrew Fort.
+##
+## Redistribution and use in source and binary forms, with or without
+## modification, are permitted provided that the following conditions
+## are met:
+## 1. Redistributions of source code must retain the above copyright
+##    notice, this list of conditions and the following disclaimer.
+## 2. Redistributions in binary form must reproduce the above copyright
+##    notice, this list of conditions and the following disclaimer in the
+##    documentation and/or other materials provided with the distribution.
+## 3. Neither the name of RANCID nor the names of its
+##    contributors may be used to endorse or promote products derived from
+##    this software without specific prior written permission.
+##
+## THIS SOFTWARE IS PROVIDED BY Henry Kilmer, John Heasley AND CONTRIBUTORS
+## ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+## TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+## PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COMPANY OR CONTRIBUTORS
+## BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+## CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+## SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+## INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+## CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+## POSSIBILITY OF SUCH DAMAGE.
+##
+## It is the request of the authors, but not a condition of license, that
+## parties packaging or redistributing RANCID NOT distribute altered versions
+## of the etc/rancid.types.base file nor alter how this file is processed nor
+## when in relation to etc/rancid.types.conf.  The goal of this is to help
+## suppress our support costs.  If it becomes a problem, this could become a
+## condition of license.
+# 
+#  The expect login scripts were based on Erik Sherk's gwtn, by permission.
+# 
+#  The original looking glass software was written by Ed Kern, provided by
+#  permission and modified beyond recognition.
+#
+# Create all of the misc files & dirs needed for each group and import them
+# into CVS, git or Subversion.
+#
+# rancid-cvs
+#
+
+# Read in the environment
+ENVFILE="/etc/rancid/rancid.conf"
+
+# print a usage message to stderr
+pr_usage() {
+    echo "usage: $0 [-V] [-f config_file] [group [group ...]]" >&2;
+}
+
+# command-line options
+# -V print version string
+if [ $# -ge 1 ] ; then
+    while [ 1 ] ; do
+	case $1 in
+	-V)
+	    echo "rancid 3.9"
+	    exit 0
+	    ;;
+	-f)
+	    shift
+	    # next arg is the alternate config file name
+	    ENVFILE="$1"
+	    if [ -z $ENVFILE ]; then
+		pr_usage
+		exit 1
+	    fi
+	    shift
+	    ;;
+	-*)
+	    echo "unknown option: $1" >&2
+	    pr_usage
+	    exit 1
+	    ;;
+	*)
+	    break;
+	    ;;
+	esac
+    done
+fi
+
+. $ENVFILE
+
+# Base dir
+if [ ! -d $BASEDIR ]; then
+    mkdir -p $BASEDIR ||
+	(echo "Could not create local state directory: $BASEDIR"; exit 1)
+fi
+
+cd $BASEDIR
+
+# RCS system
+RCSSYS=${RCSSYS:=cvs};
+if [ $RCSSYS != "cvs" -a $RCSSYS != "svn" -a $RCSSYS != "git" ] ; then
+    echo "$RCSSYS is not a valid value for RCSSYS. See rancid.conf(5)." >&2
+    exit 1
+fi
+
+# Top level RCS stuff
+case $RCSSYS in
+cvs )
+    if [ ! -d $CVSROOT ]; then
+	cvs -d $CVSROOT init
+    fi
+    ;;
+svn )
+    if echo "$CVSROOT" | grep -q "://"; then
+	# do nothing because CVSROOT is some sort of a URL
+	# also assume the repository has already been provisioned
+	:
+    else
+	if ! svn ls "file://$CVSROOT" >/dev/null 2>&1; then
+	    svnadmin create $CVSROOT --fs-type fsfs
+	fi
+	CVSROOT="file://$CVSROOT"
+    fi
+    ;;
+git)
+    if echo "$CVSROOT" | grep -q "://"; then
+	# do nothing because CVSROOT is some sort of a URL
+	# also assume the repository has already been provisioned
+	:
+    else
+	if [ ! -d $CVSROOT ]; then
+	    mkdir $CVSROOT
+	fi
+    fi
+    ;;
+esac
+
+# LOGDIR location
+LOGDIR=${LOGDIR:=$BASEDIR/logs};
+if [ ! -d $LOGDIR ]; then
+    mkdir -p $LOGDIR || (echo "Could not create log directory: $LOGDIR" >&2;    
+			 exit 1)
+fi
+
+# Which groups to do
+if [ $# -ge 1 ] ; then
+	LIST_OF_GROUPS="$*"; export LIST_OF_GROUPS
+elif [ "$LIST_OF_GROUPS" = "" ] ; then
+	echo "LIST_OF_GROUPS is empty in $ENVFILE"
+	exit 1
+fi
+
+for GROUP in `echo $LIST_OF_GROUPS` ;
+do
+    DIR=$BASEDIR/$GROUP
+
+    # Directory for the group and the configs
+    if [ ! -d $DIR ]; then
+	mkdir -p $DIR
+	cd $DIR
+	case $RCSSYS in
+	cvs )
+	    cvs import -m "$GROUP" $GROUP new rancid
+	    cd $BASEDIR
+	    cvs checkout $GROUP
+	    ;;
+	svn )
+	    svn import -m "$GROUP" . $CVSROOT/$GROUP
+	    cd $BASEDIR
+	    svn checkout $CVSROOT/$GROUP $GROUP
+	    cd $DIR
+	    svn update
+	    ;;
+	git )
+	    git init --bare $CVSROOT/$GROUP
+	    echo "$GROUP RANCiD repository" > $CVSROOT/$GROUP/description
+	    git clone $CVSROOT/$GROUP .
+	    echo "$GROUP RANCiD repository" > .git/description
+	    git config user.name RANCiD
+	    git config user.email $USER$MAILDOMAIN
+	    git config push.default current
+	    ;;
+	esac
+    fi
+    cd $DIR
+    if [ ! -d configs ]; then
+	rm -f configs
+	mkdir configs
+	if [ $RCSSYS = "git" ]; then
+	    cat > configs/.gitignore <<EOF
+.old
+*.new
+*.raw
+EOF
+	fi
+	$RCSSYS add configs
+	$RCSSYS commit -m 'new' configs
+	if [ $RCSSYS = "git" ]; then
+	    git push
+	fi
+    fi
+
+    # config and status files
+    if [ ! -f routers.all ]; then
+	touch routers.all
+    fi
+    if [ ! -f routers.down ]; then
+	touch routers.down
+    fi
+    if [ ! -f routers.up ]; then
+	touch routers.up
+    fi
+    if [ ! -f router.db ]; then
+	touch router.db
+	$RCSSYS add router.db
+	$RCSSYS commit -m 'new' router.db
+	if [ $RCSSYS = "git" ]; then
+	    git push
+	fi
+    fi
+done

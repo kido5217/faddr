@@ -1,0 +1,35 @@
+starting: Tue 08 Jun 2021 05:47:59 PM EDT
+
+cvs add: scheduling file `.cvsignore' for addition
+cvs add: use `cvs commit' to add this file permanently
+cvs add: scheduling file `configs/.cvsignore' for addition
+cvs add: use `cvs commit' to add this file permanently
+/usr/lib/rancid/bin/control_rancid: 436: /usr/lib/rancid/bin/control_rancid: /usr/sbin/sendmail: not found
+cvs add: scheduling file `192.168.100.2' for addition
+cvs add: use `cvs commit' to add this file permanently
+/var/lib/rancid/CVS/group1/configs/192.168.100.2,v  <--  192.168.100.2
+initial revision: 1.1
+Added 192.168.100.2
+
+
+
+Trying to get all of the configs.
+All routers successfully completed.
+
+cvs diff: Diffing .
+cvs diff: .cvsignore is a new entry, no comparison available
+cvs diff: Diffing configs
+cvs diff: configs/.cvsignore is a new entry, no comparison available
+cvs commit: Examining .
+cvs commit: Examining configs
+/var/lib/rancid/CVS/group1/.cvsignore,v  <--  .cvsignore
+initial revision: 1.1
+/var/lib/rancid/CVS/group1/router.db,v  <--  router.db
+new revision: 1.2; previous revision: 1.1
+/var/lib/rancid/CVS/group1/configs/.cvsignore,v  <--  configs/.cvsignore
+initial revision: 1.1
+/var/lib/rancid/CVS/group1/configs/192.168.100.2,v  <--  configs/192.168.100.2
+new revision: 1.2; previous revision: 1.1
+/usr/lib/rancid/bin/control_rancid: 730: /usr/lib/rancid/bin/control_rancid: /usr/sbin/sendmail: not found
+
+ending: Tue 08 Jun 2021 05:48:07 PM EDT

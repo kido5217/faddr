@@ -1,31 +1,29 @@
 """Dataclass objects for faddr's internal usage."""
 
-from dataclasses import dataclass, field
 from typing import List
 
+from pydantic import BaseModel
 
-@dataclass
-class IPv4:
+
+class IPv4(BaseModel):
     """Simple ipv4 address dataclass"""
 
     address: str
     mask: str = "255.255.255.255"
-    attr: List[str] = field(default_factory=list)
+    attr: List[str] = []
 
 
 # TODO: Add support for vlan list, stacking etc.
-@dataclass
-class Vlan:
+class Vlan(BaseModel):
     """Vlan dataclass"""
 
     id: str
     name: str = None
     encapsulation: str = None
-    secondary: bin = False
+    secondary: bool = False
 
 
-@dataclass
-class ACL:
+class ACL(BaseModel):
     """ACL dataclass"""
 
     name: str
@@ -33,8 +31,7 @@ class ACL:
     version: str = "ipv4"
 
 
-@dataclass
-class XConnect:
+class XConnect(BaseModel):
     """Xconnect aka l2citcuit dataclass"""
 
     neighbour: str
@@ -44,16 +41,15 @@ class XConnect:
     encapsulation: str = None
 
 
-@dataclass
-class Interface:
+class Interface(BaseModel):
     """Interface dataclass"""
 
     name: str
     description: str = None
-    vlans: List[Vlan] = field(default_factory=list)
-    ipv4: List[IPv4] = field(default_factory=list)
+    vlans: List[Vlan] = []
+    ipv4: List[IPv4] = []
     mtu: int = None
     vrf: str = None
-    acl: List[ACL] = field(default_factory=list)
-    shutdown: bin = False
+    acl: List[ACL] = []
+    shutdown: bool = False
     xconnect: XConnect = None
