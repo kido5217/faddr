@@ -8,11 +8,14 @@ from faddr.device import Device
 
 
 class RancidDir:
+    """A class to work with RANCID's dirs."""
+
     def __init__(self, rancid_path):
         """Open rancid dir and parse it's content."""
         self.path = pathlib.Path(rancid_path)
 
     def is_valid(self):
+        """Check if dir contains rancid-specific files and dirs."""
         is_valid = False
         if self.path.exists():
             for child in self.path.iterdir():
@@ -25,6 +28,7 @@ class RancidDir:
         return is_valid
 
     def load_groups(self, rancid_groups=None):
+        """Find all rancid groups and use only requested ones."""
         groups = []
         for child in self.path.iterdir():
             if child.is_dir() and (child / "router.db").exists():
@@ -41,11 +45,17 @@ class RancidDir:
         return groups
 
     def parse_configs(self, group):
+        """Parse devices configuration."""
         devices = {}
         data = {}
 
         try:
-            with open(self.path / group / "router.db", mode="r") as router_db:
+            with open(
+                self.path / group / "router.db",
+                mode="r",
+                encoding="UTF-8",
+                errors="ignore",
+            ) as router_db:
                 devices_list = router_db.readlines()
         except Exception:
             return {}
@@ -53,7 +63,7 @@ class RancidDir:
         for line in devices_list:
             if len(line.strip()) == 0:
                 continue
-            # TODO: Add ipv6 support
+            # TODO: Fix this, maybe add pydantic class
             device_data = re.split("[;:]", line.strip())
             if len(device_data) < 3:
                 continue

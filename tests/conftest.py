@@ -312,5 +312,5 @@ def config_valid():
 
 @pytest.fixture
 def config_file_invalid():
-    """Broken yaml file..."""
+    """Broken yaml file."""
     return pathlib.Path("tests/fixtures/faddr_config_invalid.yaml")
