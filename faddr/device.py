@@ -1,6 +1,5 @@
 """Read, sanitize and parse network devices' configuration."""
 
-import dataclasses
 import re
 
 from ciscoconfparse import CiscoConfParse

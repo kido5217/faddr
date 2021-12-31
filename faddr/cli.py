@@ -14,7 +14,6 @@ def parse_args_db():
     """Parsing CMD keys."""
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
-    # TODO: Replave hardcoded unix-like path with OS-independent.
     parser.add_argument(
         "-c",
         "--confguration-file",
@@ -57,7 +56,7 @@ def faddr_db():
 
     rancid = RancidDir(config.rancid.dir)
 
-    db = Database(
+    database = Database(
         pathlib.Path(config.database.dir) / pathlib.Path(config.database.file)
     )
 
@@ -77,4 +76,4 @@ def faddr_db():
         logger.debug(f"Parsing devices in group {group}")
         data = rancid.parse_configs(group)
         if len(data) > 0:
-            db.insert(data)
+            database.insert(data)
