@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - CHANGELOD.md
+- poetry module as dev dependency
 
 ## [0.0.3] - 2021-12-31
 
