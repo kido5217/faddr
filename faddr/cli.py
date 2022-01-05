@@ -56,9 +56,7 @@ def faddr_db():
 
     rancid = RancidDir(config.rancid.dir)
 
-    database = Database(
-        pathlib.Path(config.database.dir) / pathlib.Path(config.database.file)
-    )
+    database = Database(pathlib.Path(config.database.dir, config.database.file))
 
     if not rancid.is_valid():
         error = (
