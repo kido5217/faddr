@@ -1,13 +1,10 @@
 """CLI entry points of faddr."""
 
 import argparse
-import pathlib
-import sys
 
 from faddr import logger
 from faddr.config import load_config
 from faddr.rancid import RancidDir
-from faddr.database import Database
 
 
 def parse_args_db():
@@ -54,24 +51,7 @@ def faddr_db():
 
     config = load_config(cmd_args=args)
 
-    rancid = RancidDir(config.rancid.dir)
+    # database = Database(pathlib.Path(config.database.dir, config.database.file))
 
-    database = Database(pathlib.Path(config.database.dir, config.database.file))
-
-    if not rancid.is_valid():
-        error = (
-            f'"{config.rancid.dir}" is not a valid rancid BASEDIR '
-            "or was not properly initialised with rancid-csv utility"
-        )
-        logger.error(error)
-        sys.exit(1)
-
-    # Get groups list found in rancid's base dir
-    groups = ("group1", "group2")
-    logger.debug(f"Found rancid groups: {groups}")
-
-    for group in groups:
-        logger.debug(f"Parsing devices in group {group}")
-        data = rancid.parse_configs(group)
-        if len(data) > 0:
-            database.insert(data)
+    rancid = RancidDir(config.rancid.dir, level="root")
+    print(rancid.configs)
