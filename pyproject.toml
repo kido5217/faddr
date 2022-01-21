@@ -32,6 +32,7 @@ pre-commit = {version = "^2.15", python = "^3.6.1"}
 tox = "^3.24.4"
 poetry = "^1.1.12"
 tox-poetry = "^0.4.1"
+prospector = {extras = ["with_bandit", "with_mypy"], version = "^1.6.0", python = ">=3.6.2,<4.0"}
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.cli:faddr_db'
