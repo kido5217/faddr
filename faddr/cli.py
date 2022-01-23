@@ -51,7 +51,6 @@ def faddr_db():
 
     config = load_config(cmd_args=args)
 
-    # database = Database(pathlib.Path(config.database.dir, config.database.file))
-
-    rancid = RancidDir(config.rancid.dir, level="root")
-    print(rancid.configs)
+    rancid = RancidDir(config.rancid.dir)
+    for group in rancid.groups:
+        print(group.configs)
