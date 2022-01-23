@@ -1,6 +1,24 @@
 # Test Lab
 
+## Rancid configuration
+
+- All devices have permanent hostname and ipv4 OAM address
+- RANCID has 3 groups:
+  - group_01_3rows: valid group with all devices, router.db has 3 columns
+  - group_02_4rows: valid group with all devices, router.db has 4 columns
+  - group_03_router_db_errors: invalid group, has errors in router.db
+  - group_04_no_router_db: invalid group, router.db is absent
+- Separately there's special folder with rancid-specific files, but without valid groups
+
 ## Configuration rules
+
+### Credentials
+
+|            |            |
+| ---        | ---        |
+| `login`    | `faddr`    |
+| `password` | `faddr123` |
+| `enable`   | `faddr123`    |
 
 ### Interfaces
 
@@ -83,4 +101,102 @@
 
 ## Devices
 
-### Cisco IOS
+| Vendor  | Type  | Model | Version | Hostname               | OAM ipv4 address  |
+| ---     | ---   | ---   | ---     | ---                    | ---               |
+| Cisco   | IOS   | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
+| Juniper | Junos | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
+
+### Cisco
+
+#### IOS
+
+Hostname: `cisco-ios-15-7206`
+
+OAM: `192.168.100.111`
+
+Device: 7206 on [`EVE-NG`](https://www.eve-ng.net/)
+
+Version: `15.2(4)S7`
+
+Status: WIP
+
+Configuration:
+
+```
+no logging console
+
+enable secret faddr123
+username faddr privilege 15 secret faddr123
+aaa new-model
+
+hostname cisco-ios-15-7206
+ip domain-name lab.faddr
+crypto key generate rsa [768]
+ip ssh version 2
+transport input telnet ssh
+
+interface FastEthernet 0/0
+no shutdown
+description OAM
+ip address 192.168.100.111 255.255.255.0
+
+interface FastEthernet 1/0
+no shutdown
+
+interface FastEthernet 1/0.100
+description vlan 100: ipv4 address 10.100.100.1/24
+encapsulation dot1Q 100
+ip address 10.100.100.1 255.255.255.0
+
+interface FastEthernet 1/0.101
+description vlan 101: native, ipv4 address 10.101.101.1/24
+encapsulation dot1Q 101 native
+ip address 10.101.101.1 255.255.255.0
+
+
+```
+
+### Juniper
+
+#### JunOS
+
+Hostname: `juniper-junos-17-vmx`
+
+OAM: `192.168.100.112`
+
+Device: vMX on [`EVE-NG`](https://www.eve-ng.net/)
+
+Version: `17.2R1.13`
+
+Status: WIP
+
+Configuration:
+
+```
+delete chassis auto-image-upgrade
+
+set system root-authentication plain-text-password [faddr123]
+set system login user faddr class super-user
+set system login user faddr authentication plain-text-password [faddr123]
+
+set interfaces fxp0.0 description OAM
+set interfaces fxp0.0 family inet address 192.168.100.112/24
+delete interfaces fxp0 unit 0 family inet dhcp
+
+set system services telnet
+set system services ssh
+set system host-name juniper-junos-17-vmx
+set system domain-name lab.faddr
+
+set interfaces ge-0/0/1 description "port 1"
+set interfaces ge-0/0/1 flexible-vlan-tagging
+set interfaces ge-0/0/1 native-vlan-id 101
+
+set interfaces ge-0/0/1 unit 100 description "vlan 100: ipv4 address 10.100.100.1/24"
+set interfaces ge-0/0/1 unit 100 vlan-id 100
+set interfaces ge-0/0/1 unit 100 family inet address 10.100.100.1/24
+
+set interfaces ge-0/0/1 unit 101 description "vlan 101: native, ipv4 address 10.101.101.1/24"
+set interfaces ge-0/0/1 unit 101 vlan-id 101
+set interfaces ge-0/0/1 unit 101 family inet address 10.101.101.1/24
+```
