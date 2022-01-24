@@ -14,11 +14,11 @@
 
 ### Credentials
 
-|            |            |
+| Entry      | Value      |
 | ---        | ---        |
 | `login`    | `faddr`    |
 | `password` | `faddr123` |
-| `enable`   | `faddr123`    |
+| `enable`   | `faddr123` |
 
 ### Interfaces
 
