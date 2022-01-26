@@ -23,7 +23,7 @@ pydantic = {version = "^1.8", python = "^3.6.1"}
 
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.2"
 black = {version = "^21.5b2", python = "^3.6.2"}
 mypy = "^0.812"
 pylint = "^2.8.3"
