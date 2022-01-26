@@ -1,0 +1,189 @@
+!RANCID-CONTENT-TYPE: cisco-lab
+!
+!Chassis type: 7206VXR
+!CPU: NPE400, R7000 CPU at 150MHz, impl 39, Rev 2.1, 256KB L2 Cache
+!
+!Memory: main 491520K/32768K
+!Memory: nvram 125K
+!Memory: bootflash 8192K
+!Memory: pcmcia ATA slot0 131072K
+!Memory: pcmcia ATA slot1 131072K
+!
+!Processor ID: 4279256517
+!
+!Power: Power Supply 1 is AC Power Supply. Unit is on.
+!Power: Power Supply 2 is AC Power Supply. Unit is on.
+!
+!Image: Software: C7200-ADVENTERPRISEK9-M, 15.2(4)S7, RELEASE SOFTWARE (fc4)
+!Image: Compiled: Wed 01-Apr-15 20:30 by prod_rel_team
+!Image: tftp://255.255.255.255/unknown
+!
+!BOOTLDR: Version 15.2(4)S7, RELEASE SOFTWARE (fc4)
+!
+!
+!Variable: BOOT variable does not exist
+!Variable: CONFIG_FILE variable does not exist
+!Variable: BOOTLDR variable does not exist
+!Variable: WARM_REBOOT variable = FALSE
+!Variable: Configuration register is 0x2102
+!
+!Flash: nvram: Directory of nvram:/
+!Flash: nvram: -rw-           0                    <no date>  ifIndex-table
+!Flash: nvram: ----          69                    <no date>  persistent-data
+!Flash: nvram: ----        1501                    <no date>  private-config
+!Flash: nvram: -rw-        1430                    <no date>  startup-config
+!Flash: nvram: -rw-                                <no date>  underlying-config
+!Flash: nvram: 125 KB total (96% free)
+!
+!Interface: FastEthernet0/0, DEC21140
+!Interface: FastEthernet1/0, DEC21140
+!Interface: FastEthernet2/0, DEC21140
+!Interface: FastEthernet3/0, DEC21140
+!
+!Slot 0: type FE-IO-TX, 1 ports
+!Slot 0: hvers 1.14 rev A0
+!Slot 0: part 73-2956-02, serial 4294967295
+!
+!Slot 1: type 100BaseTX-ISL, 1 ports
+!Slot 1: hvers 1.2 rev C0
+!Slot 1: part 73-1688-04, serial 4294967295
+!
+!Slot 2: type 100BaseTX-ISL, 1 ports
+!Slot 2: hvers 1.2 rev C0
+!Slot 2: part 73-1688-04, serial 4294967295
+!
+!Slot 3: type 100BaseTX-ISL, 1 ports
+!Slot 3: hvers 1.2 rev C0
+!Slot 3: part 73-1688-04, serial 4294967295
+!
+!Slot Midplane: hvers 2.1 rev M0
+!Slot Midplane: part 73-1539-03, serial 4279256517
+!
+!Slot CPU: hvers 1.0 rev B0
+!Slot CPU: part 28-4086-02, serial 11111111
+!
+!NAME: "Chassis",               DESCR: "Cisco 7206VXR, 6-slot chassis"
+!PID: CISCO7206VXR
+!SN: 4279256517
+!NAME: "I/O and CPU Slot 0",    DESCR: "I/O and Processor Slot Container"
+!NAME: "NPE400 0",              DESCR: "Cisco 7200VXR Network Processing Engine NPE-400"
+!PID: NPE-400
+!SN: 11111111
+!NAME: "NPE Inlet Temperature 0", DESCR: "NPE Inlet Temperature Sensor"
+!NAME: "NPE Outlet Temperature 0", DESCR: "NPE Outlet Temperature Sensor"
+!NAME: "+3.45 V Voltage 0",     DESCR: "+3.45 V  Voltage Sensor"
+!NAME: "+5.15 V Voltage 0",     DESCR: "+5.15 V  Voltage Sensor"
+!NAME: "+12.15 V Voltage 0",    DESCR: "+12.15 V  Voltage Sensor"
+!NAME: "-11.95 V Voltage 0",    DESCR: "-11.95 V  Voltage Sensor"
+!NAME: "module 0",              DESCR: "I/O FastEthernet (TX-ISL)"
+!PID: C7200-IO-FE-MII/RJ
+!SN: 4294967295
+!NAME: "Flash Card Slot Container I/O 0", DESCR: "Flash Card Slot Container I/O"
+!NAME: "disk0",                 DESCR: "Cisco 7200 I/O PCMCIA Flash Disk, 128M"
+!PID: MEM-I/O-FLD128M
+!NAME: "I/O Cont Inlet Temperature 0", DESCR: "I/O Cont Inlet Temperature Sensor"
+!NAME: "I/O Cont Outlet Temperature 0", DESCR: "I/O Cont Outlet Temperature Sensor"
+!NAME: "FastEthernet0/0",       DESCR: "DEC21140"
+!NAME: "PA Slot 1",             DESCR: "PA Slot Container"
+!NAME: "module 1",              DESCR: "FastEthernet"
+!PID: PA-FE-TX
+!SN: 4294967295
+!NAME: "FastEthernet1/0",       DESCR: "DEC21140"
+!NAME: "PA Slot 2",             DESCR: "PA Slot Container"
+!NAME: "module 2",              DESCR: "FastEthernet"
+!PID: PA-FE-TX
+!SN: 4294967295
+!NAME: "FastEthernet2/0",       DESCR: "DEC21140"
+!NAME: "PA Slot 3",             DESCR: "PA Slot Container"
+!NAME: "module 3",              DESCR: "FastEthernet"
+!PID: PA-FE-TX
+!SN: 4294967295
+!NAME: "FastEthernet3/0",       DESCR: "DEC21140"
+!NAME: "PA Slot 4",             DESCR: "PA Slot Container"
+!NAME: "PA Slot 5",             DESCR: "PA Slot Container"
+!NAME: "PA Slot 6",             DESCR: "PA Slot Container"
+!NAME: "PEM 0",                 DESCR: "Power Supply Container"
+!NAME: "Power Supply 0",        DESCR: "Cisco 7200 AC Power Supply"
+!PID: PWR-7200-AC
+!NAME: "PEM 1",                 DESCR: "Power Supply Container"
+!NAME: "Power Supply 1",        DESCR: "Cisco 7200 AC Power Supply"
+!PID: PWR-7200-AC
+!
+!
+config-register 0x2102
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname cisco-ios-15-7206
+!
+boot-start-marker
+boot-end-marker
+!
+no logging console
+enable secret 5 $1$mUNS$EA8GP0//goIY0zv7gjl0E0
+!
+no aaa new-model
+!
+ip domain name lab.faddr
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+archive
+ log config
+  logging enable
+  notify syslog contenttype plaintext
+  hidekeys
+!
+username faddr privilege 15 secret 5 $1$2PVi$G3FmVHNhRBegJrfGfEZtV/
+!
+ip ssh version 2
+! 
+interface FastEthernet0/0
+ description OAM
+ ip address 192.168.100.111 255.255.255.0
+ duplex full
+!
+interface FastEthernet1/0
+ no ip address
+ duplex full
+!
+interface FastEthernet1/0.100
+ description vlan 100: ipv4 address 10.100.100.1/24
+ encapsulation dot1Q 100
+ ip address 10.100.100.1 255.255.255.0
+!
+interface FastEthernet1/0.101
+ description vlan 101: native, ipv4 address 10.101.101.1/24
+ encapsulation dot1Q 101 native
+ ip address 10.101.101.1 255.255.255.0
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex full
+!
+interface FastEthernet3/0
+ no ip address
+ shutdown
+ duplex full
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+control-plane
+!
+line con 0
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input telnet ssh
+!
+end

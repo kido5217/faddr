@@ -1,0 +1,30 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2022.01.26.13.58.46;	author rancid;	state Exp;
+branches;
+next	;
+commitid	10061F1539610C3A6FA;
+
+
+desc
+@@
+
+
+1.1
+log
+@updates
+@
+text
+@.cvsignore
+routers.all
+routers.down
+routers.single
+routers.up
+runcount
+@
