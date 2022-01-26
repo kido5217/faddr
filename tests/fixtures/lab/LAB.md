@@ -127,7 +127,9 @@ no logging console
 
 enable secret faddr123
 username faddr privilege 15 secret faddr123
-aaa new-model
+no aaa new-model
+line vty 0 4
+login local
 
 hostname cisco-ios-15-7206
 ip domain-name lab.faddr
@@ -152,8 +154,6 @@ interface FastEthernet 1/0.101
 description vlan 101: native, ipv4 address 10.101.101.1/24
 encapsulation dot1Q 101 native
 ip address 10.101.101.1 255.255.255.0
-
-
 ```
 
 ### Juniper
