@@ -3,7 +3,7 @@
 ## Rancid configuration
 
 - All devices have permanent hostname and ipv4 OAM address
-- RANCID has 3 groups:
+- RANCID has 4 groups:
   - group_01_3rows: valid group with all devices, router.db has 3 columns
   - group_02_4rows: valid group with all devices, router.db has 4 columns
   - group_03_router_db_errors: invalid group, has errors in router.db
