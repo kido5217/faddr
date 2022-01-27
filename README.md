@@ -1,9 +1,9 @@
 # FAddr
 
-![GitHub](https://img.shields.io/github/license/kido5217/faddr)
-![Codacy grade](https://img.shields.io/codacy/grade/0d75ea40d4f544438b4c892036132a04)
+[![CodeFactor](https://www.codefactor.io/repository/github/kido5217/faddr/badge)](https://www.codefactor.io/repository/github/kido5217/faddr)
 ![GitHub top language](https://img.shields.io/github/languages/top/kido5217/faddr)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/faddr)
+![GitHub](https://img.shields.io/github/license/kido5217/faddr)
 
 FAddr is a Python program for parsing configuration of network devices such as Juniper and Cisco routers and storing gathered data in database.
 
