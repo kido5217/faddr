@@ -26,7 +26,7 @@ pytest = "^6.2"
 black = {version = "^21.5b2", python = "^3.6.2"}
 mypy = "^0.812"
 pylint = "^2.8.3"
-pytest-cov = "^2.12.1"
+pytest-cov = "^3.0"
 pre-commit = {version = "^2.15", python = "^3.6.1"}
 tox = "^3.24.4"
 poetry = "^1.1.12"
