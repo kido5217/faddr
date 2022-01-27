@@ -127,9 +127,8 @@ class RancidGroup:
             and len(content_type_line.split(" ")) > 1
         ):
             return content_type_line.split(" ")[1]
-        else:
-            logger.debug(f"Couldn't detect content type in line '{content_type_line}'")
 
+        logger.debug(f"Couldn't detect content type in line '{content_type_line}'")
         return None
 
 
