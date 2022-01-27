@@ -93,6 +93,10 @@ class RancidGroup:
         configs = []
 
         for config_path in self.repo.iterdir():
+            if not config_path.is_file():
+                logger.debug(f"Skipping '{config_path}' - not a file")
+                continue
+
             if config_path.stat().st_size == 0:
                 logger.debug(f"Skipping '{config_path}' - file is empty")
                 continue

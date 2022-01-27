@@ -1222,7 +1222,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "53722387a1993dca8b586e87257131835df4f4f7fe77701ab0a19e5d2ddf1ba2"
+content-hash = "447d0208d80f2244c1b251afba3a5296c994f6b602ab18bfaaa42f194b9b3e2e"
 
 [metadata.files]
 aiocontextvars = [
