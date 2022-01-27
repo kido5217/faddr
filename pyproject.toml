@@ -15,7 +15,6 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 
-ciscoconfparse = "^1.5.30"
 tinydb = "^4.4.0"
 loguru = "^0.5.3"
 PyYAML = "^6.0"
