@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- CHANGELOD.md
+- CHANGELOG.md
 - poetry module as dev dependency
-- tox-poetry module fox better tox integration
+- tox-poetry module for better tox integration
+- python 3.10 profile in tox config
+- coverage as explicit dev dependency
 
-## Fixed
+### Changed
+
+- Rewritten RancidDir class. Now it supports both rancid root dir and raw repo as input
+
+### Fixed
 
 - Pylint warnings
 

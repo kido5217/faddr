@@ -5,16 +5,13 @@ import os
 
 from loguru import logger
 
-from faddr.rancid import RancidDir
-from faddr.device import Device
-from faddr.device import CiscoIOSDevice
+from faddr.rancid import RancidDir, RancidGroup
 
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __all__ = (
     "RancidDir",
-    "Device",
-    "CiscoIOSDevice",
+    "RancidGroup",
 )
 
 if os.getenv("FADDR_DEBUG"):

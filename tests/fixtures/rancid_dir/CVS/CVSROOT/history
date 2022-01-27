@@ -1,9 +1,0 @@
-A60bfe46a|rancid|~/*0|group1|1.1|router.db
-A60bfe46b|rancid|~/*0|group2|1.1|router.db
-A60bfe58f|rancid|~/*0|group1/configs|1.1|192.168.100.2
-A60bfe595|rancid|~/*0|group1|1.1|.cvsignore
-M60bfe595|rancid|~/*0|group1|1.2|router.db
-A60bfe596|rancid|~/group1|group1/configs|1.1|.cvsignore
-M60bfe596|rancid|~/group1|group1/configs|1.2|192.168.100.2
-A60bfe597|rancid|~/*0|group2|1.1|.cvsignore
-A60bfe597|rancid|~/group2|group2/configs|1.1|.cvsignore

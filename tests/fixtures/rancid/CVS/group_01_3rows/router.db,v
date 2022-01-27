@@ -1,0 +1,42 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2022.01.26.13.58.46;	author rancid;	state Exp;
+branches;
+next	1.1;
+commitid	10061F1539610C3A6FA;
+
+1.1
+date	2022.01.26.13.57.46;	author rancid;	state Exp;
+branches;
+next	;
+commitid	10061F1535A10091AF3;
+
+
+desc
+@@
+
+
+1.2
+log
+@updates
+@
+text
+@cisco-ios-15-7206;cisco-lab;up
+juniper-junos-17-vmx;juniper-lab;up
+@
+
+
+1.1
+log
+@new
+@
+text
+@d1 2
+@
+
