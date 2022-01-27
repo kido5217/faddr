@@ -3,12 +3,7 @@
 import pathlib
 
 from faddr import logger
-from faddr.exceptions import (
-    FaddrRancidRepoUnsupportedLevel,
-    FaddrRancidRepoPathError,
-    FaddrRancidRepoConfigFileFormatError,
-    FaddrRancidRepoRouterDBAbsent,
-)
+from faddr.exceptions import FaddrRancidPathError
 
 
 class RancidGroup:
@@ -24,7 +19,7 @@ class RancidGroup:
     def __init__(self, path, name=None):
         self.path = pathlib.Path(path)
         if not self.path.exists() or not self.path.is_dir():
-            raise RuntimeError(f"Wrong path: {path}")
+            raise FaddrRancidPathError(f"Wrong path: {path}")
 
         if name:
             self.name = name
@@ -43,8 +38,13 @@ class RancidGroup:
         else:
             self.configs = self.get_configs_from_dir()
 
+        logger.debug(f"Created RancidGroup class object: {self}")
+
     def __str__(self):
-        return f"RANCID {self.type} '{self.name}' in '{self.path}' contains {len(self.configs)} configs"
+        return (
+            f"RANCID {self.type} '{self.name}' in '{self.path}' "
+            f"contains {len(self.configs)} configs"
+        )
 
     def get_configs_from_router_db(self):
         """Load config files list and their metadata from 'router.db' file."""
@@ -58,6 +58,7 @@ class RancidGroup:
 
         for router_string in router_db:
             if router_string.startswith("#"):
+                logger.debug(f"Ignoring line '{router_string}' - commented out")
                 continue
 
             if ";" in router_string:
@@ -81,6 +82,8 @@ class RancidGroup:
                     config["hostname"] = router_data[3]
                 config["router_db_raw_string"] = router_string
                 configs.append(config)
+            else:
+                logger.debug(f"Ingnoring line '{router_string}' - wrong format")
 
         return configs
 
@@ -91,6 +94,7 @@ class RancidGroup:
 
         for config_path in self.repo.iterdir():
             if config_path.stat().st_size == 0:
+                logger.debug(f"Skipping '{config_path}' - file is empty")
                 continue
 
             content_type = self.get_content_type(config_path)
@@ -119,6 +123,8 @@ class RancidGroup:
             and len(content_type_line.split(" ")) > 1
         ):
             return content_type_line.split(" ")[1]
+        else:
+            logger.debug(f"Couldn't detect content type in line '{content_type_line}'")
 
         return None
 
@@ -136,7 +142,7 @@ class RancidDir:
     def __init__(self, path):
         self.path = pathlib.Path(path)
         if not self.path.exists() or not self.path.is_dir():
-            raise RuntimeError(f"Wrong path: {path}")
+            raise FaddrRancidPathError(f"Wrong path: {path}")
 
         self.groups = []
         for group_candidate in self.path.iterdir():
@@ -149,7 +155,9 @@ class RancidDir:
                     if len(rancid_group.configs) > 0:
                         self.groups.append(rancid_group)
             except PermissionError:
-                print(f"Can't access {group_candidate}")
+                logger.info(f"Can't access {group_candidate}")
+
+        logger.debug(f"Created RancidGroup class object: {self}")
 
     def __str__(self):
         return f"RANCID directory '{self.path}' contains {len(self.groups)} groups"

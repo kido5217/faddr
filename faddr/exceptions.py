@@ -13,11 +13,7 @@ class FaddrDeviceUnsupportedType(FaddrBaseException):
     """Exception raised when Device fabric function gets unsupported device_type."""
 
 
-class FaddrRancidRepoUnsupportedLevel(FaddrBaseException):
-    """Exception raised when creating RancidRepo with unsupported level."""
-
-
-class FaddrRancidRepoPathError(FaddrBaseException):
+class FaddrRancidPathError(FaddrBaseException):
     """Exception raised when requested path doesn't exist."""
 
     def __init__(self, path):
@@ -32,13 +28,4 @@ class FaddrRancidRepoConfigFileFormatError(FaddrBaseException):
     def __init__(self, path):
         self.path = path
         self.message = f"File {self.path} does not have correct content-type."
-        super().__init__(self.message)
-
-
-class FaddrRancidRepoRouterDBAbsent(FaddrBaseException):
-    """Exception raised when router.db isn't present in group dir."""
-
-    def __init__(self, path):
-        self.path = path
-        self.message = f"Can't find 'router.db' file in {self.path}."
         super().__init__(self.message)
