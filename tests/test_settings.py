@@ -6,7 +6,7 @@ import pytest
 
 from pydantic import ValidationError
 
-from faddr.config import (
+from faddr.settings import (
     FaddrConfig,
     DEFAULT_CONFIG,
     DEFAULT_SYSTEM_CONFIG_PATH,
