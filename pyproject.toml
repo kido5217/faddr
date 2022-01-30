@@ -11,7 +11,6 @@ classifiers = [
     "Environment :: Console",
     "Intended Audience :: Telecommunications Industry"
 ]
-include = ["faddr/default_settings.yaml"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -20,7 +19,6 @@ tinydb = "^4.4.0"
 loguru = "^0.5.3"
 PyYAML = "^6.0"
 pydantic = {version = "^1.8", python = "^3.6.1"}
-dynaconf = ">=3.1"
 
 
 [tool.poetry.dev-dependencies]

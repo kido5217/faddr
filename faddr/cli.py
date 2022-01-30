@@ -4,7 +4,7 @@ import argparse
 
 from faddr import logger
 from faddr.rancid import RancidDir
-from faddr.config import load_settings
+from faddr.settings import Settings
 
 
 def parse_args_db():
@@ -48,6 +48,11 @@ def faddr_db():
     """Parsing devices' config files and writing data to database."""
     args = parse_args_db()
     logger.debug(f"Arguments from CMD: {args}")
-    settings = load_settings()
+    settings = Settings()
 
-    logger.debug(f"Loaded settings: {settings.__dict__}")
+    # config = load_config(cmd_args=args)
+
+    # rancid = RancidDir(config.rancid.dir)
+    # for group in rancid.groups:
+    #    print(group.configs)
+    print(settings)

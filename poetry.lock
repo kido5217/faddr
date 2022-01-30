@@ -276,23 +276,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "dynaconf"
-version = "3.1.5"
-description = "The dynamic configurator for your Python Project"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-all = ["redis", "ruamel.yaml", "configobj", "hvac"]
-configobj = ["configobj"]
-ini = ["configobj"]
-redis = ["redis"]
-toml = ["toml"]
-vault = ["hvac"]
-yaml = ["ruamel.yaml"]
-
-[[package]]
 name = "filelock"
 version = "3.4.1"
 description = "A platform independent file lock."
@@ -1239,7 +1222,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "9762d2fe8249cc0e177030cf0adfeb4a9d70046f44643463355ca1ccd7c45a4b"
+content-hash = "447d0208d80f2244c1b251afba3a5296c994f6b602ab18bfaaa42f194b9b3e2e"
 
 [metadata.files]
 aiocontextvars = [
@@ -1443,10 +1426,6 @@ distlib = [
 dodgy = [
     {file = "dodgy-0.2.1-py3-none-any.whl", hash = "sha256:51f54c0fd886fa3854387f354b19f429d38c04f984f38bc572558b703c0542a6"},
     {file = "dodgy-0.2.1.tar.gz", hash = "sha256:28323cbfc9352139fdd3d316fa17f325cc0e9ac74438cbba51d70f9b48f86c3a"},
-]
-dynaconf = [
-    {file = "dynaconf-3.1.5-py2.py3-none-any.whl", hash = "sha256:98f0e5d861e945c1b06ed33844b9341e6412bc121c1a9ea88668df7891d8f308"},
-    {file = "dynaconf-3.1.5.tar.gz", hash = "sha256:40979cc454d8533fada490dc0945a1dbf5ea96f95dc9113f8a3b3053670fd569"},
 ]
 filelock = [
     {file = "filelock-3.4.1-py3-none-any.whl", hash = "sha256:a4bc51381e01502a30e9f06dd4fa19a1712eab852b6fb0f84fd7cce0793d8ca3"},
