@@ -151,7 +151,3 @@ cython_debug/
 
 # Local History for Visual Studio Code
 .history/
-
-
-# Dir for test configurations and rancid dir mockup
-data/
