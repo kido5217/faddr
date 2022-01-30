@@ -12,32 +12,9 @@ def parse_args_db():
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
     parser.add_argument(
-        "-c",
-        "--confguration-file",
-        help="Faddr file configuration location",
-    )
-    parser.add_argument(
-        "-r",
-        "--rancid-dir",
-        help="Rancid basedir location",
-    )
-
-    parser.add_argument(
-        "-g",
-        "--rancid-groups",
-        help="Rancid groups to parse, separated by coma(,)",
-    )
-
-    parser.add_argument(
-        "-d",
-        "--database-dir",
-        help="Database dir location",
-    )
-
-    parser.add_argument(
-        "-f",
-        "--database-file",
-        help="Database file name",
+        "-s",
+        "--settings-file",
+        help="Faddr settings file  location",
     )
 
     args = parser.parse_args()

@@ -37,9 +37,3 @@ class Settings(BaseSettings):
 
     database: DatabaseSettings = {}
     rancid: RancidSettings = {}
-
-    class Config:
-        """Parser options."""
-
-        env_prefix = "FADDR_"
-        env_nested_delimiter = "__"
