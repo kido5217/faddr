@@ -50,9 +50,4 @@ def faddr_db():
     logger.debug(f"Arguments from CMD: {args}")
     settings = load_settings()
 
-    # config = load_config(cmd_args=args)
-
-    # rancid = RancidDir(config.rancid.dir)
-    # for group in rancid.groups:
-    #    print(group.configs)
-    print(settings)
+    logger.debug(f"Loaded settings: {settings.__dict__}")

@@ -11,6 +11,7 @@ classifiers = [
     "Environment :: Console",
     "Intended Audience :: Telecommunications Industry"
 ]
+include = ["faddr/default_settings.yaml"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
