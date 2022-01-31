@@ -4,10 +4,10 @@ import argparse
 
 from faddr import logger
 from faddr.rancid import RancidDir
-from faddr.settings import Settings
+from faddr.settings import load_settings
 
 
-def parse_args_db():
+def parse_args():
     """Parsing CMD keys."""
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
@@ -21,15 +21,10 @@ def parse_args_db():
     return vars(args)
 
 
-def faddr_db():
+def cli():
     """Parsing devices' config files and writing data to database."""
-    args = parse_args_db()
-    logger.debug(f"Arguments from CMD: {args}")
-    settings = Settings()
+    cmd_args = parse_args()
+    logger.debug(f"Arguments from CMD: {cmd_args}")
+    settings = load_settings(cmd_args["settings_file"])
 
-    # config = load_config(cmd_args=args)
-
-    # rancid = RancidDir(config.rancid.dir)
-    # for group in rancid.groups:
-    #    print(group.configs)
     print(settings)

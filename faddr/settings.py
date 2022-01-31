@@ -2,7 +2,14 @@
 
 from typing import List
 
+import yaml
+
 from pydantic import BaseModel, BaseSettings
+
+
+def load_settings(settings_file):
+    settings = None
+    return settings
 
 
 class DatabaseSettings(BaseModel):
