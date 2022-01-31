@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tox-poetry module for better tox integration
 - python 3.10 profile in tox config
 - coverage as explicit dev dependency
+- unit tests for faddr.rancid and faddr.settings
 
 ### Changed
 
