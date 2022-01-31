@@ -2,11 +2,12 @@
 
 import pathlib
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 import yaml
 
 from pydantic import BaseModel, BaseSettings
+from pydantic.env_settings import SettingsSourceCallable
 
 
 def load_settings(settings_file):
@@ -72,5 +73,12 @@ class FaddrSettings(BaseSettings):
         settings_file = "/etc/faddr/faddr.yaml"
 
         @classmethod
-        def customise_sources(cls, init_settings, env_settings, file_secret_settings):
+        # pylint: disable=unused-argument
+        def customise_sources(
+            cls,
+            init_settings: SettingsSourceCallable,
+            env_settings: SettingsSourceCallable,
+            file_secret_settings: SettingsSourceCallable,
+        ) -> Tuple[SettingsSourceCallable, ...]:
+            """Only return init settings and settings loaded from settings file."""
             return (init_settings, yaml_config_settings_source)

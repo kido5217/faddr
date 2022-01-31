@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rewritten RancidDir class. Now it supports both rancid root dir and raw repo as input
+- Rewritten FaddrSettings class. Settings now use pydantic's BaseConfig.
+- Updated .gitignore
 
 ### Fixed
 
