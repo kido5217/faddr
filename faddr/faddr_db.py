@@ -25,6 +25,6 @@ def cli():
     """Parsing devices' config files and writing data to database."""
     cmd_args = parse_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
-    settings = load_settings(cmd_args["settings_file"])
 
-    print(settings)
+    settings = load_settings(cmd_args.get("settings_file"))
+    logger.debug(f"Generated settings: {settings.dict()}")

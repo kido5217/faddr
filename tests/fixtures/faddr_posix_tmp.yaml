@@ -4,6 +4,9 @@ database:
     file: "faddr-db.json"
 
 rancid:
-    dir: "tests/fixtures/rancid_dir/"
-    mapping:
-        "cisco-mf": "cisco_ios"
+  dirs:
+    - path: "tests/fixtures/rancid/"
+      kind: dir
+      mapping:
+        "cisco-faddr": "cisco_ios"
+
