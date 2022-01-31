@@ -1,10 +1,12 @@
 """CLI entry points of faddr."""
 
 import argparse
+import sys
 
 from faddr import logger
 from faddr.rancid import RancidDir
 from faddr.settings import load_settings
+from faddr.exceptions import FaddrSettingsFileFormatError
 
 
 def parse_args():
@@ -26,5 +28,9 @@ def cli():
     cmd_args = parse_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
-    settings = load_settings(cmd_args.get("settings_file"))
+    try:
+        settings = load_settings(settings_file=cmd_args.get("settings_file"))
+    except FaddrSettingsFileFormatError:
+        logger.info(f"Failed to load settings from {cmd_args.get('settings_file')}")
+        sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")

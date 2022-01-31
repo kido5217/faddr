@@ -9,10 +9,6 @@ class FaddrDatabaseNotWritable(FaddrBaseException):
     """Exception raised whed Database can not be opened for writing."""
 
 
-class FaddrDeviceUnsupportedType(FaddrBaseException):
-    """Exception raised when Device fabric function gets unsupported device_type."""
-
-
 class FaddrRancidPathError(FaddrBaseException):
     """Exception raised when requested path doesn't exist."""
 
@@ -28,4 +24,13 @@ class FaddrRancidRepoConfigFileFormatError(FaddrBaseException):
     def __init__(self, path):
         self.path = path
         self.message = f"File {self.path} does not have correct content-type."
+        super().__init__(self.message)
+
+
+class FaddrSettingsFileFormatError(FaddrBaseException):
+    """Exception raised when setting file contains errors and can't be loaded."""
+
+    def __init__(self, path):
+        self.path = path
+        self.message = f"File {self.path} contains errors."
         super().__init__(self.message)

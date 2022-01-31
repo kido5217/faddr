@@ -2,7 +2,7 @@
 
 import pytest
 
-from faddr import RancidDir, RancidGroup
+from faddr.rancid import RancidDir, RancidGroup
 from faddr.exceptions import FaddrRancidPathError
 
 

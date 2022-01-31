@@ -7,8 +7,11 @@ import yaml
 from pydantic import BaseModel, BaseSettings
 from pydantic.env_settings import SettingsSourceCallable
 
+from faddr import logger
+from faddr.exceptions import FaddrSettingsFileFormatError
 
-def load_settings(settings_file):
+
+def load_settings(settings_file=None):
     """Settings loader."""
 
     if settings_file:
@@ -23,13 +26,18 @@ def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 
     settings_file_path = pathlib.Path(settings.__config__.settings_file)
     if settings_file_path.exists():
-        with open(
-            settings_file_path,
-            encoding="ascii",
-            errors="ignore",
-        ) as settings_file:
-            return yaml.safe_load(settings_file)
-
+        try:
+            with open(
+                settings_file_path,
+                encoding="ascii",
+                errors="ignore",
+            ) as settings_file:
+                return yaml.safe_load(settings_file)
+        except yaml.scanner.ScannerError as err:
+            logger.debug(
+                f"Failed to parse configuration file '{settings_file_path}': {err}"
+            )
+            raise FaddrSettingsFileFormatError(settings_file_path) from None
     return {}
 
 
