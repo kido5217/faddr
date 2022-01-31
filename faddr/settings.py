@@ -1,17 +1,16 @@
 """Init default configuration and read configuration from file."""
 
 import pathlib
-
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
 import yaml
-
 from pydantic import BaseModel, BaseSettings
 from pydantic.env_settings import SettingsSourceCallable
 
 
 def load_settings(settings_file):
     """Settings loader."""
+
     if settings_file:
         FaddrSettings.Config.settings_file = settings_file
 

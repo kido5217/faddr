@@ -1,18 +1,11 @@
 """Parse network devices' configuration and store in database."""
 
-import sys
 import os
+import sys
 
 from loguru import logger
 
-from faddr.rancid import RancidDir, RancidGroup
-
-
 __version__ = "0.0.4"
-__all__ = (
-    "RancidDir",
-    "RancidGroup",
-)
 
 if os.getenv("FADDR_DEBUG"):
     LOG_LEVEL = "DEBUG"
