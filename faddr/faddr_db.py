@@ -4,9 +4,9 @@ import argparse
 import sys
 
 from faddr import logger
+from faddr.exceptions import FaddrSettingsFileFormatError
 from faddr.rancid import RancidDir
 from faddr.settings import load_settings
-from faddr.exceptions import FaddrSettingsFileFormatError
 
 
 def parse_args():
@@ -30,7 +30,7 @@ def cli():
 
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
-    except FaddrSettingsFileFormatError:
-        logger.info(f"Failed to load settings from {cmd_args.get('settings_file')}")
+    except FaddrSettingsFileFormatError as err:
+        logger.info(f"Failed to load settings: {err}")
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")

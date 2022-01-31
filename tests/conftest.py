@@ -55,5 +55,11 @@ def settings_file_absent():
 
 @pytest.fixture
 def settings_file_posix_tmp():
-    """Settings file with output dir as '/tmp'"""
+    """Settings file with output dir as '/tmp'."""
     return pathlib.Path("tests/fixtures/faddr_posix_tmp.yaml")
+
+
+@pytest.fixture
+def settings_file_invalid():
+    """Corrupted settings file.'"""
+    return pathlib.Path("tests/fixtures/faddr_invalid.yaml")

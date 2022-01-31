@@ -37,7 +37,7 @@ def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
             logger.debug(
                 f"Failed to parse configuration file '{settings_file_path}': {err}"
             )
-            raise FaddrSettingsFileFormatError(settings_file_path) from None
+            raise FaddrSettingsFileFormatError(settings_file_path, err) from None
     return {}
 
 
