@@ -14,6 +14,12 @@ def parse_cmd_args():
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
     parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Enable debug messages",
+    )
+    parser.add_argument(
         "-s",
         "--settings-file",
         help="Faddr settings file  location",

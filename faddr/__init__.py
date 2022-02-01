@@ -7,7 +7,7 @@ from loguru import logger
 
 __version__ = "0.0.4"
 
-if os.getenv("FADDR_DEBUG"):
+if os.getenv("FADDR_DEBUG") or any(arg in sys.argv for arg in ("-d", "--debug")):
     LOG_LEVEL = "DEBUG"
 else:
     LOG_LEVEL = "INFO"
