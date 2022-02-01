@@ -2,7 +2,6 @@
 
 import argparse
 import sys
-import pathlib
 
 from faddr import logger
 from faddr.exceptions import FaddrSettingsFileFormatError
@@ -10,7 +9,7 @@ from faddr.rancid import RancidDir
 from faddr.settings import load_settings
 
 
-def parse_args():
+def parse_cmd_args():
     """Parsing CMD keys."""
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
@@ -24,9 +23,9 @@ def parse_args():
     return vars(args)
 
 
-def cli():
+def main():
     """Parsing devices' config files and writing data to database."""
-    cmd_args = parse_args()
+    cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
     try:
