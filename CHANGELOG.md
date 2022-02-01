@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2022-02-01
+
 ### Added
 
 - CHANGELOG.md
@@ -25,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Pylint warnings
+- Prospector warnings
+- yamllint warnings in fixtures
 
 ## [0.0.3] - 2021-12-31
 
