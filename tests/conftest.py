@@ -6,42 +6,74 @@ import pytest
 
 
 @pytest.fixture
-def config_file_absent():
-    """Absent config file."""
-    return pathlib.Path("tests/fixtures/nonexistant_config.yaml")
-
-
-@pytest.fixture
-def config_empty():
-    """Empty config."""
-    return {}
-
-
-@pytest.fixture
-def config_file_valid():
-    """Valig config file."""
-    return pathlib.Path("tests/fixtures/faddr_config_valid.yaml")
-
-
-@pytest.fixture
-def config_valid():
-    """Valid config dictionary."""
-    config = {
-        "database": {
-            "dir": "data/",
-            "file": "faddr-db.json",
-        },
+def settings_default():
+    """Default settings."""
+    settings = {
+        "debug": False,
+        "templates_dir": pathlib.Path(__file__)
+        .parent.with_name("faddr")
+        .joinpath("templates"),
+        "database": {"dir": "/var/db/faddr/", "file": "faddr-db.json"},
         "rancid": {
-            "dir": "tests/fixtures/rancid_dir/",
-            "mapping": {
-                "cisco-mf": "cisco_ios",
+            "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
+            "default_mapping": {
+                "cisco": "cisco_ios",
+                "cisco-xr": "cisco_iosxr",
+                "juniper": "juniper_junos",
             },
+            "mapping": {},
         },
     }
-    return config
+    return settings
 
 
 @pytest.fixture
-def config_file_invalid():
-    """Broken yaml file."""
-    return pathlib.Path("tests/fixtures/faddr_config_invalid.yaml")
+def settings_posix_tmp():
+    """Settings with output dir as '/tmp'"""
+    settings = {
+        "debug": False,
+        "templates_dir": pathlib.Path(__file__)
+        .parent.with_name("faddr")
+        .joinpath("templates"),
+        "database": {"dir": "/tmp/", "file": "faddr-db.json"},
+        "rancid": {
+            "dirs": [
+                {
+                    "path": "tests/fixtures/rancid/",
+                    "kind": "dir",
+                    "mapping": {"cisco-faddr": "cisco_ios"},
+                }
+            ],
+            "default_mapping": {
+                "cisco": "cisco_ios",
+                "cisco-xr": "cisco_iosxr",
+                "juniper": "juniper_junos",
+            },
+            "mapping": {},
+        },
+    }
+    return settings
+
+
+@pytest.fixture
+def settings_file_absent():
+    """Absent settings file."""
+    return pathlib.Path("tests/fixtures/nonexistant_settings_file.yaml")
+
+
+@pytest.fixture
+def settings_file_posix_tmp():
+    """Settings file with output dir as '/tmp'."""
+    return pathlib.Path("tests/fixtures/faddr_posix_tmp.yaml")
+
+
+@pytest.fixture
+def settings_file_malformed():
+    """Corrupted settings file.'"""
+    return pathlib.Path("tests/fixtures/faddr_malformed.yaml")
+
+
+@pytest.fixture
+def settings_file_wrong_format():
+    """Wrong format settings file.'"""
+    return pathlib.Path("tests/fixtures/faddr_wrong_format.yml")

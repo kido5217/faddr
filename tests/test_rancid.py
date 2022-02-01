@@ -2,8 +2,8 @@
 
 import pytest
 
-from faddr import RancidDir, RancidGroup
 from faddr.exceptions import FaddrRancidPathError
+from faddr.rancid import RancidDir, RancidGroup
 
 
 def test_rancid_dir_class_creation():

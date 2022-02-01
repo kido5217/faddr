@@ -35,7 +35,7 @@ coverage = "^6"
 pytest-cov = "^3.0.0"
 
 [tool.poetry.scripts]
-faddr-db = 'faddr.cli:faddr_db'
+faddr-db = 'faddr.faddr_db:main'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -46,3 +46,6 @@ addopts = "-vvv --cov=faddr --cov-report=html --cov-report=xml --cov-report term
 testpaths = [
     "tests",
 ]
+
+[tool.pylint.'MESSAGES CONTROL']
+extension-pkg-whitelist = "pydantic"

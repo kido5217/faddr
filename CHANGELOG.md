@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2022-02-01
+
 ### Added
 
 - CHANGELOG.md
@@ -14,14 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tox-poetry module for better tox integration
 - python 3.10 profile in tox config
 - coverage as explicit dev dependency
+- unit tests for faddr.rancid and faddr.settings
 
 ### Changed
 
 - Rewritten RancidDir class. Now it supports both rancid root dir and raw repo as input
+- Rewritten FaddrSettings class. Settings now use pydantic's BaseConfig.
+- Updated .gitignore
 
 ### Fixed
 
 - Pylint warnings
+- Prospector warnings
+- yamllint warnings in fixtures
 
 ## [0.0.3] - 2021-12-31
 
