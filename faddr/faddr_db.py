@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import pathlib
 
 from faddr import logger
 from faddr.exceptions import FaddrSettingsFileFormatError

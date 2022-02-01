@@ -9,6 +9,10 @@ import pytest
 def settings_default():
     """Default settings."""
     settings = {
+        "debug": False,
+        "templates_dir": pathlib.Path(__file__)
+        .parent.with_name("faddr")
+        .joinpath("templates"),
         "database": {"dir": "/var/db/faddr/", "file": "faddr-db.json"},
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
@@ -27,6 +31,10 @@ def settings_default():
 def settings_posix_tmp():
     """Settings with output dir as '/tmp'"""
     settings = {
+        "debug": False,
+        "templates_dir": pathlib.Path(__file__)
+        .parent.with_name("faddr")
+        .joinpath("templates"),
         "database": {"dir": "/tmp/", "file": "faddr-db.json"},
         "rancid": {
             "dirs": [

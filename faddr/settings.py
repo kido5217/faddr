@@ -71,12 +71,15 @@ class RancidSettings(BaseModel):
 class FaddrSettings(BaseSettings):
     """Faddr settings root."""
 
+    debug: bool = False
+    templates_dir: pathlib.Path = pathlib.Path(__file__).parent.joinpath("templates")
     database: DatabaseSettings = {}
     rancid: RancidSettings = {}
 
     class Config:
         """pydantic configuration."""
 
+        env_prefix = "faddr_"
         settings_file = "/etc/faddr/faddr.yaml"
 
         @classmethod
@@ -88,4 +91,4 @@ class FaddrSettings(BaseSettings):
             file_secret_settings: SettingsSourceCallable,
         ) -> Tuple[SettingsSourceCallable, ...]:
             """Only return init settings and settings loaded from settings file."""
-            return (init_settings, yaml_config_settings_source)
+            return (init_settings, yaml_config_settings_source, env_settings)
