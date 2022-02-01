@@ -4,7 +4,7 @@ import pathlib
 from typing import Any, Dict, List, Tuple
 
 import yaml
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel, BaseSettings, ValidationError
 from pydantic.env_settings import SettingsSourceCallable
 
 from faddr import logger
@@ -17,7 +17,11 @@ def load_settings(settings_file=None):
     if settings_file:
         FaddrSettings.Config.settings_file = settings_file
 
-    settings = FaddrSettings()
+    try:
+        settings = FaddrSettings()
+    except ValidationError as err:
+        logger.debug(f"Failed to parse configuration file '{settings_file}': {err}")
+        raise FaddrSettingsFileFormatError(settings_file, err) from None
     return settings
 
 

@@ -32,6 +32,6 @@ class FaddrSettingsFileFormatError(FaddrBaseException):
 
     def __init__(self, path, err):
         self.path = path
-        self.err = str(err).replace("\n", "")
+        self.err = str(err).replace("\n", ": ")
         self.message = f"File '{self.path}' contains errors: '{self.err}'"
         super().__init__(self.message)

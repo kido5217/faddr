@@ -24,7 +24,13 @@ def test_load_settings_posix_tmp(settings_posix_tmp, settings_file_posix_tmp):
     assert settings == settings_posix_tmp
 
 
-def test_load_settings_file_invalid(settings_file_invalid):
+def test_load_settings_file_malformed(settings_file_malformed):
     """Test raising exception when settings file is corrupted."""
     with pytest.raises(FaddrSettingsFileFormatError):
-        load_settings(settings_file_invalid)
+        load_settings(settings_file_malformed)
+
+
+def test_load_settings_file_wrong_format(settings_file_wrong_format):
+    """Test raising exception when settings file is corrupted."""
+    with pytest.raises(FaddrSettingsFileFormatError):
+        load_settings(settings_file_wrong_format)

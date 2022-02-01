@@ -1,7 +1,7 @@
 ---
 database:
-    dir: "/tmp/"
-    file: "faddr-db.json"
+  dir: "/tmp/"
+  file: "faddr-db.json"
 
 rancid:
   dirs:
@@ -9,4 +9,3 @@ rancid:
       kind: dir
       mapping:
         "cisco-faddr": "cisco_ios"
-

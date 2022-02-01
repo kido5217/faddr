@@ -68,6 +68,12 @@ def settings_file_posix_tmp():
 
 
 @pytest.fixture
-def settings_file_invalid():
+def settings_file_malformed():
     """Corrupted settings file.'"""
-    return pathlib.Path("tests/fixtures/faddr_invalid.yaml")
+    return pathlib.Path("tests/fixtures/faddr_malformed.yaml")
+
+
+@pytest.fixture
+def settings_file_wrong_format():
+    """Wrong format settings file.'"""
+    return pathlib.Path("tests/fixtures/faddr_wrong_format.yml")
