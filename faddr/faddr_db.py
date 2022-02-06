@@ -4,9 +4,10 @@ import argparse
 import sys
 
 from faddr import logger
-from faddr.exceptions import FaddrSettingsFileFormatError
-from faddr.rancid import RancidDir
+from faddr.exceptions import FaddrSettingsFileFormatError, FaddrParserUnknownProfile
+from faddr.rancid import RancidDir, RancidGroup
 from faddr.settings import load_settings
+from faddr.parser import Parser
 
 
 def parse_cmd_args():
@@ -40,3 +41,22 @@ def main():
         logger.info(f"Failed to load settings: {err}")
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
+
+    for rancid_dir in settings.rancid.dirs:
+        if rancid_dir.kind == "dir":
+            rancid = RancidDir(rancid_dir.path)
+        elif rancid_dir.kind == "group":
+            rancid = RancidGroup(rancid_dir.path)
+
+            for config in rancid.configs:
+                logger.debug(f"Working with device: {config}")
+                try:
+                    parser = Parser(
+                        config["path"],
+                        rancid_dir.mapping.get(config["content_type"]),
+                        settings.templates_dir,
+                    )
+                    data = parser.parse()
+                    print(data)
+                except FaddrParserUnknownProfile:
+                    logger.debug(f"Unsupported config: {config}")

@@ -1132,6 +1132,14 @@ tox = {version = ">=3.7.0", markers = "python_version >= \"3\""}
 test = ["coverage", "pytest", "pycodestyle", "pylint"]
 
 [[package]]
+name = "ttp"
+version = "0.8.4"
+description = "Template Text Parser"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typed-ast"
 version = "1.4.3"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
@@ -1222,7 +1230,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "447d0208d80f2244c1b251afba3a5296c994f6b602ab18bfaaa42f194b9b3e2e"
+content-hash = "ef21119ceb5aaa69796ec6207a0568443ca23979dc91b2d9ca1de13379a45356"
 
 [metadata.files]
 aiocontextvars = [
@@ -1883,6 +1891,9 @@ tox = [
 tox-poetry = [
     {file = "tox-poetry-0.4.1.tar.gz", hash = "sha256:2395808e1ce487b5894c10f2202e14702bfa6d6909c0d1e525170d14809ac7ef"},
     {file = "tox_poetry-0.4.1-py2.py3-none-any.whl", hash = "sha256:11d9cd4e51d4cd9484b3ba63f2650ab4cfb4096e5f0682ecf561ddfc3c8e8c92"},
+]
+ttp = [
+    {file = "ttp-0.8.4.tar.gz", hash = "sha256:2911e365aa24a85fe97ce6f60e6e9faed386b756e37905157a5c3331363f96ea"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.3-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:2068531575a125b87a41802130fa7e29f26c09a2833fea68d9a40cf33902eba6"},

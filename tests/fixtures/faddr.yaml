@@ -6,4 +6,4 @@ database:
 rancid:
     dir: "tests/fixtures/rancid_dir/"
     mapping:
-        "cisco-mf": "cisco_ios"
+        "cisco-mf": "cisco-ios"

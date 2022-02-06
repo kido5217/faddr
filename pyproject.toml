@@ -19,6 +19,7 @@ tinydb = "^4.4.0"
 loguru = "^0.5.3"
 PyYAML = "^6.0"
 pydantic = {version = "^1.8", python = "^3.6.1"}
+ttp = "^0.8.4"
 
 
 [tool.poetry.dev-dependencies]

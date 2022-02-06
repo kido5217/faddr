@@ -1,9 +1,19 @@
 """Get list of configuration backup files in RANCID repos."""
 
-import pathlib
+from itertools import chain
+from pathlib import Path
+
+from pydantic import BaseModel
 
 from faddr import logger
 from faddr.exceptions import FaddrRancidPathError
+
+
+# class RancidConfig(BaseModel):
+#     """Device from router.db."""
+#
+#
+#     enabled: bool = True
 
 
 class RancidGroup:
@@ -17,7 +27,7 @@ class RancidGroup:
     """
 
     def __init__(self, path, name=None):
-        self.path = pathlib.Path(path)
+        self.path = Path(path)
         if not self.path.exists() or not self.path.is_dir():
             raise FaddrRancidPathError(f"Wrong path: {path}")
 
@@ -26,9 +36,9 @@ class RancidGroup:
         else:
             self.name = self.path.name
 
-        if pathlib.Path(self.path, "router.db").exists():
+        if Path(self.path, "router.db").exists():
             self.type = "group"
-            self.repo = pathlib.Path(self.path, "configs")
+            self.repo = Path(self.path, "configs")
         else:
             self.type = "repo"
             self.repo = self.path
@@ -40,18 +50,21 @@ class RancidGroup:
 
         logger.debug(f"Created RancidGroup class object: {self}")
 
-    def __str__(self):
+    def __repr__(self):
         return (
             f"RANCID {self.type} '{self.name}' in '{self.path}' "
             f"contains {len(self.configs)} configs"
         )
+
+    def __str__(self):
+        return self.name
 
     def get_configs_from_router_db(self):
         """Load config files list and their metadata from 'router.db' file."""
 
         configs = []
 
-        with pathlib.Path(self.path, "router.db").open(
+        with Path(self.path, "router.db").open(
             encoding="ascii", errors="ignore"
         ) as router_db_file:
             router_db = router_db_file.readlines()
@@ -73,7 +86,7 @@ class RancidGroup:
                 config = {}
                 enabled_map = {"up": True, "down": False}
                 config["enabled"] = enabled_map.get(router_data[2], False)
-                config["path"] = pathlib.Path(self.repo, router_data[0])
+                config["path"] = Path(self.repo, router_data[0])
                 config["content_type"] = router_data[1]
                 config["name"] = router_data[0]
                 if len(router_data) == 3:
@@ -117,9 +130,7 @@ class RancidGroup:
     def get_content_type(config_path):
         """Get rancid profile name from file header."""
 
-        with pathlib.Path(config_path).open(
-            encoding="ascii", errors="ignore"
-        ) as config:
+        with Path(config_path).open(encoding="ascii", errors="ignore") as config:
             content_type_line = config.readline().strip()
 
         if (
@@ -143,7 +154,7 @@ class RancidDir:
     """
 
     def __init__(self, path):
-        self.path = pathlib.Path(path)
+        self.path = Path(path)
         if not self.path.exists() or not self.path.is_dir():
             raise FaddrRancidPathError(f"Wrong path: {path}")
 
@@ -152,7 +163,7 @@ class RancidDir:
             try:
                 if (
                     group_candidate.is_dir()
-                    and pathlib.Path(group_candidate, "router.db").exists()
+                    and Path(group_candidate, "router.db").exists()
                 ):
                     rancid_group = RancidGroup(group_candidate)
                     if len(rancid_group.configs) > 0:
@@ -160,7 +171,12 @@ class RancidDir:
             except PermissionError:
                 logger.info(f"Can't access {group_candidate}")
 
+        self.configs = chain.from_iterable(group.configs for group in self.groups)
+
         logger.debug(f"Created RancidGroup class object: {self}")
 
-    def __str__(self):
+    def __repr__(self):
         return f"RANCID directory '{self.path}' contains {len(self.groups)} groups"
+
+    def __str__(self):
+        return str(self.path.resolve())

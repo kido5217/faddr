@@ -35,3 +35,21 @@ class FaddrSettingsFileFormatError(FaddrBaseException):
         self.err = str(err).replace("\n", ": ")
         self.message = f"File '{self.path}' contains errors: '{self.err}'"
         super().__init__(self.message)
+
+
+class FaddrParserUnknownProfile(FaddrBaseException):
+    """Exception raised when requesting unknonw profile."""
+
+    def __init__(self, profile):
+        self.profile = profile
+        self.message = f"Profile {self.profile} does not exist."
+        super().__init__(self.message)
+
+
+class FaddrParserConfigFileAbsent(FaddrBaseException):
+    """Exception raised when configuration file does not exist."""
+
+    def __init__(self, path):
+        self.path = path
+        self.message = f"File '{self.path}' does not exist."
+        super().__init__(self.message)

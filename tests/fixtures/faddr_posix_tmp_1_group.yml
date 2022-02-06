@@ -1,0 +1,11 @@
+---
+database:
+  dir: "/tmp/"
+  file: "faddr-db.json"
+
+rancid:
+  dirs:
+    - path: "tests/fixtures/rancid/group_02_4rows"
+      kind: group
+      mapping:
+        "cisco-lab": "cisco-ios"
