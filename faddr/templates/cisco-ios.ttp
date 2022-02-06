@@ -1,0 +1,7 @@
+<group name="interfaces">
+interface {{ interface }}
+ description {{ description }}
+ <group name="ipv4">
+ ip address {{ ip }} {{ mask }}
+ </group>
+</group>

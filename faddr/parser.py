@@ -87,5 +87,5 @@ class Parser:
         """Parse provided configuration and return structured data."""
         parser = ttp(data=self.config, template=self.template)
         parser.parse()
-        result = parser.result()[0]
+        result = parser.result()[0][0]
         return result
