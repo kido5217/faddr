@@ -53,16 +53,18 @@ def main():
             rancid = RancidDir(rancid_dir.path)
         elif rancid_dir.kind == "group":
             rancid = RancidGroup(rancid_dir.path)
+        else:
+            continue
 
-            for config in rancid.configs:
-                logger.debug(f"Working with device: {config}")
-                try:
-                    parser = Parser(
-                        config["path"],
-                        rancid_dir.mapping.get(config["content_type"]),
-                        settings.templates_dir,
-                    )
-                    data = parser.parse()
-                    console.print(data)
-                except FaddrParserUnknownProfile:
-                    logger.debug(f"Unsupported config: {config}")
+        for config in rancid.configs:
+            logger.debug(f"Working with device: {config}")
+            try:
+                parser = Parser(
+                    config["path"],
+                    rancid_dir.mapping.get(config["content_type"]),
+                    settings.templates_dir,
+                )
+                data = parser.parse()
+                console.print(data)
+            except FaddrParserUnknownProfile:
+                logger.debug(f"Unsupported config: {config}")
