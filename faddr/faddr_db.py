@@ -3,6 +3,8 @@
 import argparse
 import sys
 
+from rich.console import Console
+
 from faddr import logger
 from faddr.exceptions import FaddrSettingsFileFormatError, FaddrParserUnknownProfile
 from faddr.rancid import RancidDir, RancidGroup
@@ -32,6 +34,10 @@ def parse_cmd_args():
 
 def main():
     """Parsing devices' config files and writing data to database."""
+
+    # Setup rich console for pretty printing
+    console = Console()
+
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
@@ -57,6 +63,6 @@ def main():
                         settings.templates_dir,
                     )
                     data = parser.parse()
-                    print(data)
+                    console.print(data)
                 except FaddrParserUnknownProfile:
                     logger.debug(f"Unsupported config: {config}")
