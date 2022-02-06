@@ -15,9 +15,9 @@ def settings_default():
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
             "default_mapping": {
-                "cisco": "cisco_ios",
-                "cisco-xr": "cisco_iosxr",
-                "juniper": "juniper_junos",
+                "cisco": "cisco-ios",
+                "cisco-xr": "cisco-iosxr",
+                "juniper": "juniper-junos",
             },
             "mapping": {},
         },
@@ -37,13 +37,13 @@ def settings_posix_tmp():
                 {
                     "path": "tests/fixtures/rancid/",
                     "kind": "dir",
-                    "mapping": {"cisco-faddr": "cisco_ios"},
+                    "mapping": {"cisco-faddr": "cisco-ios"},
                 }
             ],
             "default_mapping": {
-                "cisco": "cisco_ios",
-                "cisco-xr": "cisco_iosxr",
-                "juniper": "juniper_junos",
+                "cisco": "cisco-ios",
+                "cisco-xr": "cisco-iosxr",
+                "juniper": "juniper-junos",
             },
             "mapping": {},
         },
