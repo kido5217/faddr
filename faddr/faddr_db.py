@@ -51,13 +51,12 @@ def main():
     for rancid_dir in settings.rancid.dirs:
         if rancid_dir.kind == "dir":
             rancid = RancidDir(rancid_dir.path)
-        elif rancid_dir.kind == "group":
+        elif rancid_dir.kind in ("group", "repo"):
             rancid = RancidGroup(rancid_dir.path)
         else:
             continue
 
         for config in rancid.configs:
-            logger.debug(f"Working with device: {config}")
             try:
                 parser = Parser(
                     config["path"],
