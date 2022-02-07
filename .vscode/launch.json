@@ -5,10 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Модуль",
+            "name": "faddr-db",
             "type": "python",
             "request": "launch",
-            "module": "faddr"
+            "program": ".venv/bin/faddr-db",
+            "console": "integratedTerminal",
+            "args": ["--debug", "--settings-file", "tests/fixtures/faddr_posix_tmp_1_group.yml"]
         }
     ]
 }

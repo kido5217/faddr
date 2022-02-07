@@ -1,6 +1,6 @@
 """Init default configuration and read configuration from file."""
 
-import pathlib
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import yaml
@@ -28,7 +28,7 @@ def load_settings(settings_file=None):
 def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     """A simple settings source that loads variables from a YAML file."""
 
-    settings_file_path = pathlib.Path(settings.__config__.settings_file)
+    settings_file_path = Path(settings.__config__.settings_file)
     if settings_file_path.exists():
         try:
             with open(
@@ -65,9 +65,9 @@ class RancidSettings(BaseModel):
 
     dirs: List[RancidDirSettings] = [RancidDirSettings()]
     default_mapping: dict = {
-        "cisco": "cisco_ios",
-        "cisco-xr": "cisco_iosxr",
-        "juniper": "juniper_junos",
+        "cisco": "cisco-ios",
+        "cisco-xr": "cisco-iosxr",
+        "juniper": "juniper-junos",
     }
     mapping: dict = {}
 
@@ -76,9 +76,9 @@ class FaddrSettings(BaseSettings):
     """Faddr settings root."""
 
     debug: bool = False
-    templates_dir: pathlib.Path = pathlib.Path(__file__).parent.joinpath("templates")
-    database: DatabaseSettings = {}
-    rancid: RancidSettings = {}
+    templates_dir: Path = Path(__file__).parent.joinpath("templates")
+    database: DatabaseSettings = DatabaseSettings()
+    rancid: RancidSettings = RancidSettings()
 
     class Config:
         """pydantic configuration."""

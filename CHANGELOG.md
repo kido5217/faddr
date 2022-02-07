@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- ttp package for configuration files parsing
+- rich module for pretty printing
+- Parser class to work with ttp
+- Unit tests for Parser class
+
+### Fixed
+
+- Set rancid's custom content-type suffix as "-faddr" in all fixtures
+
 ## [0.0.3] - 2022-02-01
 
 ### Added
