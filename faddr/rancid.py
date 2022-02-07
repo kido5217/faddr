@@ -3,8 +3,6 @@
 from itertools import chain
 from pathlib import Path
 
-from pydantic import BaseModel
-
 from faddr import logger
 from faddr.exceptions import FaddrRancidPathError
 
