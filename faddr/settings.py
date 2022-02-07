@@ -77,8 +77,8 @@ class FaddrSettings(BaseSettings):
 
     debug: bool = False
     templates_dir: Path = Path(__file__).parent.joinpath("templates")
-    database: DatabaseSettings = {}
-    rancid: RancidSettings = {}
+    database: DatabaseSettings = DatabaseSettings()
+    rancid: RancidSettings = RancidSettings()
 
     class Config:
         """pydantic configuration."""

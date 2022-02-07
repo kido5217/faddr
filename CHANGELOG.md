@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ttp package for configuration files parsing
 - rich module for pretty printing
 - Parser class to work with ttp
+- Unit tests for Parser class
 
 ### Fixed
 
