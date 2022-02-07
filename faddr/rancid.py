@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from faddr import logger
 from faddr.exceptions import FaddrRancidPathError
 
-
 # class RancidConfig(BaseModel):
 #     """Device from router.db."""
 #

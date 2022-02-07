@@ -6,10 +6,10 @@ import sys
 from rich.console import Console
 
 from faddr import logger
-from faddr.exceptions import FaddrSettingsFileFormatError, FaddrParserUnknownProfile
+from faddr.exceptions import FaddrParserUnknownProfile, FaddrSettingsFileFormatError
+from faddr.parser import Parser
 from faddr.rancid import RancidDir, RancidGroup
 from faddr.settings import load_settings
-from faddr.parser import Parser
 
 
 def parse_cmd_args():

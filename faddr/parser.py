@@ -59,6 +59,7 @@ class Parser:
             if len(config) == 1:
                 logger.debug(f"Provided config is path to file: '{config[0]}'")
                 return self.load_config_from_file(config[0])
+            return "\n".join(config)
 
         if isinstance(config, str):
             if len(config.split("\n")) == 1:
