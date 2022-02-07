@@ -8,4 +8,4 @@ rancid:
     - path: "tests/fixtures/rancid/group_02_4rows"
       kind: group
       mapping:
-        "cisco-lab": "cisco-ios"
+        "cisco-faddr": "cisco-ios"

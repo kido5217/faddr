@@ -1,4 +1,4 @@
-#RANCID-CONTENT-TYPE: juniper-lab
+#RANCID-CONTENT-TYPE: juniper-faddr
 #
 # juniper-junos-17-vmx> show chassis clocks 
 # juniper-junos-17-vmx> show chassis environment 
