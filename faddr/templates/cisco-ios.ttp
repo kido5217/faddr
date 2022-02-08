@@ -1,6 +1,11 @@
 <group name="interfaces">
 interface {{ interface }}
+ duplex {{ duplex }}
+ speed {{ speed }}
  description {{ description }}
+ shutdown {{ disabled | set(True) }}
+ encapsulation {{ encapsulation }} {{ vlan_id }}
+ encapsulation {{ encapsulation }} {{ vlan_id }} native
  <group name="ipv4">
  ip address {{ ip }} {{ mask }}
  </group>
