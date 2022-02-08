@@ -1,7 +1,17 @@
-<group name="interfaces">
+<group name="interfaces*">
 interface {{ interface }}
- description {{ description }}
- <group name="ipv4">
+ duplex {{ duplex }}
+ speed {{ speed }}
+ description {{ description | _line_ }}
+ shutdown {{ disabled | set(True) }}
+ encapsulation {{ encapsulation | lower() }} {{ vlan_id }}
+ encapsulation {{ encapsulation | lower() }} {{ vlan_id }} native
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan_id }} second-dot1q {{ c_vlan_id }}
+ ip vrf forwarding {{ vrf }}
+ <group name="acl*">
+ ip access-group {{ name }} {{ direction }}
+ </group>
+ <group name="ipv4*">
  ip address {{ ip }} {{ mask }}
  </group>
 </group>

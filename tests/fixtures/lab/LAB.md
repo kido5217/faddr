@@ -1,6 +1,8 @@
 # Test Lab
 
-## Rancid configuration
+## Rancid
+
+### Configuration
 
 - All devices have permanent hostname and ipv4 OAM address
 - RANCID has 4 groups:
@@ -9,6 +11,26 @@
   - group_03_router_db_errors: invalid group, has errors in router.db
   - group_04_no_router_db: invalid group, router.db is absent
 - Separately there's special folder with rancid-specific files, but without valid groups
+
+### Commands
+
+Backup all configs:
+
+```
+sudo -u rancid /usr/lib/rancid/bin/rancid-run
+```
+
+Copy configs from vm fo fixtures:
+
+```
+scp -r rancid@rancid:/var/lib/rancid ~/projects/faddr/tests/fixtures/
+rm -rf ~/projects/faddr/tests/fixtures/rancid/bin
+rm -rf ~/projects/faddr/tests/fixtures/rancid/logs
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.ssh
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.gnupg
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.bash_history
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.cloginrc
+```
 
 ## Configuration rules
 
@@ -29,7 +51,7 @@
   - vlan 101: native, ipv4 address 10.101.101.1/24
   - vlan 102: qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
   - vlan 110: vrf Test001, ipv4 address 10.110.110.1/24
-  - vlan 121: acl input ACLin01 and output01 ACLout, ipv4 address 10.121.121.121/24
+  - vlan 121: acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
   - vlan 122: acl input ACLin02, ipv4 address 10.122.122.122/24
   - vlan 123: acl output ACLout02, ipv4 address 10.123.123.123/24
   - vlan 131: rate-limit numerical, ipv4 address 10.131.131.131/24
@@ -122,7 +144,8 @@ Status: WIP
 
 Configuration:
 
-```
+```cpp
+# Basic settings, AAA, connectivity
 no logging console
 
 enable secret faddr123
@@ -136,6 +159,48 @@ ip domain-name lab.faddr
 crypto key generate rsa [768]
 ip ssh version 2
 transport input telnet ssh
+
+# VRFs
+ip vrf OAM
+rd 10.10.10.1:10
+route-target export 10.10.10.1:10
+route-target import 10.10.10.1:10
+
+ip vrf Test001
+rd 1.1.1.1:110
+route-target export 64501:110
+route-target import 64501:110
+
+ip vrf Test002
+rd 64502:110
+route-target export 64502:110
+route-target import 64502:110
+
+ip vrf Test003
+rd 64503:110
+route-target export 64503:110
+route-target import 64503:110
+
+# ACLs
+ip access-list standard ACLin01
+permit any
+ip access-list standard ACLout01
+permit any
+
+ip access-list standard ACLin02
+permit any
+ip access-list standard ACLout02
+permit any
+
+# Interfaces
+interface Loopback0
+description Loopback0: mpls, ldp, address 1.1.1.1/32
+ip address 1.1.1.1 255.255.255.255
+
+interface Loopback10
+description Loopback10: OaM, vrf OAM, ipv4 address 10.10.10.1/32
+ip vrf forwarding OAM
+ip address 10.10.10.1 255.255.255.255
 
 interface FastEthernet 0/0
 no shutdown
@@ -154,6 +219,36 @@ interface FastEthernet 1/0.101
 description vlan 101: native, ipv4 address 10.101.101.1/24
 encapsulation dot1Q 101 native
 ip address 10.101.101.1 255.255.255.0
+
+interface FastEthernet1/0.102
+description vlan 102: qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+encapsulation dot1Q 102 second-dot1q 999
+ip address 10.102.102.1 255.255.255.0
+
+interface FastEthernet1/0.110
+description vlan 110: vrf Test001, ipv4 address 10.110.110.1/24
+encapsulation dot1Q 110
+ip vrf forwarding Test001
+ip address 10.110.110.1 255.255.255.0
+
+interface FastEthernet1/0.121
+description vlan 121: acl input ACLin01 and output01 ACLout, ipv4 address 10.121.121.121/24
+encapsulation dot1Q 121
+ip address 10.121.121.121 255.255.255.0
+ip access-group ACLin01 in
+ip access-group ACLout01 out
+
+interface FastEthernet1/0.122
+description vlan 122: acl input ACLin02, ipv4 address 10.122.122.122/24
+encapsulation dot1Q 122
+ip address 10.122.122.122 255.255.255.0
+ip access-group ACLin02 in
+
+interface FastEthernet1/0.123
+description vlan 123: acl output ACLout02, ipv4 address 10.123.123.123/24
+encapsulation dot1Q 123
+ip address 10.123.123.123 255.255.255.0
+ip access-group ACLout02 out
 ```
 
 ### Juniper

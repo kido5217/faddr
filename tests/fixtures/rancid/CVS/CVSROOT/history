@@ -18,3 +18,9 @@ M61f15452|rancid|~/group_01_3rows|group_01_3rows/configs|1.3|cisco-ios-15-7206
 M61f15452|rancid|~/group_01_3rows|group_01_3rows/configs|1.3|juniper-junos-17-vmx
 M61f1545a|rancid|~/group_02_4rows|group_02_4rows/configs|1.3|cisco-ios-15-7206
 M61f1545a|rancid|~/group_02_4rows|group_02_4rows/configs|1.3|juniper-junos-17-vmx
+M6201e2fc|rancid|~/*0|group_01_3rows|1.3|router.db
+M6201e2fc|rancid|~/group_01_3rows|group_01_3rows/configs|1.4|cisco-ios-15-7206
+M6201e2fc|rancid|~/group_01_3rows|group_01_3rows/configs|1.4|juniper-junos-17-vmx
+M6201e303|rancid|~/*0|group_02_4rows|1.3|router.db
+M6201e303|rancid|~/group_02_4rows|group_02_4rows/configs|1.4|cisco-ios-15-7206
+M6201e303|rancid|~/group_02_4rows|group_02_4rows/configs|1.4|juniper-junos-17-vmx

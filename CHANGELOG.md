@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2022-02-08
+
 ### Added
 
 - ttp package for configuration files parsing
 - rich module for pretty printing
 - Parser class to work with ttp
 - Unit tests for Parser class
+- cisco-ios ttp template parses basic data: interface, ipv4, ACL, vrf, admin status
 
 ### Fixed
 
