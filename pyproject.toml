@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "faddr"
-version = "0.0.4"
+version = "0.0.5"
 description = "Tool to parse configuration of network devices such as Juniper routers and store gathered data in database"
 license = "MIT"
 authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]
 readme = "README.md"
 repository = "https://github.com/kido5217/faddr"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Telecommunications Industry"
 ]
