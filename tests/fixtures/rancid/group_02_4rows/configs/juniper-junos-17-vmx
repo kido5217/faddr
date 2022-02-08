@@ -58,7 +58,7 @@
 # VT(vga): resolution 640x480
 # sysctl: OID number(10) is already in use for 'option_Q_maxlen'
 # sysctl: OID number(18) is already in use for 'nd6_debug'
-# CPU: AMD Ryzen 5 3600X 6-Core Processor              (4000.13-MHz K8-class CPU)
+# CPU: AMD Ryzen 5 3600X 6-Core Processor              (4000.17-MHz K8-class CPU)
 #   Origin="AuthenticAMD"  Id=0x870f10  Family=0x17  Model=0x71  Stepping=0
 #   Features=0x783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2>
 #   Features2=0xfff83203<SSE3,PCLMULQDQ,SSSE3,FMA,CX16,SSE4.1,SSE4.2,x2APIC,MOVBE,POPCNT,TSCDLT,AESNI,XSAVE,OSXSAVE,AVX,F16C,RDRAND,HV>
@@ -156,7 +156,7 @@
 # ada2: Previously was known as ad2
 # random: unblocking device.
 # Kernel thread "wkupdaemon" (pid 27) exited prematurely.
-# Timecounter "TSC-low" frequency 2000064920 Hz quality 1000
+# Timecounter "TSC-low" frequency 2000084260 Hz quality 1000
 # Trying to mount root from cd9660:/dev/md0.uzip []...
 # 
 # juniper-junos-17-vmx> show system core-dumps 
