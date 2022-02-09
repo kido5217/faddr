@@ -75,11 +75,8 @@ def main():
                 device["metadata"]["source"] = "rancid"
                 device.update(data)
                 database.insert(device)
-                # console.print(data)
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
 
     if len(database.get_all()) > 0:
         database.set_default()
-
-    console.print(database.get_all())

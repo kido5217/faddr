@@ -3,7 +3,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 
 from faddr.exceptions import FaddrDatabaseDirError
 
@@ -62,6 +62,14 @@ class Database:
                 base_file.unlink()
             base_file.symlink_to(rev_file)
             self.name = self.basename
+
+    def find_network(self, network):
+        """Find provided netwkork."""
+        with TinyDB(Path(self.path, self.name)) as session:
+            results = session.search(
+                Query().interfaces.any(Query().ipv4.any(Query().network == network))
+            )
+            return results
 
     @staticmethod
     def gen_timestamp():
