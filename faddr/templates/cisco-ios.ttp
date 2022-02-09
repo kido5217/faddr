@@ -1,3 +1,13 @@
+<macro>
+import ipaddress
+
+def add_network_data(data):
+    network = ipaddress.ip_network((data["ip"] + "/" + data["mask"]), strict=False)
+    data["network"] = network.with_prefixlen
+    data["network_address"] = str(network.network_address)
+    data["prefixlen"] = network.prefixlen
+</macro>
+
 <group name="interfaces*">
 interface {{ interface }}
  duplex {{ duplex }}
@@ -11,7 +21,7 @@ interface {{ interface }}
  <group name="acl*">
  ip access-group {{ name }} {{ direction }}
  </group>
- <group name="ipv4*">
+ <group name="ipv4*" macro="add_network_data">
  ip address {{ ip }} {{ mask }}
  </group>
 </group>
