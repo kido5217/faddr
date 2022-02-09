@@ -5,8 +5,14 @@ class FaddrBaseException(Exception):
     """General base exception."""
 
 
-class FaddrDatabaseNotWritable(FaddrBaseException):
-    """Exception raised whed Database can not be opened for writing."""
+class FaddrDatabaseDirError(FaddrBaseException):
+    """Exception raised whed Database path doesn't exist."""
+
+    def __init__(self, path, problem):
+        self.path = path
+        self.problem = problem
+        self.message = f"Wrong {self.path}: {self.problem}"
+        super().__init__(self.message)
 
 
 class FaddrRancidPathError(FaddrBaseException):

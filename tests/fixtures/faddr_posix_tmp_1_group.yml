@@ -1,7 +1,7 @@
 ---
 database:
-  dir: "/tmp/"
-  file: "faddr-db.json"
+  path: "/tmp/"
+  name: "faddr-db.json"
 
 rancid:
   dirs:
