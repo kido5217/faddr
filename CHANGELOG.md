@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Working Database class
+
+### Changed
+
+- "dir" and "file" params in settings.database renamed to "path" and "name"
+
 ## [0.0.4] - 2022-02-08
 
 ### Added

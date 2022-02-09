@@ -48,8 +48,8 @@ def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 class DatabaseSettings(BaseModel):
     """Database settings."""
 
-    dir: str = "/var/db/faddr/"
-    file: str = "faddr-db.json"
+    path: str = "/var/db/faddr/"
+    name: str = "faddr-db.json"
 
 
 class RancidDirSettings(BaseModel):

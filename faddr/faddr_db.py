@@ -6,6 +6,7 @@ import sys
 from rich.console import Console
 
 from faddr import logger
+from faddr.database import Database
 from faddr.exceptions import FaddrParserUnknownProfile, FaddrSettingsFileFormatError
 from faddr.parser import Parser
 from faddr.rancid import RancidDir, RancidGroup
@@ -48,6 +49,9 @@ def main():
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
 
+    database = Database(**settings.database.dict())
+    database.new()
+
     for rancid_dir in settings.rancid.dirs:
         if rancid_dir.kind == "dir":
             rancid = RancidDir(rancid_dir.path)
@@ -64,6 +68,18 @@ def main():
                     settings.templates_dir,
                 )
                 data = parser.parse()
-                console.print(data)
+                device = {}
+                device["metadata"] = {}
+                device["metadata"]["path"] = str(config["path"])
+                device["metadata"]["name"] = str(config["name"])
+                device["metadata"]["source"] = "rancid"
+                device.update(data)
+                database.insert(device)
+                # console.print(data)
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
+
+    if len(database.get_all()) > 0:
+        database.set_default()
+
+    console.print(database.get_all())
