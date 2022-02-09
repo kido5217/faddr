@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from pathlib import Path
-from posixpath import basename
 
 from tinydb import TinyDB
 
