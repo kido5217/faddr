@@ -718,7 +718,7 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "prospector"
-version = "1.6.0"
+version = "1.7.5"
 description = ""
 category = "dev"
 optional = false
@@ -732,7 +732,7 @@ mypy = {version = ">=0.600", optional = true, markers = "extra == \"with_mypy\" 
 pep8-naming = ">=0.3.3,<=0.10.0"
 pycodestyle = ">=2.6.0,<2.9.0"
 pydocstyle = ">=2.0.0"
-pyflakes = ">=2.2.0,<2.4.0"
+pyflakes = ">=2.2.0,<3"
 pylint = ">=2.8.3"
 pylint-celery = "0.3"
 pylint-django = ">=2.5,<2.6"
@@ -1095,17 +1095,6 @@ importlib-metadata = {version = ">=1.7.0", markers = "python_version < \"3.8\""}
 pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 
 [[package]]
-name = "tinydb"
-version = "4.6.1"
-description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
-category = "main"
-optional = false
-python-versions = ">=3.6,<4.0"
-
-[package.dependencies]
-typing-extensions = {version = ">=3.10.0,<5.0.0", markers = "python_version <= \"3.7\""}
-
-[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -1267,7 +1256,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "9020703c711fbe6b4dfbe9cf7679104b24c222ed108b15c1b0dc0b8759520406"
+content-hash = "8a4fcc65fbf5a3440719d399f29538aadb9c3cbb20fc07fe220b09240f0fa2eb"
 
 [metadata.files]
 aiocontextvars = [
@@ -1733,8 +1722,8 @@ pre-commit = [
     {file = "pre_commit-2.17.0.tar.gz", hash = "sha256:c1a8040ff15ad3d648c70cc3e55b93e4d2d5b687320955505587fd79bbaed06a"},
 ]
 prospector = [
-    {file = "prospector-1.6.0-py3-none-any.whl", hash = "sha256:fd5a2872b26ee07babc15b826c1ff4a717282a3dbb744591a59625a2c11a0468"},
-    {file = "prospector-1.6.0.tar.gz", hash = "sha256:1ca0da95a2d1a151ae578f02d6fc78300a9150af8f2c2c201097213016cc92ee"},
+    {file = "prospector-1.7.5-py3-none-any.whl", hash = "sha256:b018a3a22ac3ec9b70b7c51c694e22ce9fdf7b56e83557d8f6210656c9c9f500"},
+    {file = "prospector-1.7.5.tar.gz", hash = "sha256:5414028db480503736ad4d44e21aa2fd2f5c3558fb8cfc3e13098a9723a0ff46"},
 ]
 ptyprocess = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
@@ -1916,10 +1905,6 @@ snowballstemmer = [
 stevedore = [
     {file = "stevedore-3.5.0-py3-none-any.whl", hash = "sha256:a547de73308fd7e90075bb4d301405bebf705292fa90a90fc3bcf9133f58616c"},
     {file = "stevedore-3.5.0.tar.gz", hash = "sha256:f40253887d8712eaa2bb0ea3830374416736dc8ec0e22f5a65092c1174c44335"},
-]
-tinydb = [
-    {file = "tinydb-4.6.1-py3-none-any.whl", hash = "sha256:ac1fdae2a7d5d7e2ca915d2666e685d63982991827c5dd097b6be4a3b5822dbc"},
-    {file = "tinydb-4.6.1.tar.gz", hash = "sha256:0d5400f5e5ae368a84d57cb234456f1cf70430fd39bcd77ccd568fea91ff2a4e"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},

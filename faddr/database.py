@@ -3,8 +3,6 @@
 from datetime import datetime
 from pathlib import Path
 
-from tinydb import TinyDB, Query
-
 from faddr.exceptions import FaddrDatabaseDirError
 
 
@@ -22,36 +20,26 @@ class Database:
 
         self.basename = name
         self.name = name
-        self.timestamp = None
+        self.revision = None
 
-    def new(self, timestamp=None):
-        """Create new revision and return timestamp."""
-        if timestamp:
-            self.timestamp = timestamp
+    def new(self, revision=None):
+        """Create new revision and return it."""
+        if revision:
+            self.revision = revision
         else:
-            self.timestamp = self.gen_timestamp()
+            self.revision = self.gen_revision()
 
-        rev_name = Path(self.basename).stem + "-" + self.timestamp
+        rev_name = Path(self.basename).stem + "-" + self.revision
         suffix = Path(self.basename).suffix
         self.name = rev_name + suffix
 
-        return self.timestamp
+        return self.revision
 
     def insert(self, data):
         """Insert data to database."""
-        with TinyDB(Path(self.path, self.name)) as session:
-            session.insert(data)
 
-    def get_all(self, table=None):
+    def get_all(self):
         """Get all data from database or specified table."""
-        with TinyDB(Path(self.path, self.name)) as session:
-            if table:
-                return session.table(table).all()
-
-            data = {}
-            for table_name in session.tables():
-                data[table_name] = session.table(table_name).all()
-            return data
 
     def set_default(self):
         """Make current revision default one."""
@@ -65,16 +53,11 @@ class Database:
 
     def find_network(self, network):
         """Find provided netwkork."""
-        with TinyDB(Path(self.path, self.name)) as session:
-            results = session.search(
-                Query().interfaces.any(Query().ipv4.any(Query().network == network))
-            )
-            return results
 
     @staticmethod
-    def gen_timestamp():
-        """Generate timestamp."""
+    def gen_revision():
+        """Generate revision."""
         date_format = "%Y%m%d%H%M%S"
-        timestamp = datetime.now().strftime(date_format)
+        revision = datetime.now().strftime(date_format)
 
-        return timestamp
+        return revision

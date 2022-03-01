@@ -31,6 +31,7 @@ def settings_default():
 @pytest.fixture
 def settings_posix_tmp():
     """Settings with output dir as '/tmp'"""
+    # TODO: use tempfile module: https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir
     settings = {
         "debug": False,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
