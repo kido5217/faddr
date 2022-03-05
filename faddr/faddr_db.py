@@ -49,8 +49,8 @@ def main():
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
 
-    # database = Database(**settings.database.dict())
-    # database.new()
+    database = Database(**settings.database.dict())
+    database.new()
 
     for rancid_dir in settings.rancid.dirs:
         if rancid_dir.kind == "dir":
@@ -69,14 +69,17 @@ def main():
                 )
                 data = parser.parse()
                 device = {}
-                device["meta"] = {}
-                device["meta"]["path"] = str(config["path"])
-                device["meta"]["name"] = str(config["name"])
-                device["meta"]["source"] = "rancid"
+                device["info"] = {}
+                device["info"]["path"] = str(config["path"])
+                device["info"]["name"] = str(config["name"])
+                device["info"]["source"] = "rancid"
                 device.update(data)
-                # database.insert(device)
+                database.insert_device(device)
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
 
-    # if len(database.get_all()) > 0:
-    #    database.set_default()
+    database.set_default()
+
+    console.rule("Devices")
+    for device in database.get_devices():
+        console.print(device.__dict__)

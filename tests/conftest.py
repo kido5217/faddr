@@ -14,7 +14,7 @@ def settings_default():
     settings = {
         "debug": False,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
-        "database": {"path": "/var/db/faddr/", "name": "faddr-db.json"},
+        "database": {"path": "/var/db/faddr/", "name": "faddr-db.sqlite"},
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
             "default_mapping": {
@@ -35,7 +35,7 @@ def settings_posix_tmp():
     settings = {
         "debug": False,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
-        "database": {"path": "/tmp/", "name": "faddr-db.json"},
+        "database": {"path": "/tmp/", "name": "faddr-db.sqlite"},
         "rancid": {
             "dirs": [
                 {

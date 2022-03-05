@@ -3,7 +3,25 @@
 from datetime import datetime
 from pathlib import Path
 
+from sqlalchemy import create_engine, select
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base, Session
+
 from faddr.exceptions import FaddrDatabaseDirError
+
+
+Base = declarative_base()
+
+
+class Device(Base):
+    """ORM Device data mapping."""
+
+    __tablename__ = "device"
+
+    id = Column(Integer, primary_key=True)
+    path = Column(String)
+    name = Column(String)
+    source = Column(String)
 
 
 class Database:
@@ -22,6 +40,13 @@ class Database:
         self.name = name
         self.revision = None
 
+    @property
+    def engine(self):
+        """Create SQLAlchemy engine."""
+        db_file = Path(self.path, self.name)
+        engine = create_engine(f"sqlite+pysqlite:///{db_file}", future=True)
+        return engine
+
     def new(self, revision=None):
         """Create new revision and return it."""
         if revision:
@@ -33,13 +58,24 @@ class Database:
         suffix = Path(self.basename).suffix
         self.name = rev_name + suffix
 
+        Base.metadata.create_all(self.engine)
+
         return self.revision
 
-    def insert(self, data):
-        """Insert data to database."""
+    def insert_device(self, data):
+        """Insert device data to database."""
 
-    def get_all(self):
-        """Get all data from database or specified table."""
+        with Session(self.engine) as session:
+            device = Device(**data["info"])
+            session.add(device)
+            session.commit()
+            print(device.id)
+
+    def get_devices(self):
+        """Get device list from database."""
+
+        with Session(self.engine) as session:
+            return session.query(Device).all()
 
     def set_default(self):
         """Make current revision default one."""
