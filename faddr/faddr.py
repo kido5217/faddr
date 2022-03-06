@@ -48,7 +48,7 @@ def pretty_print_result(result):
             elif isinstance(value, bool) and not value:
                 row[key] = "-"
 
-        table.add_row(*[str(row.get(cell_name)) for cell_name in result["header"]])
+        table.add_row(*[str(row.get(cell_name, "-")) for cell_name in result["header"]])
         # console.print(row)
         # console.print(*[row.get(cell_name) for cell_name in result["header"]])
 
