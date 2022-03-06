@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - "dir" and "file" params in settings.database renamed to "path" and "name"
+- Switched from TinyDB to SQLAlchemy as DB engine
+
+### Removed
+
+- Deleted dataclasses.py with unused pydantic dataclasses
 
 ## [0.0.4] - 2022-02-08
 
