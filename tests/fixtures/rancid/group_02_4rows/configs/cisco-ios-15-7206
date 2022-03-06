@@ -219,6 +219,7 @@ interface FastEthernet1/0.123
  encapsulation dot1Q 123
  ip address 10.123.123.123 255.255.255.0
  ip access-group ACLout02 out
+ shutdown
 !
 interface FastEthernet2/0
  no ip address

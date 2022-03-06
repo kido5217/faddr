@@ -3,9 +3,9 @@
 import argparse
 import sys
 
-from rich.console import Console
+from rich.table import Table
 
-from faddr import logger
+from faddr import console, logger
 from faddr.database import Database
 from faddr.exceptions import FaddrSettingsFileFormatError
 from faddr.settings import load_settings
@@ -30,11 +30,31 @@ def parse_cmd_args():
     return vars(args)
 
 
+def pretty_print_result(result):
+    """Print data with pretty formatting."""
+
+    table = Table()
+
+    for column_name in result["header"]:
+        table.add_column(column_name)
+
+    for row in result["data"]:
+        # Fix bool and None values.
+        for key, value in row.items():
+            if value is None:
+                row[key] = "-"
+            elif isinstance(value, bool) and value:
+                row[key] = "[bold red]Yes"
+            elif isinstance(value, bool) and not value:
+                row[key] = "-"
+
+        table.add_row(*[str(row.get(cell_name, "-")) for cell_name in result["header"]])
+
+    console.print(table)
+
+
 def main():
     """Query database"""
-
-    # Setup rich console for pretty printing
-    console = Console()
 
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
@@ -49,4 +69,5 @@ def main():
     database = Database(**settings.database.dict())
 
     result = database.find_network(cmd_args.get("address"))
-    console.print(result)
+
+    pretty_print_result(result)

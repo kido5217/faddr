@@ -3,9 +3,7 @@
 import argparse
 import sys
 
-from rich.console import Console
-
-from faddr import logger
+from faddr import console, logger
 from faddr.database import Database
 from faddr.exceptions import FaddrParserUnknownProfile, FaddrSettingsFileFormatError
 from faddr.parser import Parser
@@ -35,9 +33,6 @@ def parse_cmd_args():
 
 def main():
     """Parsing devices' config files and writing data to database."""
-
-    # Setup rich console for pretty printing
-    console = Console()
 
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
