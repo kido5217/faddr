@@ -15,12 +15,12 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 
-tinydb = "^4.4.0"
-loguru = "^0.5.3"
+loguru = "^0.6"
 PyYAML = "^6.0"
 pydantic = {version = "^1.8", python = "^3.6.1"}
 ttp = "^0.8.4"
 rich = {version = "^11.1.0", python = ">=3.6.2,<4.0"}
+SQLAlchemy = "^1.4"
 
 
 [tool.poetry.dev-dependencies]
@@ -38,13 +38,15 @@ pytest-cov = "^3.0.0"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
+faddr = 'faddr.faddr:main'
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "-vvv --cov=faddr --cov-report=html --cov-report=xml --cov-report term-missing"
+#addopts = "-vvv --cov=faddr --cov-report=html --cov-report=xml --cov-report term-missing"
 testpaths = [
     "tests",
 ]

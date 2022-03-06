@@ -49,7 +49,7 @@ class DatabaseSettings(BaseModel):
     """Database settings."""
 
     path: str = "/var/db/faddr/"
-    name: str = "faddr-db.json"
+    name: str = "faddr-db.sqlite"
 
 
 class RancidDirSettings(BaseModel):

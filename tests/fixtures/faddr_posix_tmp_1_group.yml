@@ -1,7 +1,7 @@
 ---
 database:
   path: "/tmp/"
-  name: "faddr-db.json"
+  name: "faddr-db.sqlite"
 
 rancid:
   dirs:

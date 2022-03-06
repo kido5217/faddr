@@ -1,7 +1,7 @@
 ---
 database:
   dir: "/tmp/"
-  file: "faddr-db.json"
+  file: "faddr-db.sqlite"
 
 rancid:
   - path: "tests/fixtures/rancid/"

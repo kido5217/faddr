@@ -14,35 +14,9 @@ def settings_default():
     settings = {
         "debug": False,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
-        "database": {"path": "/var/db/faddr/", "name": "faddr-db.json"},
+        "database": {"path": "/var/db/faddr/", "name": "faddr-db.sqlite"},
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
-            "default_mapping": {
-                "cisco": "cisco-ios",
-                "cisco-xr": "cisco-iosxr",
-                "juniper": "juniper-junos",
-            },
-            "mapping": {},
-        },
-    }
-    return settings
-
-
-@pytest.fixture
-def settings_posix_tmp():
-    """Settings with output dir as '/tmp'"""
-    settings = {
-        "debug": False,
-        "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
-        "database": {"path": "/tmp/", "name": "faddr-db.json"},
-        "rancid": {
-            "dirs": [
-                {
-                    "path": "tests/fixtures/rancid/",
-                    "kind": "dir",
-                    "mapping": {"cisco-faddr": "cisco-ios"},
-                }
-            ],
             "default_mapping": {
                 "cisco": "cisco-ios",
                 "cisco-xr": "cisco-iosxr",
@@ -58,12 +32,6 @@ def settings_posix_tmp():
 def settings_file_absent():
     """Absent settings file."""
     return Path("tests/fixtures/nonexistant_settings_file.yaml")
-
-
-@pytest.fixture
-def settings_file_posix_tmp():
-    """Settings file with output dir as '/tmp'."""
-    return Path("tests/fixtures/faddr_posix_tmp.yaml")
 
 
 @pytest.fixture

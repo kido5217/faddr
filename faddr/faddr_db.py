@@ -1,4 +1,4 @@
-"""CLI entry points of faddr."""
+"""CLI entry point for database creation."""
 
 import argparse
 import sys
@@ -68,15 +68,17 @@ def main():
                     settings.templates_dir,
                 )
                 data = parser.parse()
-                device = {}
-                device["metadata"] = {}
-                device["metadata"]["path"] = str(config["path"])
-                device["metadata"]["name"] = str(config["name"])
-                device["metadata"]["source"] = "rancid"
+                device = {
+                    "info": {
+                        "path": str(config["path"]),
+                        "name": str(config["name"]),
+                        "source": "rancid",
+                    }
+                }
                 device.update(data)
-                database.insert(device)
+                database.insert_device(device)
+                console.print(device)
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
 
-    if len(database.get_all()) > 0:
-        database.set_default()
+    database.set_default()
