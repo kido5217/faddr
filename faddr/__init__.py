@@ -4,6 +4,7 @@ import os
 import sys
 
 from loguru import logger
+from rich.console import Console
 
 __version__ = "0.0.4"
 
@@ -14,3 +15,6 @@ else:
 
 logger.remove()
 logger.add(sys.stdout, level=LOG_LEVEL)
+
+# Setup rich console for pretty printing
+console = Console()
