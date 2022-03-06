@@ -32,7 +32,7 @@ def parse_cmd_args():
 
 def pretty_print_result(result):
     """Print data with pretty formatting."""
-    # console.print(result)
+
     table = Table()
 
     for column_name in result["header"]:
@@ -49,8 +49,6 @@ def pretty_print_result(result):
                 row[key] = "-"
 
         table.add_row(*[str(row.get(cell_name, "-")) for cell_name in result["header"]])
-        # console.print(row)
-        # console.print(*[row.get(cell_name) for cell_name in result["header"]])
 
     console.print(table)
 
