@@ -41,8 +41,6 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     vrf = Column(String)
     acl_in = Column(String)
     acl_out = Column(String)
-    # acl = Column(String)
-    # ipv4 = Column(String)
 
     device_id = Column(Integer, ForeignKey("device.id"))
 

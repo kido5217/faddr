@@ -3,7 +3,6 @@
 import argparse
 import sys
 
-from rich import inspect
 from rich.console import Console
 
 from faddr import logger
