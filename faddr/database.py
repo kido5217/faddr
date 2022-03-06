@@ -3,9 +3,9 @@
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, Session, relationship
+from sqlalchemy.orm import declarative_base, Session
 
 from faddr.exceptions import FaddrDatabaseDirError
 
