@@ -43,7 +43,7 @@ def pretty_print_result(result):
         for key, value in row.items():
             if value is None:
                 row[key] = "-"
-            if isinstance(value, bool) and value:
+            elif isinstance(value, bool) and value:
                 row[key] = "[bold red]Yes"
             elif isinstance(value, bool) and not value:
                 row[key] = "-"
