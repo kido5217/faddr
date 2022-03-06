@@ -9,14 +9,14 @@ def add_network_data(data):
 </macro>
 
 <group name="interfaces*">
-interface {{ interface }}
+interface {{ name }}
  duplex {{ duplex }}
  speed {{ speed }}
  description {{ description | _line_ }}
  shutdown {{ disabled | set(True) }}
- encapsulation {{ encapsulation | lower() }} {{ vlan_id }}
- encapsulation {{ encapsulation | lower() }} {{ vlan_id }} native
- encapsulation {{ encapsulation | lower() }} {{ s_vlan_id }} second-dot1q {{ c_vlan_id }}
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan }}
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan }} native
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan }} second-dot1q {{ c_vlan }}
  ip vrf forwarding {{ vrf }}
  <group name="acl*">
  ip access-group {{ name }} {{ direction }}

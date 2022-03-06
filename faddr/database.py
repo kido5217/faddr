@@ -4,8 +4,8 @@ from datetime import datetime
 from pathlib import Path
 
 from sqlalchemy import create_engine, select
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import declarative_base, Session, relationship
 
 from faddr.exceptions import FaddrDatabaseDirError
 
@@ -13,15 +13,63 @@ from faddr.exceptions import FaddrDatabaseDirError
 Base = declarative_base()
 
 
-class Device(Base):
-    """ORM Device data mapping."""
+class Device(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'device' table data mapping."""
 
     __tablename__ = "device"
 
     id = Column(Integer, primary_key=True)
-    path = Column(String)
     name = Column(String)
+    path = Column(String)
     source = Column(String)
+
+
+class Interface(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'interface' table data mapping."""
+
+    __tablename__ = "interface"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    duplex = Column(String)
+    speed = Column(String)
+    description = Column(String)
+    shutdown = Column(Boolean)
+    encapsulation = Column(String)
+    s_vlan = Column(Integer)
+    c_vlan = Column(Integer)
+    vrf = Column(String)
+    # acl = Column(String)
+    # ipv4 = Column(String)
+
+    device_id = Column(Integer, ForeignKey("device.id"))
+
+
+class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'acl' table data mapping."""
+
+    __tablename__ = "interface_acl"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    direction = Column(String)
+
+    interface_id = Column(Integer, ForeignKey("interface.id"))
+
+
+class InterfaceIPv4(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'ipv4' table data mapping."""
+
+    __tablename__ = "interface_ipv4"
+
+    id = Column(Integer, primary_key=True)
+    network = Column(String)
+    ip = Column(String)
+    mask = Column(String)
+    prefixlen = Column(Integer)
+    network_address = Column(String)
+
+    interface_id = Column(Integer, ForeignKey("interface.id"))
 
 
 class Database:
@@ -62,14 +110,67 @@ class Database:
 
         return self.revision
 
-    def insert_device(self, data):
+    def insert_device(self, device_data):
         """Insert device data to database."""
 
+        device = Device(**device_data["info"])
+
         with Session(self.engine) as session:
-            device = Device(**data["info"])
             session.add(device)
             session.commit()
-            print(device.id)
+            device_id = device.id
+
+        for interface in device_data.get("interfaces", []):
+            self.insert_interface(device_id, interface)
+
+    def insert_interface(self, device_id, interface_data):
+        """Insert interface data to database."""
+
+        table_data = {}
+        for key in Interface.__table__.columns.keys():
+            table_data[key] = interface_data.get(key)
+        table_data["device_id"] = device_id
+
+        interface = Interface(**table_data)
+
+        with Session(self.engine) as session:
+            session.add(interface)
+            session.commit()
+            interface_id = interface.id
+
+        for acl in interface_data.get("acl", []):
+            self.insert_acl(interface_id, acl)
+
+        for ipv4 in interface_data.get("ipv4", []):
+            self.insert_ipv4(interface_id, ipv4)
+
+    def insert_acl(self, interface_id, acl_data):
+        """Insert acl data to database."""
+
+        table_data = {}
+        for key in InterfaceACL.__table__.columns.keys():
+            table_data[key] = acl_data.get(key)
+        table_data["interface_id"] = interface_id
+
+        acl = InterfaceACL(**table_data)
+
+        with Session(self.engine) as session:
+            session.add(acl)
+            session.commit()
+
+    def insert_ipv4(self, interface_id, ipv4_data):
+        """Insert ipv4 data to database."""
+
+        table_data = {}
+        for key in InterfaceIPv4.__table__.columns.keys():
+            table_data[key] = ipv4_data.get(key)
+        table_data["interface_id"] = interface_id
+
+        ipv4 = InterfaceIPv4(**table_data)
+
+        with Session(self.engine) as session:
+            session.add(ipv4)
+            session.commit()
 
     def get_devices(self):
         """Get device list from database."""
@@ -86,6 +187,10 @@ class Database:
                 base_file.unlink()
             base_file.symlink_to(rev_file)
             self.name = self.basename
+
+    def is_default(self):
+        """Check if current revision is default."""
+        return self.name == self.basename
 
     def find_network(self, network):
         """Find provided netwkork."""

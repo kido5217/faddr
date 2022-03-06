@@ -68,13 +68,16 @@ def main():
                     settings.templates_dir,
                 )
                 data = parser.parse()
-                device = {}
-                device["info"] = {}
-                device["info"]["path"] = str(config["path"])
-                device["info"]["name"] = str(config["name"])
-                device["info"]["source"] = "rancid"
+                device = {
+                    "info": {
+                        "path": str(config["path"]),
+                        "name": str(config["name"]),
+                        "source": "rancid",
+                    }
+                }
                 device.update(data)
                 database.insert_device(device)
+                console.print(device)
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
 
