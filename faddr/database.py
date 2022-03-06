@@ -1,5 +1,7 @@
 """Database operations."""
 
+import ipaddress
+
 from datetime import datetime
 from pathlib import Path
 
@@ -180,24 +182,30 @@ class Database:
             "data": [],
         }
 
-        stmt = select(
-            Device.name.label("device"),
-            Interface.name.label("interface"),
-            Interface.disabled,
-            InterfaceIPv4.address,
-            Interface.acl_in,
-            Interface.acl_out,
-            Interface.description,
-        ).where(
-            InterfaceIPv4.network == network,
-            Interface.id == InterfaceIPv4.interface_id,
-            Device.id == Interface.device_id,
-        )
+        for mask in range(mask_max, mask_min + 1):
 
-        with Session(self.engine) as session:
-            for row in session.execute(stmt):
-                data = dict(zip(result["header"], row))
-                result["data"].append(data)
+            network = ipaddress.ip_network(
+                (network.split("/")[0], mask), strict=False
+            ).with_prefixlen
+
+            stmt = select(
+                Device.name.label("device"),
+                Interface.name.label("interface"),
+                Interface.disabled,
+                InterfaceIPv4.address,
+                Interface.acl_in,
+                Interface.acl_out,
+                Interface.description,
+            ).where(
+                InterfaceIPv4.network == network,
+                Interface.id == InterfaceIPv4.interface_id,
+                Device.id == Interface.device_id,
+            )
+
+            with Session(self.engine) as session:
+                for row in session.execute(stmt):
+                    data = dict(zip(result["header"], row))
+                    result["data"].append(data)
 
         return result
 
