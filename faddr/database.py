@@ -3,7 +3,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import declarative_base, Session
 
@@ -34,27 +34,17 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     duplex = Column(String)
     speed = Column(String)
     description = Column(String)
-    shutdown = Column(Boolean)
+    disabled = Column(Boolean, default=False)
     encapsulation = Column(String)
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
     vrf = Column(String)
+    acl_in = Column(String)
+    acl_out = Column(String)
     # acl = Column(String)
     # ipv4 = Column(String)
 
     device_id = Column(Integer, ForeignKey("device.id"))
-
-
-class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'acl' table data mapping."""
-
-    __tablename__ = "interface_acl"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    direction = Column(String)
-
-    interface_id = Column(Integer, ForeignKey("interface.id"))
 
 
 class InterfaceIPv4(Base):  # pylint: disable=too-few-public-methods
@@ -64,6 +54,7 @@ class InterfaceIPv4(Base):  # pylint: disable=too-few-public-methods
 
     id = Column(Integer, primary_key=True)
     network = Column(String)
+    address = Column(String)
     ip = Column(String)
     mask = Column(String)
     prefixlen = Column(Integer)
@@ -138,25 +129,8 @@ class Database:
             session.commit()
             interface_id = interface.id
 
-        for acl in interface_data.get("acl", []):
-            self.insert_acl(interface_id, acl)
-
         for ipv4 in interface_data.get("ipv4", []):
             self.insert_ipv4(interface_id, ipv4)
-
-    def insert_acl(self, interface_id, acl_data):
-        """Insert acl data to database."""
-
-        table_data = {}
-        for key in InterfaceACL.__table__.columns.keys():
-            table_data[key] = acl_data.get(key)
-        table_data["interface_id"] = interface_id
-
-        acl = InterfaceACL(**table_data)
-
-        with Session(self.engine) as session:
-            session.add(acl)
-            session.commit()
 
     def insert_ipv4(self, interface_id, ipv4_data):
         """Insert ipv4 data to database."""
@@ -192,8 +166,42 @@ class Database:
         """Check if current revision is default."""
         return self.name == self.basename
 
-    def find_network(self, network):
+    def find_network(self, network, mask_min=32, mask_max=24):
         """Find provided netwkork."""
+
+        result = {
+            "header": (
+                "Device",
+                "Interface",
+                "Shutdown",
+                "IP",
+                "ACL in",
+                "ACL out",
+                "Description",
+            ),
+            "data": [],
+        }
+
+        stmt = select(
+            Device.name.label("device"),
+            Interface.name.label("interface"),
+            Interface.disabled,
+            InterfaceIPv4.address,
+            Interface.acl_in,
+            Interface.acl_out,
+            Interface.description,
+        ).where(
+            InterfaceIPv4.network == network,
+            Interface.id == InterfaceIPv4.interface_id,
+            Device.id == Interface.device_id,
+        )
+
+        with Session(self.engine) as session:
+            for row in session.execute(stmt):
+                data = dict(zip(result["header"], row))
+                result["data"].append(data)
+
+        return result
 
     @staticmethod
     def gen_revision():

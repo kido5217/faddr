@@ -1,4 +1,4 @@
-"""CLI entry points of faddr."""
+"""CLI entry point for database creation."""
 
 import argparse
 import sys
@@ -82,7 +82,3 @@ def main():
                 logger.debug(f"Unsupported config: {config}")
 
     database.set_default()
-
-    console.rule("Devices")
-    for device in database.get_devices():
-        console.print(device.__dict__)

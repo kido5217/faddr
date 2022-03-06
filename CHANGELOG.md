@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Working Database class
+- 'faddr' cli entry point for data querying
 
 ### Changed
 

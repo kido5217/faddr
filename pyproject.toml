@@ -38,6 +38,8 @@ pytest-cov = "^3.0.0"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
+faddr = 'faddr.faddr:main'
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
