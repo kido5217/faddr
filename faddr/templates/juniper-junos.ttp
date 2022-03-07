@@ -1,0 +1,15 @@
+<macro>
+def generate_dot_interface_name(data):
+    data["name"] = data["parent_interface"] + "." + data["unit"]
+</macro>
+
+<group name="interfaces*" macro="generate_dot_interface_name">
+set interfaces {{ parent_interface }} unit {{ unit }} description {{ description | ORPHRASE }}
+set interfaces {{ parent_interface }} unit {{ unit }} vlan-id {{ s_vlan }}
+set interfaces {{ parent_interface }} unit {{ unit }} family inet address {{ ipv4 | to_ip |ip_info | to_list }}
+</group>
+
+<group name="interfaces*">
+set interfaces {{ name }} description {{ description | ORPHRASE }}
+set interfaces {{ name }} native-vlan-id {{ native_vlan }}
+</group>

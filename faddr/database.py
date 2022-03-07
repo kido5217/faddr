@@ -33,6 +33,8 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    parent_interface = Column(String)
+    unit = Column(String)
     duplex = Column(String)
     speed = Column(String)
     description = Column(String)
@@ -56,7 +58,7 @@ class InterfaceIPv4(Base):  # pylint: disable=too-few-public-methods
     network = Column(String)
     address = Column(String)
     ip = Column(String)
-    mask = Column(String)
+    netmask = Column(String)
     prefixlen = Column(Integer)
     network_address = Column(String)
 
@@ -166,7 +168,7 @@ class Database:
         """Check if current revision is default."""
         return self.name == self.basename
 
-    def find_network(self, network, mask_min=32, mask_max=24):
+    def find_network(self, network, netmask_min=32, netmask_max=24):
         """Find provided netwkork."""
 
         result = {
@@ -183,10 +185,10 @@ class Database:
             "data": [],
         }
 
-        for mask in range(mask_max, mask_min + 1):
+        for netmask in range(netmask_max, netmask_min + 1):
 
             network = ipaddress.ip_network(
-                (network.split("/")[0], mask), strict=False
+                (network.split("/")[0], netmask), strict=False
             ).with_prefixlen
 
             stmt = select(

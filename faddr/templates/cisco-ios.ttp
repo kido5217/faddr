@@ -2,7 +2,7 @@
 import ipaddress
 
 def add_network_data(data):
-    network = ipaddress.ip_network((data["ip"] + "/" + data["mask"]), strict=False)
+    network = ipaddress.ip_network((data["ip"] + "/" + data["netmask"]), strict=False)
     data["network"] = network.with_prefixlen
     data["network_address"] = str(network.network_address)
     data["prefixlen"] = network.prefixlen
@@ -22,6 +22,6 @@ interface {{ name }}
  ip access-group {{ acl_in }} in
  ip access-group {{ acl_out }} out
  <group name="ipv4*" macro="add_network_data">
- ip address {{ ip }} {{ mask }}
+ ip address {{ ip }} {{ netmask }}
  </group>
 </group>
