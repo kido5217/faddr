@@ -46,10 +46,11 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-#addopts = "-vvv --cov=faddr --cov-report=html --cov-report=xml --cov-report term-missing"
+addopts = "-vvv"
 testpaths = [
     "tests",
 ]
 
 [tool.pylint.'MESSAGES CONTROL']
 extension-pkg-whitelist = "pydantic"
+

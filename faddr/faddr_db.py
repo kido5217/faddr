@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from faddr import console, logger
+from faddr import logger
 from faddr.database import Database
 from faddr.exceptions import FaddrParserUnknownProfile, FaddrSettingsFileFormatError
 from faddr.parser import Parser
@@ -72,7 +72,7 @@ def main():
                 }
                 device.update(data)
                 database.insert_device(device)
-                console.print(device)
+                logger.debug(f"Device data: {device}")
             except FaddrParserUnknownProfile:
                 logger.debug(f"Unsupported config: {config}")
 
