@@ -3,7 +3,21 @@ def generate_dot_interface_name(data):
     data["name"] = _ttp_["vars"]["parent_interface"] + "." + data["unit"]
 </macro>
 
-<group name="interfaces*">
+<macro>
+def add_vrf_to_interface(data):
+    pass
+</macro>
+
+<group name="routing_instances*">
+routing-instances { {{ _start_ }}
+    {{ name }} {
+        instance-type {{ instance_type }};
+        <group name="interfaces*">
+        interface {{ interfaces | to_list}};
+        </group>
+</group>
+
+<group name="interfaces*" macro="add_vrf_to_interface">
 interfaces { {{ _start_ }}
     <group record="name, parent_interface">
     {{ name }} {
@@ -25,4 +39,3 @@ interfaces { {{ _start_ }}
     </group>
 } {{ _end_ }}
 </group>
-
