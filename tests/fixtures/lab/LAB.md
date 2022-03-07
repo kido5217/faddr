@@ -30,6 +30,8 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.ssh
 rm -rf ~/projects/faddr/tests/fixtures/rancid/.gnupg
 rm -rf ~/projects/faddr/tests/fixtures/rancid/.bash_history
 rm -rf ~/projects/faddr/tests/fixtures/rancid/.cloginrc
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.vim
+rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
 ```
 
 ## Configuration rules
