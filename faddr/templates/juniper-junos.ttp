@@ -15,6 +15,10 @@ interfaces { {{ _start_ }}
             description {{ description | ORPHRASE }};
             vlan-id {{ s_vlan }};
             vlan-tags outer {{ s_vlan }} inner {{ c_vlan }};
+            family inet { {{ _ignore_ }}
+                filter { {{ _ignore_ }}
+                    input {{ acl_in }};
+                    output {{ acl_out }};
                 address {{ ipv4 | PREFIX | to_ip | ip_info | to_list }};
         </group>
     } {{ _end_ }}
