@@ -173,10 +173,11 @@ class Database:
             "header": (
                 "Device",
                 "Interface",
-                "Shutdown",
                 "IP",
+                "VRF",
                 "ACL in",
                 "ACL out",
+                "Shutdown",
                 "Description",
             ),
             "data": [],
@@ -191,10 +192,11 @@ class Database:
             stmt = select(
                 Device.name.label("device"),
                 Interface.name.label("interface"),
-                Interface.disabled,
                 InterfaceIPv4.address,
+                Interface.vrf,
                 Interface.acl_in,
                 Interface.acl_out,
+                Interface.disabled,
                 Interface.description,
             ).where(
                 InterfaceIPv4.network == network,
