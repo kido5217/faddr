@@ -265,9 +265,14 @@ Version: `17.2R1.13`
 
 Status: WIP
 
+Notes:
+
+- vMX needs trial license for some features to work properly. Read more: <https://www.juniper.net/us/en/dm/vmx-trial-download.html>
+
 Configuration:
 
 ```
+# Basic settings, AAA, connectivity
 delete chassis auto-image-upgrade
 
 set system root-authentication plain-text-password [faddr123]
@@ -283,6 +288,21 @@ set system services ssh
 set system host-name juniper-junos-17-vmx
 set system domain-name lab.faddr
 
+set chassis network-services enhanced-ip
+
+# VRFs
+set routing-instances Test001 instance-type vrf
+set routing-instances Test001 interface ge-0/0/1.110
+set routing-instances Test001 route-distinguisher 1.1.1.1:110
+set routing-instances Test001 vrf-target target:64501:110
+
+# ACLs
+set firewall family inet filter ACLin01 term 001 then accept
+set firewall family inet filter ACLin02 term 001 then accept
+set firewall family inet filter ACLout01 term 001 then accept
+set firewall family inet filter ACLout02 term 001 then accept
+
+# Interfaces
 set interfaces ge-0/0/1 description "port 1"
 set interfaces ge-0/0/1 flexible-vlan-tagging
 set interfaces ge-0/0/1 native-vlan-id 101
@@ -294,4 +314,34 @@ set interfaces ge-0/0/1 unit 100 family inet address 10.100.100.1/24
 set interfaces ge-0/0/1 unit 101 description "vlan 101: native, ipv4 address 10.101.101.1/24"
 set interfaces ge-0/0/1 unit 101 vlan-id 101
 set interfaces ge-0/0/1 unit 101 family inet address 10.101.101.1/24
+
+set interfaces ge-0/0/1 unit 102 description "qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24"
+set interfaces ge-0/0/1 unit 102 vlan-tags outer 102
+set interfaces ge-0/0/1 unit 102 vlan-tags inner 999
+set interfaces ge-0/0/1 unit 102 family inet mtu 1500
+set interfaces ge-0/0/1 unit 102 family inet no-redirects
+set interfaces ge-0/0/1 unit 102 family inet address 10.102.102.1/24
+
+set interfaces ge-0/0/1 unit 110 description "vrf Test001, ipv4 address 10.110.110.1/24"
+set interfaces ge-0/0/1 unit 110 vlan-id 110
+set interfaces ge-0/0/1 unit 110 family inet address 10.110.110.1/24
+
+set interfaces ge-0/0/1 unit 121 description "acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24"
+set interfaces ge-0/0/1 unit 121 vlan-id 121
+set interfaces ge-0/0/1 unit 121 family inet rpf-check
+set interfaces ge-0/0/1 unit 121 family inet no-redirects
+set interfaces ge-0/0/1 unit 121 family inet filter input ACLin01
+set interfaces ge-0/0/1 unit 121 family inet filter output ACLout01
+set interfaces ge-0/0/1 unit 121 family inet address 10.121.121.121/24
+
+set interfaces ge-0/0/1 unit 122 description "acl input ACLin02, ipv4 address 10.122.122.122/24"
+set interfaces ge-0/0/1 unit 122 vlan-id 122
+set interfaces ge-0/0/1 unit 122 family inet filter input ACLin02
+set interfaces ge-0/0/1 unit 122 family inet address 10.122.122.122/24
+
+set interfaces ge-0/0/1 unit 123 disable
+set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 10.123.123.123/24"
+set interfaces ge-0/0/1 unit 123 vlan-id 123
+set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
+set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
 ```
