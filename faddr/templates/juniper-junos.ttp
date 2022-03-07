@@ -1,13 +1,24 @@
-<group>
+<macro>
+def generate_dot_interface_name(data):
+    data["name"] = _ttp_["vars"]["parent_interface"] + "." + data["unit"]
+</macro>
+
+<group name="interfaces*">
 interfaces { {{ _start_ }}
+    <group record="name, parent_interface">
     {{ name }} {
         description {{ description | ORPHRASE }};
-        native-vlan-id {{ native_vlan }};
-        unit {{ unit | _start_ }} {
+        native-vlan-id {{ native_vlan_id }};
+        <group set="parent_interface" macro="generate_dot_interface_name">
+        unit {{ unit | DIGIT }} {
+            disable; {{ disabled | set(True) }}
             description {{ description | ORPHRASE }};
             vlan-id {{ s_vlan }};
             vlan-tags outer {{ s_vlan }} inner {{ c_vlan }};
-        } {{ _end_ }}
-    }
+                address {{ ipv4 | PREFIX | to_ip | ip_info | to_list }};
+        </group>
+    } {{ _end_ }}
+    </group>
 } {{ _end_ }}
 </group>
+
