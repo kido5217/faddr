@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Juniper Junos configuration pasring.
+
+### Changed
+
+- Parser's output structure format. "interfaces" now is dict instean of list.
+- ipv4 and ipv6 combined into single ip structure/QLALchemy class.
+
 ## [0.0.5] - 2022-03-07
 
 ### Added

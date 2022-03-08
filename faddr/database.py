@@ -49,18 +49,34 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     device_id = Column(Integer, ForeignKey("device.id"))
 
 
-class InterfaceIPv4(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'ipv4' table data mapping."""
+class IP(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'ip' table data mapping."""
 
-    __tablename__ = "interface_ipv4"
+    __tablename__ = "ip"
 
     id = Column(Integer, primary_key=True)
-    network = Column(String)
-    address = Column(String)
+    broadcast_address = Column(String)
+    compressed = Column(String)
+    exploded = Column(String)
+    hostmask = Column(String)
+    hosts = Column(Integer)
     ip = Column(String)
+    is_link_local = Column(Boolean, default=False)
+    is_loopback = Column(Boolean, default=False)
+    is_multicast = Column(Boolean, default=False)
+    is_private = Column(Boolean, default=False)
+    is_reserved = Column(Boolean, default=False)
+    is_unspecified = Column(Boolean, default=False)
+    max_prefixlen = Column(Integer)
     netmask = Column(String)
-    prefixlen = Column(Integer)
+    network = Column(String)
     network_address = Column(String)
+    num_addresses = Column(Integer)
+    prefixlen = Column(Integer)
+    version = Column(Integer)
+    with_hostmask = Column(String)
+    with_netmask = Column(String)
+    with_prefixlen = Column(String)
 
     interface_id = Column(Integer, ForeignKey("interface.id"))
 
@@ -113,15 +129,16 @@ class Database:
             session.commit()
             device_id = device.id
 
-        for interface in device_data.get("interfaces", []):
-            self.insert_interface(device_id, interface)
+        for interface_name, interface_data in device_data.get("interfaces", {}).items():
+            self.insert_interface(device_id, interface_name, interface_data)
 
-    def insert_interface(self, device_id, interface_data):
+    def insert_interface(self, device_id, name, data):
         """Insert interface data to database."""
 
         table_data = {}
         for key in Interface.__table__.columns.keys():
-            table_data[key] = interface_data.get(key)
+            table_data[key] = data.get(key)
+        table_data["name"] = name
         table_data["device_id"] = device_id
 
         interface = Interface(**table_data)
@@ -131,21 +148,21 @@ class Database:
             session.commit()
             interface_id = interface.id
 
-        for ipv4 in interface_data.get("ipv4", []):
-            self.insert_ipv4(interface_id, ipv4)
+        for ip_address in data.get("ip", []):
+            self.insert_ip_address(interface_id, ip_address)
 
-    def insert_ipv4(self, interface_id, ipv4_data):
-        """Insert ipv4 data to database."""
+    def insert_ip_address(self, interface_id, data):
+        """Insert ip_address data to database."""
 
         table_data = {}
-        for key in InterfaceIPv4.__table__.columns.keys():
-            table_data[key] = ipv4_data.get(key)
+        for key in IP.__table__.columns.keys():
+            table_data[key] = data.get(key)
         table_data["interface_id"] = interface_id
 
-        ipv4 = InterfaceIPv4(**table_data)
+        ip_address = IP(**table_data)
 
         with Session(self.engine) as session:
-            session.add(ipv4)
+            session.add(ip_address)
             session.commit()
 
     def get_devices(self):
@@ -194,15 +211,15 @@ class Database:
             stmt = select(
                 Device.name.label("device"),
                 Interface.name.label("interface"),
-                InterfaceIPv4.address,
+                IP.with_prefixlen,
                 Interface.vrf,
                 Interface.acl_in,
                 Interface.acl_out,
                 Interface.disabled,
                 Interface.description,
             ).where(
-                InterfaceIPv4.network == network,
-                Interface.id == InterfaceIPv4.interface_id,
+                IP.network == network,
+                Interface.id == IP.interface_id,
                 Device.id == Interface.device_id,
             )
 
