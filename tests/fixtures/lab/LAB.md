@@ -125,10 +125,11 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
 
 ## Devices
 
-| Vendor  | Type  | Model | Version | Hostname               | OAM ipv4 address  |
-| ---     | ---   | ---   | ---     | ---                    | ---               |
-| Cisco   | IOS   | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
-| Juniper | Junos | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
+| Vendor  | Type   | Model | Version | Hostname               | OAM ipv4 address  |
+| ---     | ---    | ---   | ---     | ---                    | ---               |
+| Cisco   | IOS    | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
+| Juniper | Junos  | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
+| Cisco   | IOS-XR | XRv9k | 6.0.1   | `cisco-iosxr-6-xrv`    | `192.168.100.113` |
 
 ### Cisco
 
@@ -251,6 +252,50 @@ description vlan 123: acl output ACLout02, ipv4 address 10.123.123.123/24
 encapsulation dot1Q 123
 ip address 10.123.123.123 255.255.255.0
 ip access-group ACLout02 out
+```
+
+#### IOS-XR
+
+Hostname: `cisco-iosxr-6-xrv`
+
+OAM: `192.168.100.113`
+
+Device: XRv9k on [`EVE-NG`](https://www.eve-ng.net/)
+
+Version: `6.0.1`
+
+Status: WIP
+
+Notes:
+
+- With modern openssh you need to enable legacy cyphers:
+`ssh -oCiphers=+aes256-cbc -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 192.168.100.113`
+
+Configuration:
+
+```cpp
+# Basic settings, AAA, connectivity
+hostname cisco-iosxr-6-xrv
+domain name faddr.lab
+
+username faddr
+username faddr group root-lr
+username faddr password faddr123
+
+interface MgmtEth0/RP0/CPU0/0 description OAM
+interface MgmtEth0/RP0/CPU0/0 ipv4 address 192.168.100.113 255.255.255.0
+no interface MgmtEth0/RP0/CPU0/0 shutdown
+
+ssh server v2
+ssh server vrf default
+line default transport input ssh
+
+# Generate SSH keys
+crypto key generate rsa
+
+# VRFs
+
+
 ```
 
 ### Juniper
