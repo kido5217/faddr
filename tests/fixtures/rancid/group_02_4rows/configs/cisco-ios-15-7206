@@ -167,9 +167,10 @@ interface Loopback0
  ip address 1.1.1.1 255.255.255.255
 !
 interface Loopback10
- description Loopback10: OaM, vrf OAM, ipv4 address 10.10.10.1/32
+ description Loopback10:  OaM, vrf OAM, ipv4 address 10.10.10.1/32
  ip vrf forwarding OAM
  ip address 10.10.10.1 255.255.255.255
+ ip address 20.20.20.2 255.255.255.255 secondary
 !
 interface FastEthernet0/0
  description OAM
@@ -219,7 +220,6 @@ interface FastEthernet1/0.123
  encapsulation dot1Q 123
  ip address 10.123.123.123 255.255.255.0
  ip access-group ACLout02 out
- shutdown
 !
 interface FastEthernet2/0
  no ip address

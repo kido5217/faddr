@@ -1,0 +1,26 @@
+<vars>
+SUBINT_UNIT = "((\S+)\s(unit)\s(\S+))"
+</vars>
+
+<group name="interfaces.{{ name }}**" method="table">
+set interfaces {{ name }} description {{ description | ORPHRASE }}
+set interfaces {{ name }} native-vlan-id {{ native_vlan }}
+</group>
+
+<group name="interfaces.{{ name }}**" method="table">
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} disable {{ disabled | set("True") }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} description {{ description | _line_ }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-id {{ s_vlan }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags outer {{ s_vlan }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags inner {{ c_vlan }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter input {{ acl_in }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter output {{ acl_out }}
+</group>
+
+<group name="interfaces.{{ name }}**.ip*" method="table" itemize="ip">
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip | PREFIX | to_ip | ip_info }}
+</group>
+
+<group name="interfaces.{{ name }}**" method="table">
+set routing-instances {{ vrf }} interface {{ name }}
+</group>

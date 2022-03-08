@@ -1,0 +1,11 @@
+{
+    "interfaces": {
+        "ge-0/0/1": {
+            "description": "FIXTURE_TTP_TEST"
+        },
+        "ge-0/0/1.101": {
+            "description": "FIXTURE_TTP_TEST",
+            "s_vlan": "101"
+        }
+    }
+}

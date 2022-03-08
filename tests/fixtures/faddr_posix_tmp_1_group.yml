@@ -9,3 +9,4 @@ rancid:
       kind: group
       mapping:
         "cisco-faddr": "cisco-ios"
+        "juniper-faddr": "juniper-junos"
