@@ -11,19 +11,17 @@ from faddr.exceptions import FaddrParserConfigFileAbsent, FaddrParserUnknownProf
 class Parser:
     """Loads configuration, preprocesses it, parses it and returns structured data."""
 
-    SUPPORTED_PROFILES = ("cisco-ios",)
+    SUPPORTED_PROFILES = (
+        "cisco-ios",
+        "juniper-junos",
+    )
 
     def __init__(
         self,
         config,
         profile,
         template_dir,
-        input_encoding="ascii",
-        input_errors="ignore",
     ) -> None:
-
-        self.encoding = input_encoding
-        self.errors = input_errors
 
         if profile in self.__class__.SUPPORTED_PROFILES:
             self.profile = profile
@@ -43,9 +41,7 @@ class Parser:
         """Load ttp template from template dir."""
         template_name = self.profile + ".ttp"
         template_path = Path(template_dir, template_name)
-        with open(
-            template_path, encoding=self.encoding, errors=self.errors
-        ) as template_file:
+        with open(template_path, encoding="ascii", errors="ignore") as template_file:
             return template_file.read()
 
     def load_config(self, config):
@@ -74,7 +70,7 @@ class Parser:
         if not path.exists:
             raise FaddrParserConfigFileAbsent(path)
 
-        with open(path, encoding=self.encoding, errors=self.errors) as config_file:
+        with open(path, encoding="ascii", errors="ignore") as config_file:
             config = config_file.read()
 
         return config
