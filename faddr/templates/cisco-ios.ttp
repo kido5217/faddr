@@ -1,3 +1,6 @@
+<vars>
+IP_SPACE_MASK = "((\S+)\s(\S+))"
+</vars>
 <macro>
 import ipaddress
 
@@ -9,7 +12,7 @@ def add_network_data(data):
     data["address"] = data["ip"] + "/" + str(data["prefixlen"])
 </macro>
 
-<group name="interfaces*">
+<group name="interfaces.{{ name }}**">
 interface {{ name }}
  duplex {{ duplex }}
  speed {{ speed }}
@@ -21,7 +24,8 @@ interface {{ name }}
  ip vrf forwarding {{ vrf }}
  ip access-group {{ acl_in }} in
  ip access-group {{ acl_out }} out
- <group name="ipv4*" macro="add_network_data">
- ip address {{ ip }} {{ netmask }}
+ <group name="ip*" method="table" itemize="ip">
+ ip address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }}
+ ip address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
  </group>
 </group>

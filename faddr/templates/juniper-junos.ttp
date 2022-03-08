@@ -9,7 +9,7 @@ set interfaces {{ name }} native-vlan-id {{ native_vlan }}
 
 <group name="interfaces.{{ name }}**" method="table">
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} disable {{ disabled | set("True") }}
-set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} description {{ description | ORPHRASE }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} description {{ description | _line_ }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-id {{ s_vlan }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags outer {{ s_vlan }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags inner {{ c_vlan }}
