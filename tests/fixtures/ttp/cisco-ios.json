@@ -1,1 +1,7 @@
-{"interfaces": [{"description": "FIXTURE_TTP_TEST", "name": "FastEthernet0/0"}]}
+{
+    "interfaces": {
+        "FastEthernet0/0": {
+            "description": "FIXTURE_TTP_TEST"
+        }
+    }
+}
