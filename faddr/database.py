@@ -1,16 +1,21 @@
 """Database operations."""
 
 import ipaddress
-
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine, select
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    create_engine,
+    select,
+)
+from sqlalchemy.orm import Session, declarative_base
 
 from faddr.exceptions import FaddrDatabaseDirError
-
 
 Base = declarative_base()
 
