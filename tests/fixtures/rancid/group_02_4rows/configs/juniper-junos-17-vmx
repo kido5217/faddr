@@ -1288,6 +1288,7 @@ set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 
 set interfaces ge-0/0/1 unit 123 vlan-id 123
 set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
 set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
+set interfaces ge-0/0/1 unit 123 family inet address 20.20.20.20/24
 set interfaces fxp0 unit 0 description OAM
 set interfaces fxp0 unit 0 family inet address 192.168.100.112/24
 set firewall family inet filter ACLin01 term 001 then accept
