@@ -6,12 +6,6 @@ from pathlib import Path
 from faddr import logger
 from faddr.exceptions import FaddrRancidPathError
 
-# class RancidConfig(BaseModel):
-#     """Device from router.db."""
-#
-#
-#     enabled: bool = True
-
 
 class RancidGroup:
     """Rancid group dir parser.
@@ -85,11 +79,11 @@ class RancidGroup:
                 config["enabled"] = enabled_map.get(router_data[2], False)
                 config["path"] = Path(self.repo, router_data[0])
                 config["content_type"] = router_data[1]
-                config["name"] = router_data[0]
+                config["name"] = router_data[0].casefold()
                 if len(router_data) == 3:
-                    config["hostname"] = router_data[0]
+                    config["hostname"] = router_data[0].casefold()
                 else:
-                    config["hostname"] = router_data[3]
+                    config["hostname"] = router_data[3].casefold()
                 config["router_db_raw_string"] = router_string
                 configs.append(config)
             else:
