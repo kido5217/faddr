@@ -5,7 +5,11 @@ import sys
 
 from faddr import logger
 from faddr.database import Database
-from faddr.exceptions import FaddrParserUnknownProfile, FaddrSettingsFileFormatError
+from faddr.exceptions import (
+    FaddrParserConfigFileAbsent,
+    FaddrParserUnknownProfile,
+    FaddrSettingsFileFormatError,
+)
 from faddr.parser import Parser
 from faddr.rancid import RancidDir, RancidGroup
 from faddr.settings import load_settings
@@ -54,8 +58,10 @@ def main():
             rancid = RancidGroup(rancid_dir.path)
         else:
             continue
+        logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
 
         for config in rancid.configs:
+            logger.info(f'Parsing \'{config["name"]}\' from \'{config["path"]}\'')
             try:
                 parser = Parser(
                     config["path"],
@@ -72,8 +78,17 @@ def main():
                 }
                 device.update(data)
                 database.insert_device(device)
-                logger.debug(f"Device data: {device}")
+                device_stats = {}
+                for category, category_data in data.items():
+                    if category != "info":
+                        device_stats[category] = len(category_data)
+                logger.info(
+                    f'Inserted device \'{device["info"]["name"]}\' data into database'
+                )
+                logger.info(f'\'{device["info"]["name"]}\' stats: {device_stats}')
             except FaddrParserUnknownProfile:
-                logger.debug(f"Unsupported config: {config}")
+                logger.warning(f"Unsupported config: {config}")
+            except FaddrParserConfigFileAbsent:
+                logger.warning(f"Config file absent: {config}")
 
     database.set_default()
