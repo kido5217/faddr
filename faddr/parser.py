@@ -67,7 +67,7 @@ class Parser:
     def load_config_from_file(self, path):
         """Try to read data from file."""
         path = Path(path)
-        if not path.exists:
+        if not path.exists():
             raise FaddrParserConfigFileAbsent(path)
 
         with open(path, encoding="ascii", errors="ignore") as config_file:
