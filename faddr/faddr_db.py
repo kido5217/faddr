@@ -20,7 +20,7 @@ def parse_cmd_args():
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
     parser.add_argument(
-        "-d",
+        "-D",
         "--debug",
         action="store_true",
         help="Enable debug messages",
@@ -80,12 +80,10 @@ def main():
                 database.insert_device(device)
                 device_stats = {}
                 for category, category_data in data.items():
-                    if category != "info":
-                        device_stats[category] = len(category_data)
-                logger.info(
-                    f'Inserted device \'{device["info"]["name"]}\' data into database'
-                )
-                logger.info(f'\'{device["info"]["name"]}\' stats: {device_stats}')
+                    if category == "info":
+                        continue
+                    device_stats[category] = len(category_data)
+                logger.info(f'\'{device["info"]["name"]}\' parsed: {device_stats}')
             except FaddrParserUnknownProfile:
                 logger.warning(f"Unsupported config: {config}")
             except FaddrParserConfigFileAbsent:

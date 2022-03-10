@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Some INFO level logging for faddr-db
+- Some INFO level logging for faddr-db.
+
+### Changed
+
+- Compact output table style .
+- Debug short key in CLI changes from "-d" to "-D".
+
+### Fixed
+
+- Disables text wrapping for output table in "faddr" for all columns except "Description".
 
 ## [0.0.6] - 2022-03-08
 

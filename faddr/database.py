@@ -194,7 +194,7 @@ class Database:
         """Find provided netwkork."""
 
         result = {
-            "header": (
+            "header": [
                 "Device",
                 "Interface",
                 "IP",
@@ -203,7 +203,7 @@ class Database:
                 "ACL out",
                 "Shutdown",
                 "Description",
-            ),
+            ],
             "data": [],
         }
 
