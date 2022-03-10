@@ -6,7 +6,7 @@ import sys
 from loguru import logger
 from rich.console import Console
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 if os.getenv("FADDR_DEBUG") or any(arg in sys.argv for arg in ("-D", "--debug")):
     LOG_LEVEL = "DEBUG"

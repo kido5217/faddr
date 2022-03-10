@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Cisco IOS-XR configuration parsing.
 - Some INFO level logging for faddr-db.
 
 ### Changed
