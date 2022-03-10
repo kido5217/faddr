@@ -1,0 +1,17 @@
+<vars>
+IP_SPACE_MASK = "((\S+)\s(\S+))"
+</vars>
+
+<group name="interfaces.{{ name }}**">
+interface {{ name }}
+ description {{ description | _line_ }}
+ vrf {{ vrf }}
+ <group name="ip*" method="table" itemize="ip">
+ ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }}
+ ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
+ </group>
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan }}
+ encapsulation {{ encapsulation | lower() }} {{ s_vlan }} second-dot1q {{ c_vlan }}
+ ipv4 access-group {{ acl_in }} ingress
+ ipv4 access-group {{ acl_out }} egress
+</group>

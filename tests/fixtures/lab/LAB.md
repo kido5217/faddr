@@ -125,10 +125,11 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
 
 ## Devices
 
-| Vendor  | Type  | Model | Version | Hostname               | OAM ipv4 address  |
-| ---     | ---   | ---   | ---     | ---                    | ---               |
-| Cisco   | IOS   | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
-| Juniper | Junos | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
+| Vendor  | Type   | Model | Version | Hostname               | OAM ipv4 address  |
+| ---     | ---    | ---   | ---     | ---                    | ---               |
+| Cisco   | IOS    | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
+| Juniper | Junos  | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
+| Cisco   | IOS-XR | XRv9k | 6.0.1   | `cisco-iosxr-6-xrv`    | `192.168.100.113` |
 
 ### Cisco
 
@@ -251,6 +252,103 @@ description vlan 123: acl output ACLout02, ipv4 address 10.123.123.123/24
 encapsulation dot1Q 123
 ip address 10.123.123.123 255.255.255.0
 ip access-group ACLout02 out
+```
+
+#### IOS-XR
+
+Hostname: `cisco-iosxr-6-xrv`
+
+OAM: `192.168.100.113`
+
+Device: XRv9k on [`EVE-NG`](https://www.eve-ng.net/)
+
+Version: `6.0.1`
+
+Status: WIP
+
+Notes:
+
+- With modern openssh you need to enable legacy cyphers:
+`ssh -oCiphers=+aes256-cbc -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 192.168.100.113`
+
+Configuration:
+
+```cpp
+# Basic settings, AAA, connectivity
+hostname cisco-iosxr-6-xrv
+domain name lab.faddr
+
+username faddr
+username faddr group root-lr
+username faddr password faddr123
+
+interface MgmtEth0/RP0/CPU0/0 description OAM
+interface MgmtEth0/RP0/CPU0/0 ipv4 address 192.168.100.113 255.255.255.0
+no interface MgmtEth0/RP0/CPU0/0 shutdown
+
+ssh server v2
+ssh server vrf default
+line default transport input ssh
+line default transport input telnet
+
+# Generate SSH keys
+crypto key generate rsa
+
+# VRFs
+vrf Test001 
+vrf Test001 address-family ipv4 unicast 
+vrf Test001 address-family ipv4 unicast import route-target 64501:110
+vrf Test001 address-family ipv4 unicast export route-target 64501:110
+
+# ACLs
+ipv4 access-list ACLin01 10 permit ipv4 any any
+ipv4 access-list ACLin02 10 permit ipv4 any any
+ipv4 access-list ACLout01 10 permit ipv4 any any
+ipv4 access-list ACLout02 10 permit ipv4 any any
+
+# Interfaces
+no interface GigabitEthernet0/0/0/0 shutdown
+
+interface GigabitEthernet0/0/0/0.100 
+interface GigabitEthernet0/0/0/0.100 description ipv4 address 10.100.100.1/24
+interface GigabitEthernet0/0/0/0.100 ipv4 address 10.100.100.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.100 encapsulation dot1q 100
+
+interface GigabitEthernet0/0/0/0.101 
+interface GigabitEthernet0/0/0/0.101 description native, ipv4 address 10.101.101.1/24
+interface GigabitEthernet0/0/0/0.101 ipv4 address 10.101.101.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.101 encapsulation dot1q 101
+
+interface GigabitEthernet0/0/0/0.102 
+interface GigabitEthernet0/0/0/0.102 description qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+interface GigabitEthernet0/0/0/0.102 ipv4 address 10.102.102.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.102 encapsulation dot1q 102 second-dot1q 999
+
+interface GigabitEthernet0/0/0/0.110 
+interface GigabitEthernet0/0/0/0.110 description vrf Test001, ipv4 address 10.110.110.1/24
+interface GigabitEthernet0/0/0/0.110 vrf Test001
+interface GigabitEthernet0/0/0/0.110 ipv4 address 10.110.110.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.110 encapsulation dot1q 110
+
+interface GigabitEthernet0/0/0/0.121 
+interface GigabitEthernet0/0/0/0.121 description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
+interface GigabitEthernet0/0/0/0.121 ipv4 address 10.121.121.121 255.255.255.0
+interface GigabitEthernet0/0/0/0.121 encapsulation dot1q 121
+interface GigabitEthernet0/0/0/0.121 ipv4 access-group ACLin01 ingress
+interface GigabitEthernet0/0/0/0.121 ipv4 access-group ACLout01 egress
+
+interface GigabitEthernet0/0/0/0.122 
+interface GigabitEthernet0/0/0/0.122 description acl input ACLin02, ipv4 address 10.122.122.122/24
+interface GigabitEthernet0/0/0/0.122 ipv4 address 10.122.122.122 255.255.255.0
+interface GigabitEthernet0/0/0/0.122 encapsulation dot1q 122
+interface GigabitEthernet0/0/0/0.122 ipv4 access-group ACLin02 ingress
+
+interface GigabitEthernet0/0/0/0.123 
+interface GigabitEthernet0/0/0/0.123 description acl output ACLout02, ipv4 address 10.123.123.123/24
+interface GigabitEthernet0/0/0/0.123 ipv4 address 10.123.123.123 255.255.255.0
+interface GigabitEthernet0/0/0/0.123 shutdown
+interface GigabitEthernet0/0/0/0.123 encapsulation dot1q 123
+interface GigabitEthernet0/0/0/0.123 ipv4 access-group ACLout02 egress
 ```
 
 ### Juniper

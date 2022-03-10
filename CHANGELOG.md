@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2022-03-10
+
 ### Added
 
+- Cisco IOS-XR configuration parsing.
 - Some INFO level logging for faddr-db.
 
 ### Changed
@@ -18,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Disables text wrapping for output table in "faddr" for all columns except "Description".
+- Disabled text wrapping for output table in "faddr" for all columns except "Description".
 
 ## [0.0.6] - 2022-03-08
 

@@ -1,16 +1,6 @@
 <vars>
 IP_SPACE_MASK = "((\S+)\s(\S+))"
 </vars>
-<macro>
-import ipaddress
-
-def add_network_data(data):
-    network = ipaddress.ip_network((data["ip"] + "/" + data["netmask"]), strict=False)
-    data["network"] = network.with_prefixlen
-    data["network_address"] = str(network.network_address)
-    data["prefixlen"] = network.prefixlen
-    data["address"] = data["ip"] + "/" + str(data["prefixlen"])
-</macro>
 
 <group name="interfaces.{{ name }}**">
 interface {{ name }}

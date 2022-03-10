@@ -13,6 +13,7 @@ class Parser:
 
     SUPPORTED_PROFILES = (
         "cisco-ios",
+        "cisco-iosxr",
         "juniper-junos",
     )
 

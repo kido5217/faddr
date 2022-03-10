@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "faddr"
-version = "0.0.6"
+version = "0.0.7"
 description = "Tool to parse configuration of network devices such as Juniper routers and store gathered data in database"
 license = "MIT"
 authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]

@@ -26,3 +26,9 @@ M6201e303|rancid|~/group_02_4rows|group_02_4rows/configs|1.4|cisco-ios-15-7206
 M6201e303|rancid|~/group_02_4rows|group_02_4rows/configs|1.4|juniper-junos-17-vmx
 M62264bd3|rancid|~/group_01_3rows|group_01_3rows/configs|1.5|juniper-junos-17-vmx
 M62264bda|rancid|~/group_02_4rows|group_02_4rows/configs|1.5|juniper-junos-17-vmx
+A622a2ba8|rancid|~/*0|group_01_3rows/configs|1.1|cisco-iosxr-6-xrv
+M622a2bb9|rancid|~/*0|group_01_3rows|1.4|router.db
+A622a2bba|rancid|~/*0|group_02_4rows/configs|1.1|cisco-iosxr-6-xrv
+M622a2bc8|rancid|~/*0|group_02_4rows|1.4|router.db
+M622a2dc4|rancid|~/group_01_3rows|group_01_3rows/configs|1.2|cisco-iosxr-6-xrv
+M622a2de2|rancid|~/group_02_4rows|group_02_4rows/configs|1.2|cisco-iosxr-6-xrv
