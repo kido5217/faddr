@@ -1,0 +1,727 @@
+!RANCID-CONTENT-TYPE: cisco-xr-faddr
+!
+!
+!
+!
+!Image: Node 0/RP0/CPU0 [RP]
+!Image:   Boot Partition: xr_lv0
+!Image:   Active Packages: 1
+!Image:         xrv9k-xr-6.0.1 version=6.0.1 [Boot image]
+!
+!Flash: disk0: Directory of disk0:
+!Flash: disk0: 8177 drwx------ 2  4096 Mar  8 15:32 clihistory
+!Flash: disk0:   13 lrwxrwxrwx 1    12 Mar  8 15:32 config -> /misc/config
+!Flash: disk0:   12 drwxr-xr-x 2  4096 Mar  8 15:32 core
+!Flash: disk0: 8178 drwxr-xr-x 2  4096 Mar  8 15:33 crypto
+!Flash: disk0:   11 drwx------ 2 16384 Mar  8 15:32 lost+found
+!Flash: disk0: 8180 drwxr-xr-x 2  4096 Mar 10 16:39 nvgen_traces
+!Flash: disk0:   19 -rw-r--r-- 1   363 Mar 10 15:44 status_file
+!Flash: disk0: 8179 drwxr-xr-x 2  4096 Mar 10 15:44 ztp
+!Flash: disk0: 988 MB total (93% free)
+!
+!Flash: harddisk: Directory of harddisk:
+!Flash: harddisk:   12 -rw-r--r-- 1 589824 Mar  8 15:32 .csbsc
+!Flash: harddisk: 8003 drwxr-xr-x 2   4096 Mar  8 15:33 ipodwdm_log
+!Flash: harddisk: 8001 drwxr-xr-x 2   4096 Mar  8 15:32 nvram
+!Flash: harddisk: 8002 drwxr-xr-x 2   4096 Mar  8 15:32 shutdown
+!Flash: harddisk:   11 drwxr-xr-x 2   4096 Mar  8 15:32 tftpboot
+!Flash: harddisk: 968 MB total (92% free)
+!
+!Location  DEFAULT OUT LIST                                               
+!-------------------------------------------------------------------------
+!0         [ "\n Rack 0-Fake-IDPROM Info\n    IDPROM data unavailable" ]  
+!0/RP0     [ "\n 0/RP0-Fake-IDPROM Info\n    IDPROM data unavailable" ]   
+!
+! Name: Rack 0-Chassis        Descr: Cisco IOS-XRv 9000 Virtual Router                           
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: Rack 0-Fake-RouterBackplane  Descr: Cisco IOS-XRv 9000 Router Fake Backplane Module             
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: Rack 0-Fake-IDPROM    Descr: Cisco XRv9K Virtual Router                                  
+! PID: R-IOSXRV9000-CH        VID: V01                   SN: B32E2AF5833 
+! Name: Rack 0-Route Processor Slot 0  Descr: Cisco IOS-XRv 9000 Route Processor Slot                     
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Card            Descr: Cisco IOS-XRv 9000 Route Processor                          
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Fake-Motherboard  Descr: Cisco IOS-XRv 9000 Fake RP Motherboard Module               
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Fake-IDPROM     Descr: Cisco XRv9K Route Processor                                 
+! PID: R-IOSXRV9000-RP        VID: V01                   SN: B32E2AF5833 
+! Name: 0/RP0-CPU Module      Descr: CPU Module                                                  
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Intel 8 Core CPU Complex  Descr: Processor Module                                            
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Virtual processor for admin  Descr: Virtual Processor Module for Admin VM                       
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: 0/RP0-Virtual processor for RP XR  Descr: Virtual Processor Module for RP-XR VM                       
+! PID: N/A                    VID: N/A                   SN: N/A         
+! Name: Rack 0-Route Processor Slot 1  Descr: Cisco XRv9k Route Processor Slot                            
+! PID: N/A                    VID: N/A                   SN: N/A         
+!
+!                              Current    Current       Max
+!                               Total      Limit       Limit
+! ------------------------------------------------------------
+! Lines of configuration             0      65536     131072
+! Policies                           0       3500       5000
+! Compiled policies size (kB)        0
+!
+!fpd auto-upgrade disable
+!aaa authentication users user admin
+! uid        9000
+! gid        100
+! password   $1$gaae$w6TbTEQI8OFqSMnfpcinn0
+! ssh_keydir /var/confd/homes/admin/.ssh
+! homedir    /var/confd/homes/admin
+!!
+!aaa authentication groups group aaa-r
+! gid   100
+! users %%__system_user__%%
+!!
+!aaa authentication groups group admin-r
+! gid   100
+! users %%__system_user__%%
+!!
+!aaa authentication groups group root-system
+! gid   100
+! users "admin %%__system_user__%%"
+!!
+!aaa authorization cmdrules cmdrule 1
+! context *
+! command *
+! group   root-system
+! ops     rx
+! action  accept
+!!
+!aaa authorization cmdrules cmdrule 2
+! context *
+! command "show running-config aaa"
+! group   aaa-r
+! ops     rx
+! action  accept
+!!
+!aaa authorization cmdrules cmdrule 3
+! context *
+! command "show tech-support aaa"
+! group   aaa-r
+! ops     rx
+! action  accept
+!!
+!aaa authorization cmdrules cmdrule 4
+! context *
+! command "show aaa"
+! group   aaa-r
+! ops     rx
+! action  accept
+!!
+!aaa authorization cmdrules cmdrule 5
+! context *
+! command show
+! group   admin-r
+! ops     rx
+! action  accept
+!!
+!aaa authorization datarules datarule 1
+! namespace *
+! context   *
+! keypath   *
+! group     root-system
+! ops       rwx
+! action    accept
+!!
+!aaa authorization datarules datarule 2
+! namespace *
+! context   *
+! keypath   /aaa
+! group     aaa-r
+! ops       r
+! action    accept
+!!
+!aaa authorization datarules datarule 3
+! namespace *
+! context   *
+! keypath   /aaa
+! group     admin-r
+! ops       rwx
+! action    reject
+!!
+!aaa authorization datarules datarule 4
+! namespace *
+! context   *
+! keypath   /
+! group     admin-r
+! ops       r
+! action    accept
+!!
+!confdConfig encryptedStrings DES3CBC key1 0123456789ABCDEF
+!confdConfig encryptedStrings DES3CBC key2 0123456789ABCDEF
+!confdConfig encryptedStrings DES3CBC key3 0123456789ABCDEF
+!confdConfig encryptedStrings DES3CBC initVector 0123456789ABCDEF
+!confdConfig encryptedStrings AESCFB128 key 0123456789ABCDEF0123456789ABCDEF
+!confdConfig encryptedStrings AESCFB128 initVector 0123456789ABCDEF0123456789ABCDEF
+!confdConfig hideGroup NETCONF
+! password $1$UpiO$LGGm9H0zoPnUFQMFbVHCz0
+!!
+!confdConfig hideGroup SNMP
+! password $1$nyGeV$TXO7lSrec6Hl93FvsRLFA/
+!!
+!confdConfig hideGroup SSH
+! password $1$cdygK8v$gJwKmo7mgQZfJHbtZVtQ1/
+!!
+!confdConfig hideGroup ccc-action-grp
+! password $1$Luma$6.OPJ/r5zeOTZiD6Pn5oC0
+!!
+!confdConfig hideGroup debug
+! password $1$A9stHjBQ$G0Vb/DPwFJvL6kMSXay0B0
+!!
+!confdConfig hideGroup envmon-dis-grp
+! password $1$HVaG$55eJ5TuSio.X3pFKFQuLp0
+!!
+!confdConfig hideGroup foldedchassis
+! password $1$2s$Fm5eMm3fFtJanP24uW962.
+!!
+!confdConfig hideGroup hidden_synced_config
+! password $1$kmQVK$oztZlDgVsYjWgB9UzCxe21
+!!
+!confdConfig hideGroup obflclear-grp
+! password $1$nM$BQGcg0f/SBVRY6SOgEECP.
+!!
+!confdConfig hideGroup unittest
+! password $1$nDSe$87bRO3U9.RKY3u/arTXeY0
+!!
+!confdConfig logs confdLog enabled
+!confdConfig logs confdLog file enabled
+!confdConfig logs confdLog file name /var/log/confd_daemon.log
+!confdConfig logs confdLog syslog disabled
+!confdConfig logs developerLog enabled
+!confdConfig logs developerLog file enabled
+!confdConfig logs developerLog file name /var/log/confd_developer.log
+!confdConfig logs developerLog syslog disabled
+!confdConfig logs developerLogLevel trace
+!confdConfig logs auditLog enabled
+!confdConfig logs auditLog file enabled
+!confdConfig logs auditLog file name /var/log/confd_audit.log
+!confdConfig logs auditLog syslog disabled
+!confdConfig logs auditLogCommit false
+!confdConfig logs netconfLog enabled
+!confdConfig logs netconfLog file enabled
+!confdConfig logs netconfLog file name /var/log/confd_netconf.log
+!confdConfig logs netconfLog syslog disabled
+!confdConfig logs snmpLog enabled
+!confdConfig logs snmpLog file enabled
+!confdConfig logs snmpLog file name /var/log/confd_snmp.log
+!confdConfig logs snmpLog syslog disabled
+!confdConfig logs webuiAccessLog disabled
+!confdConfig logs webuiAccessLog dir /var/log/confd_webui.log
+!confdConfig logs netconfTraceLog disabled
+!confdConfig logs netconfTraceLog filename /var/log/confd_netconf_trace.log
+!confdConfig logs netconfTraceLog format pretty
+!confdConfig logs errorLog enabled
+!confdConfig logs errorLog filename /var/log/confd_error.log
+!confdConfig logs errorLog maxSize S10M
+!confdConfig logs syslogConfig version bsd
+!confdConfig logs syslogConfig facility daemon
+!confdConfig logs syslogConfig udp disabled
+!confdConfig logs syslogConfig udp host syslogsrv.example.com
+!confdConfig logs syslogConfig udp port 514
+!confdConfig cli enabled
+!confdConfig cli modeNameStyle short
+!confdConfig cli allowOverwriteOnCopy false
+!confdConfig cli inheritPaginate false
+!confdConfig cli safeScriptExecution true
+!confdConfig cli exitConfigModeOnCtrlC false
+!confdConfig cli execNavigationCmds false
+!confdConfig cli allowOldStyleModeCmds false
+!confdConfig cli mixedMode    false
+!confdConfig cli topLevelCmdsInSubMode true
+!confdConfig cli completionShowOldVal true
+!confdConfig cli reportInvalidCompletionInput true
+!confdConfig cli useShortEnabled true
+!confdConfig cli smartRenameFiltering true
+!confdConfig cli allowParenQuotes false
+!confdConfig cli singleElemPattern true
+!confdConfig cli multiPatternOperation any
+!confdConfig cli sortSubmodeCmds true
+!confdConfig cli sortLocalCmds true
+!confdConfig cli displayEmptyConfigContainers true
+!confdConfig cli whoShowMode  true
+!confdConfig cli whoHistoryDateTimeFormat short
+!confdConfig cli editWrapMode wrap
+!confdConfig cli supportQuotedEOL true
+!confdConfig cli allowWildcard true
+!confdConfig cli allowAllAsWildcard false
+!confdConfig cli allowRangeExpression true
+!confdConfig cli addExtraTableSpacing false
+!confdConfig cli suppressRangeKeyword false
+!confdConfig cli tableLabel   false
+!confdConfig cli tableLookAhead 50
+!confdConfig cli showTableLabelsIfMultiple false
+!confdConfig cli defaultTableBehavior dynamic
+!confdConfig cli allowTableOverflow false
+!confdConfig cli tableOverflowTruncate false
+!confdConfig cli allowTableCellWrap false
+!confdConfig cli showAllNs    false
+!confdConfig cli leafPrompting true
+!confdConfig cli auditLogMode all
+!confdConfig cli transactions true
+!confdConfig cli transactionCtrlCmds false
+!confdConfig cli style        c
+!confdConfig cli completionShowMax 2000
+!confdConfig cli rollbackMax  1000
+!confdConfig cli rollbackNumbering fixed
+!confdConfig cli rollbackNumberingInitial 10000
+!confdConfig cli showDefaults false
+!confdConfig cli reallocateOperTrans false
+!confdConfig cli quickSshTeardown false
+!confdConfig cli cAlignLeafValues true
+!confdConfig cli defaultPrefix ""
+!confdConfig cli jWarningPrefix "Warning: "
+!confdConfig cli jAbortedPrefix "Aborted: "
+!confdConfig cli jErrorPrefix "Error: "
+!confdConfig cli cWarningPrefix "Warning: "
+!confdConfig cli cAbortedPrefix "Aborted: "
+!confdConfig cli cErrorPrefix "Error: "
+!confdConfig cli invalidDataString --ERROR--
+!confdConfig cli showKeyName  true
+!confdConfig cli commitRetryTimeout 15s
+!confdConfig cli timezone     local
+!confdConfig cli utcOffset    0
+!confdConfig cli oldDetailsArg false
+!confdConfig cli withDefaults false
+!confdConfig cli trimDefaultShow false
+!confdConfig cli trimDefaultSave false
+!confdConfig cli banner       ""
+!confdConfig cli bannerFile   ""
+!confdConfig cli prompt1      "\u@\h\M> "
+!confdConfig cli prompt2      "\u@\h\M% "
+!confdConfig cli cPrompt1     "\H# "
+!confdConfig cli cPrompt2     "\H(\m)# "
+!confdConfig cli cStylePromptInJStyle false
+!confdConfig cli promptHostnameDelimiter .
+!confdConfig cli asyncPromptRefresh true
+!confdConfig cli showLogDirectory /var/log/
+!confdConfig cli idleTimeout  0s
+!confdConfig cli disableIdleTimeoutOnCmd true
+!confdConfig cli commandTimeout infinity
+!confdConfig cli spaceCompletion disabled
+!confdConfig cli timestamp enabled
+!confdConfig cli autoWizard disabled
+!confdConfig cli commitMessage true
+!confdConfig cli commitMessageFormat "\\nSystem message at $(time)...\\nCommit performed by $(user) via $(proto) using $(ctx).\\n"
+!confdConfig cli jShowCR      false
+!confdConfig cli showPipe     true
+!confdConfig cli showPipeConfig false
+!confdConfig cli disablePipe  false
+!confdConfig cli disablePipeConfig false
+!confdConfig cli pipeHelpMode always
+!confdConfig cli jAllowDeleteAll true
+!confdConfig cli cSilentNo    true
+!confdConfig cli noFollowIncompleteCommand false
+!confdConfig cli cRestrictiveNo true
+!confdConfig cli prioritizeSubmodeCmds true
+!confdConfig cli cExtendedCmdSearch true
+!confdConfig cli enterSubmodeOnLeaf false
+!confdConfig cli jExtendedShow true
+!confdConfig cli jShowUnset   false
+!confdConfig cli jShowUnsetText UNSET
+!confdConfig cli jStatusFormat "[$(status)][$(time)]\\n"
+!confdConfig cli cModeExitFormat "!"
+!confdConfig cli forcedExitFormat "\\nYou are forced out of configure mode by $(sender).\\n"
+!confdConfig cli showSubsystemMessages false
+!confdConfig cli ignoreSubsystemFailures true
+!confdConfig cli showEmptyContainers false
+!confdConfig cli showTags     true
+!confdConfig cli showAnnotations true
+!confdConfig cli jShowTableRecursive false
+!confdConfig cli cPrivate     false
+!confdConfig cli cTab         false
+!confdConfig cli cTabInfo     false
+!confdConfig cli tabExtend    true
+!confdConfig cli cHelp        true
+!confdConfig cli restrictedFileAccess false
+!confdConfig cli hideDotFiles false
+!confdConfig cli restrictedFileRegexp ""
+!confdConfig cli historyRemoveDuplicates false
+!confdConfig cli historyMaxSize 1000
+!confdConfig cli messageMaxSize 10000
+!confdConfig cli mapActions   oper
+!confdConfig cli compactTable true
+!confdConfig cli compactShow  false
+!confdConfig cli compactStatsShow false
+!confdConfig cli prettifyStatsName false
+!confdConfig cli showCommitProgress false
+!confdConfig cli commitActivityClock false
+!confdConfig cli confirmUncommitedOnExit prompt
+!confdConfig cli reconfirmHidden false
+!confdConfig cli dequoteHidden false
+!confdConfig cli enumKeyInfo  false
+!confdConfig cli columnStats  false
+!confdConfig cli allowAbbrevCmds true
+!confdConfig cli allowAbbrevCmdsOnLoad true
+!confdConfig cli allowAbbrevKeys false
+!confdConfig cli allowAbbrevParamNames true
+!confdConfig cli allowAbbrevEnums true
+!confdConfig cli allowCaseInsensitiveEnums true
+!confdConfig cli strictRefsOnLoad false
+!confdConfig cli stopLoadOnError true
+!confdConfig cli autocommitLoad false
+!confdConfig cli enableLoadMerge true
+!confdConfig cli loadActivityClock false
+!confdConfig cli instanceDescription true
+!confdConfig cli addErrorPrefixSuffix true
+!confdConfig cli compListCompact false
+!confdConfig cli completionListLine false
+!confdConfig cli infoOnMatch  true
+!confdConfig cli enableDisplayLevel false
+!confdConfig cli defaultDisplayLevel 99999999
+!confdConfig cli enableDisplayGroups true
+!confdConfig cli unifiedHistory false
+!confdConfig cli modeInfoInAAA false
+!confdConfig cli cmdAAAForAutowizard false
+!confdConfig cli quoteStyle   backslash
+!confdConfig cli laxBarQuoting false
+!confdConfig cli expandAliasEscape false
+!confdConfig cli docWrap      true
+!confdConfig cli infoOnTab    true
+!confdConfig cli infoOnSpace  true
+!confdConfig cli newLogout    true
+!confdConfig cli newInsert    true
+!confdConfig cli messageFormat "\\nMessage from $(sender) at $(time)...\\n$(message)\\nEOF\\n"
+!confdConfig cli messageWordWrap false
+!confdConfig cli messageQueueSize 10
+!confdConfig cli promptEnumLimit 4
+!confdConfig cli caseInsensitive true
+!confdConfig cli caseInsensitiveKeys true
+!confdConfig cli ignoreLeadingWhitespace false
+!confdConfig cli indentTemplates false
+!confdConfig cli wrapInfo     true
+!confdConfig cli wrapPrompt   false
+!confdConfig cli sortShowElems true
+!confdConfig cli showMatchBeforePossible false
+!confdConfig cli possibleCompletionsFormat "Possible completions:"
+!confdConfig cli matchCompletionsFormat "Possible match completions:"
+!confdConfig cli noMatchCompletionsFormat ""
+!confdConfig cli showDescription true
+!confdConfig cli explicitSetCreate false
+!confdConfig snmpAgent disabled
+!confdConfig snmpAgent port      161
+!confdConfig snmpAgent extraIpPorts [ [::] ]
+!confdConfig snmpAgent dscp      0
+!confdConfig snmpAgent mibs file [ /opt/cisco/calvados/confd/lib/confd/priv/snmp/mibs/CISCO-ENTITY-SENSOR-MIB.bin /opt/cisco/calvados/confd/lib/confd/priv/snmp/mibs/ENTITY-MIB.bin /opt/cisco/calvados/confd/lib/confd/priv/snmp/mibs/ENTITY-STATE-MIB.bin /opt/cisco/calvados/confd/lib/confd/priv/snmp/mibs/ENTITY-STATE-TC-MIB.bin SNMP-COMMUNITY-MIB.bin SNMP-NOTIFICATION-MIB.bin SNMP-TARGET-MIB.bin SNMP-USER-BASED-SM-MIB.bin SNMP-VIEW-BASED-ACM-MIB.bin ]
+!confdConfig snmpAgent mibs fromLoadPath false
+!confdConfig snmpAgent temporaryStorageTime 300
+!confdConfig snmpAgent snmpVersions v1 true
+!confdConfig snmpAgent snmpVersions v2c true
+!confdConfig snmpAgent snmpVersions v3 false
+!confdConfig snmpAgent snmpEngine snmpEngineID 80:00:61:81:05:01
+!confdConfig snmpAgent snmpEngine snmpEngineMaxMessageSize 50000
+!confdConfig snmpAgent authenticationFailureNotifyName ""
+!confdConfig snmpAgent system sysDescr "Cisco Calvados SNMP agent"
+!confdConfig snmpAgent system sysObjectID 1.3.6.1.4.1.24961
+!confdConfig snmpAgent system sysServices 72
+!confdConfig snmpAgent system sysORTable
+!SNMP-COMMUNITY-MIB snmpCommunityTable snmpCommunityEntry public
+! snmpCommunityName            public
+! snmpCommunitySecurityName    public
+! snmpCommunityContextEngineID 80:00:61:81:05:01
+! snmpCommunityContextName     ""
+! snmpCommunityTransportTag    ""
+! snmpCommunityStorageType     permanent
+!!
+!SNMP-NOTIFICATION-MIB snmpNotifyTable snmpNotifyEntry std_v1_trap
+! snmpNotifyTag         std_v1_trap
+! snmpNotifyType        trap
+! snmpNotifyStorageType nonVolatile
+!!
+!SNMP-NOTIFICATION-MIB snmpNotifyTable snmpNotifyEntry std_v2_inform
+! snmpNotifyTag         std_v2_inform
+! snmpNotifyType        inform
+! snmpNotifyStorageType nonVolatile
+!!
+!SNMP-NOTIFICATION-MIB snmpNotifyTable snmpNotifyEntry std_v2_trap
+! snmpNotifyTag         std_v2_trap
+! snmpNotifyType        trap
+! snmpNotifyStorageType nonVolatile
+!!
+!SNMP-NOTIFICATION-MIB snmpNotifyTable snmpNotifyEntry std_v3_inform
+! snmpNotifyTag         std_v3_inform
+! snmpNotifyType        inform
+! snmpNotifyStorageType nonVolatile
+!!
+!SNMP-NOTIFICATION-MIB snmpNotifyTable snmpNotifyEntry std_v3_trap
+! snmpNotifyTag         std_v3_trap
+! snmpNotifyType        trap
+! snmpNotifyStorageType nonVolatile
+!!
+!SNMP-TARGET-MIB snmpTargetAddrTable snmpTargetAddrEntry "127.0.0.1 v1"
+! snmpTargetAddrTDomain     1.3.6.1.6.1.1
+! snmpTargetAddrTAddress    127.0.0.1.19.136
+! snmpTargetAddrTimeout     1500
+! snmpTargetAddrRetryCount  3
+! snmpTargetAddrTagList     "std_v1_trap std_trap std_v1_inform std_inform"
+! snmpTargetAddrParams      target_v1
+! snmpTargetAddrStorageType nonVolatile
+! snmpTargetAddrEngineID    ""
+! snmpTargetAddrTMask       ""
+! snmpTargetAddrMMS         2048
+! enabled
+!!
+!SNMP-TARGET-MIB snmpTargetAddrTable snmpTargetAddrEntry "127.0.0.1 v2"
+! snmpTargetAddrTDomain     1.3.6.1.6.1.1
+! snmpTargetAddrTAddress    127.0.0.1.23.112
+! snmpTargetAddrTimeout     1500
+! snmpTargetAddrRetryCount  3
+! snmpTargetAddrTagList     "std_v2_trap std_trap std_v2_inform std_inform"
+! snmpTargetAddrParams      target_v2
+! snmpTargetAddrStorageType nonVolatile
+! snmpTargetAddrEngineID    ""
+! snmpTargetAddrTMask       ""
+! snmpTargetAddrMMS         2048
+! enabled
+!!
+!SNMP-TARGET-MIB snmpTargetAddrTable snmpTargetAddrEntry "127.0.0.1 v3"
+! snmpTargetAddrTDomain     1.3.6.1.6.1.1
+! snmpTargetAddrTAddress    127.0.0.1.27.88
+! snmpTargetAddrTimeout     1500
+! snmpTargetAddrRetryCount  3
+! snmpTargetAddrTagList     "std_v3_trap std_trap"
+! snmpTargetAddrParams      trap_target_v3
+! snmpTargetAddrStorageType nonVolatile
+! snmpTargetAddrEngineID    ""
+! snmpTargetAddrTMask       ""
+! snmpTargetAddrMMS         2048
+! enabled
+!!
+!SNMP-TARGET-MIB snmpTargetAddrTable snmpTargetAddrEntry "127.0.0.1 v3.inform"
+! snmpTargetAddrTDomain     1.3.6.1.6.1.1
+! snmpTargetAddrTAddress    127.0.0.1.27.88
+! snmpTargetAddrTimeout     1500
+! snmpTargetAddrRetryCount  3
+! snmpTargetAddrTagList     "std_v3_inform std_inform"
+! snmpTargetAddrParams      inform_target_v3
+! snmpTargetAddrStorageType nonVolatile
+! snmpTargetAddrEngineID    80:00:1f:88:04:74:65:73:74:69:6e:67
+! snmpTargetAddrTMask       ""
+! snmpTargetAddrMMS         2048
+! enabled
+!!
+!SNMP-TARGET-MIB snmpTargetParamsTable snmpTargetParamsEntry inform_target_v3
+! snmpTargetParamsMPModel       3
+! snmpTargetParamsSecurityModel 3
+! snmpTargetParamsSecurityName  remote
+! snmpTargetParamsSecurityLevel noAuthNoPriv
+! snmpTargetParamsStorageType   nonVolatile
+!!
+!SNMP-TARGET-MIB snmpTargetParamsTable snmpTargetParamsEntry target_v1
+! snmpTargetParamsMPModel       0
+! snmpTargetParamsSecurityModel 1
+! snmpTargetParamsSecurityName  public
+! snmpTargetParamsSecurityLevel noAuthNoPriv
+! snmpTargetParamsStorageType   nonVolatile
+!!
+!SNMP-TARGET-MIB snmpTargetParamsTable snmpTargetParamsEntry target_v2
+! snmpTargetParamsMPModel       1
+! snmpTargetParamsSecurityModel 2
+! snmpTargetParamsSecurityName  public
+! snmpTargetParamsSecurityLevel noAuthNoPriv
+! snmpTargetParamsStorageType   nonVolatile
+!!
+!SNMP-TARGET-MIB snmpTargetParamsTable snmpTargetParamsEntry trap_target_v3
+! snmpTargetParamsMPModel       3
+! snmpTargetParamsSecurityModel 3
+! snmpTargetParamsSecurityName  public
+! snmpTargetParamsSecurityLevel noAuthNoPriv
+! snmpTargetParamsStorageType   nonVolatile
+!!
+!SNMP-USER-BASED-SM-MIB usmUserTable usmUserEntry 80:00:61:81:05:01 initial
+! usmUserSecurityName initial
+! usmUserAuthProtocol 1.3.6.1.6.3.10.1.1.1
+! usmUserPrivProtocol 1.3.6.1.6.3.10.1.2.1
+! usmUserStorageType  nonVolatile
+!!
+!SNMP-USER-BASED-SM-MIB usmUserTable usmUserEntry 80:00:61:81:05:01 initial_auth
+! usmUserSecurityName initial_auth
+! usmUserAuthProtocol 1.3.6.1.6.3.10.1.1.2
+! usmUserPrivProtocol 1.3.6.1.6.3.10.1.2.1
+! usmUserStorageType  nonVolatile
+! usmUserAuthKey      10:2c:bd:65:e3:eb:e2:16:0d:63:db:23:73:f3:17:b2
+!!
+!SNMP-USER-BASED-SM-MIB usmUserTable usmUserEntry 80:00:61:81:05:01 initial_authPriv
+! usmUserSecurityName initial_authPriv
+! usmUserAuthProtocol 1.3.6.1.6.3.10.1.1.2
+! usmUserPrivProtocol 1.3.6.1.6.3.10.1.2.2
+! usmUserStorageType  nonVolatile
+! usmUserAuthKey      10:2c:bd:65:e3:eb:e2:16:0d:63:db:23:73:f3:17:b2
+! usmUserPrivKey      10:2c:bd:65:e3:eb:e2:16:0d:63:db:23:73:f3:17:b2
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable vacmSecurityToGroupEntry 1 public
+! vacmGroupName                  all-rights
+! vacmSecurityToGroupStorageType nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable vacmSecurityToGroupEntry 2 public
+! vacmGroupName                  all-rights
+! vacmSecurityToGroupStorageType nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable vacmSecurityToGroupEntry 3 initial
+! vacmGroupName                  initial
+! vacmSecurityToGroupStorageType nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable vacmSecurityToGroupEntry 3 initial_auth
+! vacmGroupName                  initial
+! vacmSecurityToGroupStorageType nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable vacmSecurityToGroupEntry 3 initial_authPriv
+! vacmGroupName                  initial
+! vacmSecurityToGroupStorageType nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmAccessTable vacmAccessEntry initial "" 3 noAuthNoPriv
+! vacmAccessContextMatch   exact
+! vacmAccessReadViewName   internet
+! vacmAccessWriteViewName  internet
+! vacmAccessNotifyViewName internet
+! vacmAccessStorageType    nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmAccessTable vacmAccessEntry initial "" 3 authNoPriv
+! vacmAccessContextMatch   exact
+! vacmAccessReadViewName   internet
+! vacmAccessWriteViewName  internet
+! vacmAccessNotifyViewName internet
+! vacmAccessStorageType    nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmAccessTable vacmAccessEntry initial "" 3 authPriv
+! vacmAccessContextMatch   exact
+! vacmAccessReadViewName   internet
+! vacmAccessWriteViewName  internet
+! vacmAccessNotifyViewName internet
+! vacmAccessStorageType    nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmAccessTable vacmAccessEntry all-rights "" 0 noAuthNoPriv
+! vacmAccessContextMatch   exact
+! vacmAccessReadViewName   internet
+! vacmAccessWriteViewName  internet
+! vacmAccessNotifyViewName internet
+! vacmAccessStorageType    nonVolatile
+!!
+!SNMP-VIEW-BASED-ACM-MIB vacmViewTreeFamilyTable vacmViewTreeFamilyEntry internet 1.3.6.1
+! vacmViewTreeFamilyMask        ""
+! vacmViewTreeFamilyType        included
+! vacmViewTreeFamilyStorageType nonVolatile
+!!
+!SNMPv2-MIB system sysContact ""
+!SNMPv2-MIB system sysName ""
+!SNMPv2-MIB system sysLocation ""
+!SNMPv2-MIB snmp snmpEnableAuthenTraps disabled
+!sdr default-sdr
+! resources card-type RP
+!  vm-memory 2
+!  vm-cpu    1
+! !
+! resources card-type LC
+!  vm-memory 1
+!  vm-cpu    1
+! !
+! location all
+! !
+!!
+!
+hostname cisco-iosxr-6-xrv
+telnet vrf default ipv4 server max-servers 100
+domain name lab.faddr
+username admin
+ group root-lr
+ group cisco-support
+ secret 5 $1$gaae$w6TbTEQI8OFqSMnfpcinn0
+!
+username faddr
+ group root-lr
+ group netadmin
+! password <removed>
+!
+vrf Test001
+ address-family ipv4 unicast
+  import route-target
+   64501:110
+  !
+  export route-target
+   64501:110
+  !
+ !
+!
+line default
+ transport input ssh telnet
+!
+call-home
+ service active
+ contact smart-licensing
+ profile CiscoTAC-1
+  active
+  destination transport-method http
+ !
+!
+ipv4 access-list ACLin01
+ permit ipv4 any any
+!
+ipv4 access-list ACLin02
+ permit ipv4 any any
+!
+ipv4 access-list ACLout01
+ permit ipv4 any any
+!
+ipv4 access-list ACLout02
+ permit ipv4 any any
+!
+interface MgmtEth0/RP0/CPU0/0
+ description OAM
+ ipv4 address 192.168.100.113 255.255.255.0
+!
+interface GigabitEthernet0/0/0/0.100
+ description ipv4 address 10.100.100.1/24
+ ipv4 address 10.100.100.1 255.255.255.0
+ encapsulation dot1q 100
+!
+interface GigabitEthernet0/0/0/0.101
+ description native, ipv4 address 10.101.101.1/24
+ ipv4 address 10.101.101.1 255.255.255.0
+ encapsulation dot1q 101
+!
+interface GigabitEthernet0/0/0/0.102
+ description qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+ ipv4 address 10.102.102.1 255.255.255.0
+ encapsulation dot1q 102 second-dot1q 999
+!
+interface GigabitEthernet0/0/0/0.110
+ description vrf Test001, ipv4 address 10.110.110.1/24
+ vrf Test001
+ ipv4 address 10.110.110.1 255.255.255.0
+ encapsulation dot1q 110
+!
+interface GigabitEthernet0/0/0/0.121
+ description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
+ ipv4 address 10.121.121.121 255.255.255.0
+ encapsulation dot1q 121
+ ipv4 access-group ACLin01 ingress
+ ipv4 access-group ACLout01 egress
+!
+interface GigabitEthernet0/0/0/0.122
+ description acl input ACLin02, ipv4 address 10.122.122.122/24
+ ipv4 address 10.122.122.122 255.255.255.0
+ encapsulation dot1q 122
+ ipv4 access-group ACLin02 ingress
+!
+interface GigabitEthernet0/0/0/0.123
+ description acl output ACLout02, ipv4 address 10.123.123.123/24
+ ipv4 address 10.123.123.123 255.255.255.0
+ shutdown
+ encapsulation dot1q 123
+ ipv4 access-group ACLout02 egress
+!
+interface GigabitEthernet0/0/0/1
+ shutdown
+!
+interface GigabitEthernet0/0/0/2
+ shutdown
+!
+interface GigabitEthernet0/0/0/3
+ shutdown
+!
+ssh server v2
+ssh server vrf default
+end

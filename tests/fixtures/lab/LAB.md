@@ -289,6 +289,7 @@ no interface MgmtEth0/RP0/CPU0/0 shutdown
 ssh server v2
 ssh server vrf default
 line default transport input ssh
+line default transport input telnet
 
 # Generate SSH keys
 crypto key generate rsa
