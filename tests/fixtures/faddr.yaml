@@ -1,9 +1,0 @@
----
-database:
-    dir: "data/"
-    file: "faddr-db.sqlite"
-
-rancid:
-    dir: "tests/fixtures/rancid_dir/"
-    mapping:
-        "cisco-faddr": "cisco-ios"
