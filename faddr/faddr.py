@@ -3,6 +3,7 @@
 import argparse
 import sys
 
+from rich import box
 from rich.table import Table
 
 from faddr import console, logger
@@ -19,7 +20,24 @@ def parse_cmd_args():
         "address",
         help="Address to search",
     )
-
+    parser.add_argument(
+        "-c",
+        "--color",
+        action="store_true",
+        help="Enable color printing",
+    )
+    parser.add_argument(
+        "-D",
+        "--debug",
+        action="store_true",
+        help="Enable debug messages",
+    )
+    parser.add_argument(
+        "-d",
+        "--description",
+        action="store_true",
+        help="Print description column",
+    )
     parser.add_argument(
         "-s",
         "--settings-file",
@@ -30,13 +48,25 @@ def parse_cmd_args():
     return vars(args)
 
 
-def pretty_print_result(result):
+def pretty_print_result(result, print_description=False, color=False):
     """Print data with pretty formatting."""
 
-    table = Table()
+    if print_description is False:
+        result["header"].remove("Description")
+
+    table = Table(
+        padding=0,
+        expand=True,
+        highlight=color,
+        header_style=None,
+        box=box.ROUNDED,
+    )
 
     for column_name in result["header"]:
-        table.add_column(column_name)
+        table.add_column(
+            column_name,
+            no_wrap=(column_name != "Description"),
+        )
 
     for row in result["data"]:
         # Fix bool and None values.
@@ -70,4 +100,8 @@ def main():
 
     result = database.find_network(cmd_args.get("address"))
 
-    pretty_print_result(result)
+    pretty_print_result(
+        result,
+        print_description=cmd_args.get("description", False),
+        color=cmd_args.get("color", False),
+    )

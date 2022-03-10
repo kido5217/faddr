@@ -8,7 +8,7 @@ from rich.console import Console
 
 __version__ = "0.0.6"
 
-if os.getenv("FADDR_DEBUG") or any(arg in sys.argv for arg in ("-d", "--debug")):
+if os.getenv("FADDR_DEBUG") or any(arg in sys.argv for arg in ("-D", "--debug")):
     LOG_LEVEL = "DEBUG"
 else:
     LOG_LEVEL = "INFO"
