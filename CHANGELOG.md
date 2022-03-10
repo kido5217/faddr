@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2022-03-10
+
 ### Added
 
 - Cisco IOS-XR configuration parsing.
