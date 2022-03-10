@@ -276,7 +276,7 @@ Configuration:
 ```cpp
 # Basic settings, AAA, connectivity
 hostname cisco-iosxr-6-xrv
-domain name faddr.lab
+domain name lab.faddr
 
 username faddr
 username faddr group root-lr
@@ -294,8 +294,60 @@ line default transport input ssh
 crypto key generate rsa
 
 # VRFs
+vrf Test001 
+vrf Test001 address-family ipv4 unicast 
+vrf Test001 address-family ipv4 unicast import route-target 64501:110
+vrf Test001 address-family ipv4 unicast export route-target 64501:110
 
+# ACLs
+ipv4 access-list ACLin01 10 permit ipv4 any any
+ipv4 access-list ACLin02 10 permit ipv4 any any
+ipv4 access-list ACLout01 10 permit ipv4 any any
+ipv4 access-list ACLout02 10 permit ipv4 any any
 
+# Interfaces
+no interface GigabitEthernet0/0/0/0 shutdown
+
+interface GigabitEthernet0/0/0/0.100 
+interface GigabitEthernet0/0/0/0.100 description ipv4 address 10.100.100.1/24
+interface GigabitEthernet0/0/0/0.100 ipv4 address 10.100.100.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.100 encapsulation dot1q 100
+
+interface GigabitEthernet0/0/0/0.101 
+interface GigabitEthernet0/0/0/0.101 description native, ipv4 address 10.101.101.1/24
+interface GigabitEthernet0/0/0/0.101 ipv4 address 10.101.101.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.101 encapsulation dot1q 101
+
+interface GigabitEthernet0/0/0/0.102 
+interface GigabitEthernet0/0/0/0.102 description qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+interface GigabitEthernet0/0/0/0.102 ipv4 address 10.102.102.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.102 encapsulation dot1q 102 second-dot1q 999
+
+interface GigabitEthernet0/0/0/0.110 
+interface GigabitEthernet0/0/0/0.110 description vrf Test001, ipv4 address 10.110.110.1/24
+interface GigabitEthernet0/0/0/0.110 vrf Test001
+interface GigabitEthernet0/0/0/0.110 ipv4 address 10.110.110.1 255.255.255.0
+interface GigabitEthernet0/0/0/0.110 encapsulation dot1q 110
+
+interface GigabitEthernet0/0/0/0.121 
+interface GigabitEthernet0/0/0/0.121 description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
+interface GigabitEthernet0/0/0/0.121 ipv4 address 10.121.121.121 255.255.255.0
+interface GigabitEthernet0/0/0/0.121 encapsulation dot1q 121
+interface GigabitEthernet0/0/0/0.121 ipv4 access-group ACLin01 ingress
+interface GigabitEthernet0/0/0/0.121 ipv4 access-group ACLout01 egress
+
+interface GigabitEthernet0/0/0/0.122 
+interface GigabitEthernet0/0/0/0.122 description acl input ACLin02, ipv4 address 10.122.122.122/24
+interface GigabitEthernet0/0/0/0.122 ipv4 address 10.122.122.122 255.255.255.0
+interface GigabitEthernet0/0/0/0.122 encapsulation dot1q 122
+interface GigabitEthernet0/0/0/0.122 ipv4 access-group ACLin02 ingress
+
+interface GigabitEthernet0/0/0/0.123 
+interface GigabitEthernet0/0/0/0.123 description acl output ACLout02, ipv4 address 10.123.123.123/24
+interface GigabitEthernet0/0/0/0.123 ipv4 address 10.123.123.123 255.255.255.0
+interface GigabitEthernet0/0/0/0.123 shutdown
+interface GigabitEthernet0/0/0/0.123 encapsulation dot1q 123
+interface GigabitEthernet0/0/0/0.123 ipv4 access-group ACLout02 egress
 ```
 
 ### Juniper
