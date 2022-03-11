@@ -7,7 +7,7 @@ interface {{ name }}
  duplex {{ duplex }}
  speed {{ speed }}
  description {{ description | _line_ }}
- shutdown {{ disabled | set(True) }}
+ {{ disabled | equal("shutdown") | let(True) }}
  encapsulation {{ encapsulation | lower() }} {{ s_vlan }}
  encapsulation {{ encapsulation | lower() }} {{ s_vlan }} native
  encapsulation {{ encapsulation | lower() }} {{ s_vlan }} second-dot1q {{ c_vlan }}
