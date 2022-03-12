@@ -43,7 +43,7 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     duplex = Column(String)
     speed = Column(String)
     description = Column(String)
-    disabled = Column(Boolean, default=False)
+    is_disabled = Column(Boolean, default=False)
     encapsulation = Column(String)
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
@@ -220,7 +220,7 @@ class Database:
                 Interface.vrf,
                 Interface.acl_in,
                 Interface.acl_out,
-                Interface.disabled,
+                Interface.is_disabled,
                 Interface.description,
             ).where(
                 IP.network == network,

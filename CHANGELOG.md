@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Addes
+
+- Detect 'shutdown' on interface for all profiles. Record it as boolean 'is_disabled'
+
 ## [0.0.7] - 2022-03-10
 
 ### Added

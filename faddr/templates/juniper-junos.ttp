@@ -3,12 +3,13 @@ SUBINT_UNIT = "((\S+)\s(unit)\s(\S+))"
 </vars>
 
 <group name="interfaces.{{ name }}**" method="table">
+set interfaces {{ name }} {{ disabled | equal("disable") | let(True) }}
 set interfaces {{ name }} description {{ description | ORPHRASE }}
 set interfaces {{ name }} native-vlan-id {{ native_vlan }}
 </group>
 
 <group name="interfaces.{{ name }}**" method="table">
-set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} disable {{ disabled | set("True") }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} {{ is_disabled | equal("disable") | let(True) }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} description {{ description | _line_ }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-id {{ s_vlan }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags outer {{ s_vlan }}
