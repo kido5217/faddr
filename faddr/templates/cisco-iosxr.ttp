@@ -6,6 +6,7 @@ IP_SPACE_MASK = "((\S+)\s(\S+))"
 interface {{ name }}
  description {{ description | _line_ }}
  vrf {{ vrf }}
+ {{ is_disabled | equal("shutdown") | let(True) }}
  <group name="ip*" method="table" itemize="ip">
  ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }}
  ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
