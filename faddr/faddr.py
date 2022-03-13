@@ -17,8 +17,8 @@ def parse_cmd_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "address",
-        help="Address to search",
+        "ip_address",
+        help="IP address to search",
     )
     parser.add_argument(
         "-c",
@@ -55,7 +55,6 @@ def pretty_print_result(result, print_description=False, color=False):
         result["header"].remove("Description")
 
     table = Table(
-        padding=0,
         expand=True,
         highlight=color,
         header_style=None,
@@ -98,7 +97,7 @@ def main():
 
     database = Database(**settings.database.dict())
 
-    result = database.find_network(cmd_args.get("address"))
+    result = database.find_network(cmd_args.get("ip_address"))
 
     pretty_print_result(
         result,
