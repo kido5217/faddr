@@ -1,0 +1,20 @@
+<vars>
+IP_SPACE_MASK = "((\S+)\s(\S+))"
+</vars>
+
+<group name="interfaces.{{ name }}**">
+interface {{ name }}
+ duplex {{ duplex }}
+ speed {{ speed }}
+ vlan-type {{ encapsulation }} {{ s_vlan }}
+ qinq termination pe-vid {{ s_vlan }} ce-vid {{ c_vlan }}
+ description {{ description | _line_ }}
+ {{ is_disabled | equal("shutdown") | let(True) }}
+ <group name="ip*" method="table" itemize="ip">
+ ip address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }}
+ ip address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }} sub
+ </group>
+ ip binding vpn-instance {{ vrf }}
+ traffic-policy {{ acl_in }} inbound
+ traffic-policy {{ acl_out }} outbound
+</group>
