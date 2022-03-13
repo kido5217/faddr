@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix RANCID-CONTENT-TYPE detection for 3rd-party rancid scripts.
+- Add one space padding for result table for easy double-click select.
+
 ## [0.0.8] - 2022-03-13
 
-### Addes
+### Added
 
 - Huawei VRP configuration parsing.
 - Huawei VRP configuration gathered by rancid (hwlogin/hwrancid) and other related test fixtures.

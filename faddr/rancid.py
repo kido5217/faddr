@@ -124,11 +124,8 @@ class RancidGroup:
         with Path(config_path).open(encoding="ascii", errors="ignore") as config:
             content_type_line = config.readline().strip()
 
-        if (
-            "RANCID-CONTENT-TYPE" in content_type_line
-            and len(content_type_line.split(" ")) > 1
-        ):
-            return content_type_line.split(" ")[1]
+        if len(content_type_line.split("RANCID-CONTENT-TYPE:")) > 1:
+            return content_type_line.split("RANCID-CONTENT-TYPE:")[-1].strip()
 
         logger.debug(f"Couldn't detect content type in line '{content_type_line}'")
         return None
