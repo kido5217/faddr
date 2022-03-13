@@ -462,6 +462,7 @@ Status: WIP
 Notes:
 
 - It appears that NE40 in VM does not support traffic-policy, so they should be added manually into gathered configuration.
+- Virtual NE40 in EVE-NG sometimes stops learning arps. Working solution is to recreate device in topology.
 
 Configuration:
 
@@ -485,6 +486,10 @@ user privilege level 3
 interface Ethernet1/0/0
 description OAM
 undo shutdown
+undo dcn
+y
+undo dcn mode vlan
+y
 ip address 192.168.100.114 255.255.255.0
 
 # VRFs
@@ -500,7 +505,9 @@ vpn-target 64501:110 import-extcommunity
 interface Ethernet1/0/1
 undo shutdown
 undo dcn
+y
 undo dcn mode vlan
+y
 
 interface Ethernet1/0/1.100
 vlan-type dot1q 100

@@ -1,9 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks; strict;
 comment	@# @;
 
+
+1.5
+date	2022.03.13.11.57.00;	author rancid;	state Exp;
+branches;
+next	1.4;
+commitid	100622DDC0C048C93EE;
 
 1.4
 date	2022.03.10.16.48.08;	author rancid;	state Exp;
@@ -34,7 +40,7 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @updates
 @
@@ -42,6 +48,16 @@ text
 @cisco-ios-15-7206;cisco-faddr;up;192.168.100.111
 juniper-junos-17-vmx;juniper-faddr;up;192.168.100.112
 cisco-iosxr-6-xrv;cisco-xr-faddr;up;192.168.100.113
+huawei-vrp-v800-ne40;huawei-faddr;up;192.168.100.114
+@
+
+
+1.4
+log
+@updates
+@
+text
+@d4 1
 @
 
 

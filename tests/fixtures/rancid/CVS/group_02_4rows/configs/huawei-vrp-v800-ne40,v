@@ -1,0 +1,269 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@o@;
+
+
+1.2
+date	2022.03.13.14.09.54;	author rancid;	state Exp;
+branches;
+next	1.1;
+commitid	100622DFB32065369DE;
+
+1.1
+date	2022.03.13.11.56.46;	author rancid;	state Exp;
+branches;
+next	;
+commitid	100622DDBFE03A0EFCC;
+
+
+desc
+@@
+
+
+1.2
+log
+@updates
+@
+text
+@! RANCID-CONTENT-TYPE: huawei
+!
+! Huawei Versatile Routing Platform Software
+! VRP (R) software, Version 8.180 (NE40E V800R011C00SPC607B607)
+! Copyright (C) 2012-2018 Huawei Technologies Co., Ltd.
+! HUAWEI NE40E  uptime<masked>  
+! SVRP Platform Version 1.0
+!Software Version V800R011C00SPC607B607
+!Last configuration was updated at 2022-03-13 13:40:26+00:00
+!Last configuration was saved at 2022-03-13 13:40:31+00:00
+#
+sysname huawei-vrp-v800-ne40
+#
+set neid 18a89
+#
+vsm on-board-mode enable
+#
+undo user-security-policy enable
+#
+snmp-agent trap type base-trap
+#
+icmp rate-limit disable
+#
+ip vpn-instance Test001
+ ipv4-family
+  route-distinguisher 1.1.1.1:110
+  vpn-target 64501:110 export-extcommunity
+  vpn-target 64501:110 import-extcommunity
+#
+ip dcn vpn-instance __dcn_vpn__
+ ipv4-family
+#
+aaa
+ local-user faddr password irreversible-cipher $1c$uj7|KFCkcT$0%tRLKwdS=HfnT$#+'H-YUnW:Nw4{@@#)y.76gvk%$
+ local-user faddr service-type telnet ssh
+ local-user faddr level 3
+ local-user faddr state block fail-times 3 interval 5
+ #
+ authentication-scheme default0
+ #
+ authentication-scheme default1
+ #
+ authentication-scheme default
+  authentication-mode local radius
+ #
+ authorization-scheme default
+ #
+ accounting-scheme default0
+ #
+ accounting-scheme default1
+ #
+ domain default0
+ #
+ domain default1
+ #
+ domain default_admin
+#
+license
+#
+interface Ethernet1/0/0
+ description OAM
+ undo shutdown
+ ip address 192.168.100.114 255.255.255.0
+ undo dcn
+ undo dcn mode vlan
+#
+interface Ethernet1/0/1
+ undo shutdown
+ undo dcn
+ undo dcn mode vlan
+#
+interface Ethernet1/0/1.100
+ vlan-type dot1q 100
+ description ipv4 address 10.100.100.1/24
+ ip address 10.100.100.1 255.255.255.0
+#
+interface Ethernet1/0/1.101
+ description native, ipv4 address 10.101.101.1/24
+ ip address 10.101.101.1 255.255.255.0
+ vlan-type dot1q 101 default
+#
+interface Ethernet1/0/1.102
+ description qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+ ip address 10.102.102.1 255.255.255.0
+ encapsulation qinq-termination
+ qinq termination pe-vid 102 ce-vid 999
+#
+interface Ethernet1/0/1.110
+ vlan-type dot1q 110
+ description vrf Test001, ipv4 address 10.110.110.1/24
+ ip binding vpn-instance Test001
+ ip address 10.110.110.1 255.255.255.0
+#
+interface Ethernet1/0/1.121
+ vlan-type dot1q 121
+ description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
+ ip address 10.121.121.121 255.255.255.0
+#
+interface Ethernet1/0/1.122
+ vlan-type dot1q 122
+ description acl input ACLin02, ipv4 address 10.122.122.122/24
+ ip address 10.122.122.122 255.255.255.0
+#
+interface Ethernet1/0/1.123
+ vlan-type dot1q 123
+ description acl output ACLout02, ipv4 address 10.123.123.123/24
+ shutdown
+ ip address 10.123.123.123 255.255.255.0
+#
+interface Ethernet1/0/2
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/2.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/3
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/3.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/4
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/4.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/5
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/5.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/6
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/6.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/7
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/7.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/8
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/8.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface Ethernet1/0/9
+ undo shutdown
+ dcn mode vlan
+#
+interface Ethernet1/0/9.4094
+ vlan-type dot1q 4094
+ ip binding vpn-instance __dcn_vpn__
+ ip address unnumbered interface LoopBack2147483647
+#
+interface GigabitEthernet0/0/0
+ undo shutdown
+#
+interface LoopBack2147483647
+ description DCN loopback interface
+ ip binding vpn-instance __dcn_vpn__
+ ip address 128.1.138.137 255.255.0.0
+#
+interface NULL0
+#
+ospf 65534 vpn-instance __dcn_vpn__
+ description DCN ospf create by default
+ opaque-capability enable
+ hostname
+ vpn-instance-capability simple
+ area 0.0.0.0
+  network 0.0.0.0 255.255.255.255
+#
+!The DCN function implements the capability of plug-and-play for this device.
+!A NE IP address based on the unique NE ID is automatically generated in VPN
+!of DCN. It is recommended that the NE IP address be changed to the planned 
+!one by running the ne-ip X.X.X.X <MASK> command after the device being online.
+dcn
+#
+lldp enable
+#
+ssh authorization-type default aaa
+#
+ssh server cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc
+#
+ssh server dh-exchange min-len 1024
+#
+ssh client cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc
+#
+user-interface con 0
+#
+user-interface aux 0
+#
+user-interface vty 0 4
+ authentication-mode aaa
+ user privilege level 3
+#
+local-aaa-server
+#
+vm-manager
+#
+return
+@
+
+
+1.1
+log
+@new router
+@
+text
+@d1 228
+@
+
