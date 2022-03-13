@@ -1,4 +1,4 @@
-! RANCID-CONTENT-TYPE: huawei
+! RANCID-CONTENT-TYPE: huawei-faddr
 !
 ! Huawei Versatile Routing Platform Software
 ! VRP (R) software, Version 8.180 (NE40E V800R011C00SPC607B607)
@@ -95,17 +95,21 @@ interface Ethernet1/0/1.121
  vlan-type dot1q 121
  description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
  ip address 10.121.121.121 255.255.255.0
+ traffic-policy ACLin01 inbound
+ traffic-policy ACLout01 outbound
 #
 interface Ethernet1/0/1.122
  vlan-type dot1q 122
  description acl input ACLin02, ipv4 address 10.122.122.122/24
  ip address 10.122.122.122 255.255.255.0
+ traffic-policy ACLin02 inbound
 #
 interface Ethernet1/0/1.123
  vlan-type dot1q 123
  description acl output ACLout02, ipv4 address 10.123.123.123/24
  shutdown
  ip address 10.123.123.123 255.255.255.0
+ traffic-policy ACLout02 outbound
 #
 interface Ethernet1/0/2
  undo shutdown
