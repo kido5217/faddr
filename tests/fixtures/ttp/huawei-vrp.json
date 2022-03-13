@@ -1,0 +1,7 @@
+{
+    "interfaces": {
+        "Ethernet1/0/0": {
+            "description": "FIXTURE_TTP_TEST"
+        }
+    }
+}
