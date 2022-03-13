@@ -10,4 +10,5 @@ rancid:
       mapping:
         "cisco-faddr": "cisco-ios"
         "cisco-xr-faddr": "cisco-iosxr"
+        "huawei-faddr": "huawei-vrp"
         "juniper-faddr": "juniper-junos"

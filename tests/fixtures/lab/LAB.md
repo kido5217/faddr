@@ -130,6 +130,7 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
 | Cisco   | IOS    | 7206  | 15.2    | `cisco-ios-15-7206`    | `192.168.100.111` |
 | Juniper | Junos  | vMX   | 17.2    | `juniper-junos-17-vmx` | `192.168.100.112` |
 | Cisco   | IOS-XR | XRv9k | 6.0.1   | `cisco-iosxr-6-xrv`    | `192.168.100.113` |
+| Huawei  | VRP    | NE40  | V800    | `huawei-vrp-v800-ne40` | `192.168.100.114` |
 
 ### Cisco
 
@@ -444,4 +445,105 @@ set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 
 set interfaces ge-0/0/1 unit 123 vlan-id 123
 set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
 set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
+```
+
+#### Huawei VRP
+
+Hostname: `huawei-vrp-v800-ne40`
+
+OAM: `192.168.100.115`
+
+Device: NE40 on [`EVE-NG`](https://www.eve-ng.net/)
+
+Version: `V800R011C00SPC607B607`
+
+Status: WIP
+
+Notes:
+
+- It appears that NE40 in VM does not support traffic-policy, so they should be added manually into gathered configuration.
+- Virtual NE40 in EVE-NG sometimes stops learning arps. Working solution is to recreate device in topology.
+
+Configuration:
+
+```
+# Basic settings, AAA, connectivity
+sysname huawei-vrp-v800-ne40
+
+undo user-security-policy enable
+
+aaa
+undo user-password complexity-check
+local-user faddr password irreversible-cipher $1c$uj7|KFCkcT$0%tRLKwdS=HfnT$#+'H-YUnW:Nw4{@#)y.76gvk%$
+local-user faddr service-type ssh telnet
+local-user faddr level 3
+
+user-interface vty 0 4
+protocol inbound all
+authentication-mode aaa
+user privilege level 3
+
+interface Ethernet1/0/0
+description OAM
+undo shutdown
+undo dcn
+y
+undo dcn mode vlan
+y
+ip address 192.168.100.114 255.255.255.0
+
+# VRFs
+ip vpn-instance Test001
+ipv4-family
+route-distinguisher 1.1.1.1:110
+vpn-target 64501:110 export-extcommunity
+vpn-target 64501:110 import-extcommunity
+
+# ACLs
+
+# Interfaces
+interface Ethernet1/0/1
+undo shutdown
+undo dcn
+y
+undo dcn mode vlan
+y
+
+interface Ethernet1/0/1.100
+vlan-type dot1q 100
+description ipv4 address 10.100.100.1/24
+ip address 10.100.100.1 255.255.255.0
+
+interface Ethernet1/0/1.101
+description native, ipv4 address 10.101.101.1/24
+ip address 10.101.101.1 255.255.255.0
+vlan-type dot1q 101 default
+
+interface Ethernet1/0/1.102
+description qinq s-vlan 102, c-vlan 999, ipv4 address 10.102.102.1/24
+ip address 10.102.102.1 255.255.255.0
+encapsulation qinq-termination
+qinq termination pe-vid 102 ce-vid 999
+
+interface Ethernet1/0/1.110
+vlan-type dot1q 110
+description vrf Test001, ipv4 address 10.110.110.1/24
+ip binding vpn-instance Test001
+ip address 10.110.110.1 255.255.255.0
+
+interface Ethernet1/0/1.121
+vlan-type dot1q 121
+description acl input ACLin01 and output ACLout01, ipv4 address 10.121.121.121/24
+ip address 10.121.121.121 255.255.255.0
+
+interface Ethernet1/0/1.122
+vlan-type dot1q 122
+description acl input ACLin02, ipv4 address 10.122.122.122/24
+ip address 10.122.122.122 255.255.255.0
+
+interface Ethernet1/0/1.123
+vlan-type dot1q 123
+description acl output ACLout02, ipv4 address 10.123.123.123/24
+shutdown
+ip address 10.123.123.123 255.255.255.0
 ```
