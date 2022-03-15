@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2022-03-15
+
+### Added
+
+- Sort ip_address search results by device name, than by interface name, than by ip_address.
+
 ### Changed
 
 - RancidDir class now detects path's level automatically and can be created with path's level "dir", "group" and "repo".
+- Made outbox table box edges square.
 
 ### Fixed
 
