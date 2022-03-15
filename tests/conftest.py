@@ -16,7 +16,7 @@ def settings_default():
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
         "database": {"path": "/var/db/faddr/", "name": "faddr-db.sqlite"},
         "rancid": {
-            "dirs": [{"path": "/var/lib/rancid/", "kind": "dir", "mapping": {}}],
+            "dirs": [{"path": "/var/lib/rancid/", "mapping": {}}],
             "default_mapping": {
                 "cisco": "cisco-ios",
                 "cisco-xr": "cisco-iosxr",

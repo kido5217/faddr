@@ -138,7 +138,7 @@ class RancidDir:
                 try:
                     group = RancidGroup(group_candidate)
                     self.groups.append(group)
-                except FaddrRancidPathError:
+                except (FaddrRancidPathError, PermissionError):
                     logger.warning(f"{group_candidate} isn't valid rancid group dir")
 
             if len(self.groups) == 0:

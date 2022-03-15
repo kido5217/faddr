@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix RANCID-CONTENT-TYPE detection for 3rd-party rancid scripts.
 - Add one space padding for result table for easy double-click select.
+- Add 'PermissionError' exception for 'RancidDir' folder scan
+
+### Removed
+
+- Removed 'rancid.dirs.kind' field from settings and test fixtures.
 
 ## [0.0.8] - 2022-03-13
 
