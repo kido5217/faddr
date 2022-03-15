@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- RancidDir class now detects path's level automatically and can be created with path's level "dir", "group" and "repo".
+
 ### Fixed
 
 - Fix RANCID-CONTENT-TYPE detection for 3rd-party rancid scripts.
