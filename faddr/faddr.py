@@ -58,7 +58,7 @@ def pretty_print_result(result, print_description=False, color=False):
         expand=True,
         highlight=color,
         header_style=None,
-        box=box.ROUNDED,
+        box=box.SQUARE,
     )
 
     for column_name in result["header"]:

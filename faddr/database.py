@@ -213,19 +213,25 @@ class Database:
                 (network.split("/")[0], netmask), strict=False
             ).with_prefixlen
 
-            stmt = select(
-                Device.name.label("device"),
-                Interface.name.label("interface"),
-                IP.with_prefixlen,
-                Interface.vrf,
-                Interface.acl_in,
-                Interface.acl_out,
-                Interface.is_disabled,
-                Interface.description,
-            ).where(
-                IP.network == network,
-                Interface.id == IP.interface_id,
-                Device.id == Interface.device_id,
+            stmt = (
+                select(
+                    Device.name.label("device"),
+                    Interface.name.label("interface"),
+                    IP.with_prefixlen,
+                    Interface.vrf,
+                    Interface.acl_in,
+                    Interface.acl_out,
+                    Interface.is_disabled,
+                    Interface.description,
+                )
+                .where(
+                    IP.network == network,
+                    Interface.id == IP.interface_id,
+                    Device.id == Interface.device_id,
+                )
+                .order_by(Device.name)
+                .order_by(Interface.name)
+                .order_by(IP.with_prefixlen)
             )
 
             with Session(self.engine) as session:
