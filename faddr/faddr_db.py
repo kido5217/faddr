@@ -11,7 +11,7 @@ from faddr.exceptions import (
     FaddrSettingsFileFormatError,
 )
 from faddr.parser import Parser
-from faddr.rancid import RancidDir, RancidGroup
+from faddr.rancid import RancidDir
 from faddr.settings import load_settings
 
 

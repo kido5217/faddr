@@ -4,6 +4,7 @@ IP_SPACE_MASK = "((\S+)\s(\S+))"
 
 <group name="interfaces.{{ name }}**">
 interface {{ name }}
+interface {{ name | _start_ }} point-to-point
  duplex {{ duplex }}
  speed {{ speed }}
  description {{ description | _line_ }}
