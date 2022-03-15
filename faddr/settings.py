@@ -56,7 +56,6 @@ class RancidDirSettings(BaseModel):
     """Rancid Directory settings."""
 
     path: str = "/var/lib/rancid/"
-    kind: str = "dir"
     mapping: dict = {}
 
 

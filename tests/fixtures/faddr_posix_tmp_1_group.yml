@@ -6,7 +6,6 @@ database:
 rancid:
   dirs:
     - path: "tests/fixtures/rancid/group_02_4rows"
-      kind: group
       mapping:
         "cisco-faddr": "cisco-ios"
         "cisco-xr-faddr": "cisco-iosxr"

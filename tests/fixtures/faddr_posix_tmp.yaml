@@ -6,7 +6,6 @@ database:
 rancid:
   dirs:
     - path: "tests/fixtures/rancid/"
-      kind: dir
       mapping:
         "cisco-faddr": "cisco-ios"
         "cisco-xr-faddr": "cisco-iosxr"
