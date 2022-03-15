@@ -52,12 +52,7 @@ def main():
     database.new()
 
     for rancid_dir in settings.rancid.dirs:
-        if rancid_dir.kind == "dir":
-            rancid = RancidDir(rancid_dir.path)
-        elif rancid_dir.kind in ("group", "repo"):
-            rancid = RancidGroup(rancid_dir.path)
-        else:
-            continue
+        rancid = RancidDir(rancid_dir.path)
         logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
 
         for config in rancid.configs:

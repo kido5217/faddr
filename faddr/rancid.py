@@ -8,19 +8,12 @@ from faddr.exceptions import FaddrRancidPathError
 
 
 class RancidGroup:
-    """Rancid group dir parser.
-
-    rancid_dir
-    ├── group1                  <- This Class, self.type="group"
-    │   ├── configs             <- This Class, self.type="repo"
-    │   │   └── 7206-ios15-1
-    │   ├── router.db
-    """
+    """Rancid group dir parser."""
 
     def __init__(self, path, name=None):
         self.path = Path(path)
         if not self.path.exists() or not self.path.is_dir():
-            raise FaddrRancidPathError(f"Wrong path: {path}")
+            raise FaddrRancidPathError(path)
 
         if name:
             self.name = name
@@ -28,22 +21,19 @@ class RancidGroup:
             self.name = self.path.name
 
         if Path(self.path, "router.db").exists():
-            self.type = "group"
+            self.level = "group"
             self.repo = Path(self.path, "configs")
-        else:
-            self.type = "repo"
-            self.repo = self.path
-
-        if self.type == "group":
             self.configs = self.get_configs_from_router_db()
         else:
+            self.level = "repo"
+            self.repo = self.path
             self.configs = self.get_configs_from_dir()
 
         logger.debug(f"Created RancidGroup class object: {self}")
 
     def __repr__(self):
         return (
-            f"RANCID {self.type} '{self.name}' in '{self.path}' "
+            f"RANCID {self.level} '{self.name}' in '{self.path}' "
             f"contains {len(self.configs)} configs"
         )
 
@@ -132,32 +122,29 @@ class RancidGroup:
 
 
 class RancidDir:
-    """Rancid root dir parser.
-
-    rancid_dir/                 <- This Class
-    ├── group1
-    │   ├── configs
-    │   │   └── 7206-ios15-1
-    │   ├── router.db
-    """
+    """Rancid root dir parser."""
 
     def __init__(self, path):
         self.path = Path(path)
         if not self.path.exists() or not self.path.is_dir():
             raise FaddrRancidPathError(f"Wrong path: {path}")
 
+        self.level = self.get_level(path)
+
         self.groups = []
-        for group_candidate in self.path.iterdir():
-            try:
-                if (
-                    group_candidate.is_dir()
-                    and Path(group_candidate, "router.db").exists()
-                ):
-                    rancid_group = RancidGroup(group_candidate)
-                    if len(rancid_group.configs) > 0:
-                        self.groups.append(rancid_group)
-            except PermissionError:
-                logger.info(f"Can't access {group_candidate}")
+
+        if self.level == "dir":
+            for group_candidate in self.path.iterdir():
+                try:
+                    group = RancidGroup(group_candidate)
+                    self.groups.append(group)
+                except FaddrRancidPathError:
+                    logger.warning(f"{group_candidate} isn't valid rancid group dir")
+
+            if len(self.groups) == 0:
+                raise FaddrRancidPathError(self.path)
+        else:
+            self.groups.append(RancidGroup(self.path))
 
         self.configs = chain.from_iterable(group.configs for group in self.groups)
 
@@ -168,3 +155,30 @@ class RancidDir:
 
     def __str__(self):
         return str(self.path.resolve())
+
+    @staticmethod
+    def get_level(path):
+        """Get level inside rancid dir for provided path."""
+        path = Path(path)
+
+        if Path(path, "router.db").exists():
+            return "group"
+
+        for group_candidate in path.iterdir():
+            try:
+                if Path(group_candidate, "router.db").exists():
+                    return "dir"
+            except PermissionError:
+                logger.warning(f"Can't access {group_candidate}")
+
+        for config_path in path.iterdir():
+            try:
+                if config_path.is_file():
+                    with config_path.open(encoding="ascii", errors="ignore") as config:
+                        ct_line = config.readline()
+                    if "RANCID-CONTENT-TYPE" in ct_line:
+                        return "repo"
+            except PermissionError:
+                logger.warning(f"Can't access {config_path}")
+
+        raise FaddrRancidPathError(path)

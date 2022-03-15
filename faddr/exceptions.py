@@ -20,7 +20,9 @@ class FaddrRancidPathError(FaddrBaseException):
 
     def __init__(self, path):
         self.path = path
-        self.message = f"Path {self.path} does not exist or isn't directory."
+        self.message = (
+            f"Path {self.path} doesn't exist or isn't valid RANCID directory."
+        )
         super().__init__(self.message)
 
 
