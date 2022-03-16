@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Raise exception in Parser class is loaded config file is empty
+- Raise exception in Parser class if loaded config file is empty
 
 ## [0.0.9] - 2022-03-15
 
