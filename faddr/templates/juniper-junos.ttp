@@ -1,5 +1,5 @@
 <vars>
-SUBINT_UNIT = "((\S+)\s(unit)\s(\S+))"
+SUBINT_UNIT = "((\S+) (unit) (\S+))"
 </vars>
 
 <group name="interfaces.{{ name }}**" method="table">
