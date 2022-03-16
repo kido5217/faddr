@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Raise exception in Parser class if loaded config file is empty
 - Only parse config file if it's enabled in router.db
+- Made working IP space MASK regex
 
 ## [0.0.9] - 2022-03-15
 
