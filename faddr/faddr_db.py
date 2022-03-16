@@ -57,6 +57,12 @@ def main():
         logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
 
         for config in rancid.configs:
+            if not config.get("is_enabled", False):
+                logger.info(
+                    f"Config '{config['name']}' is disabled in router.db, skipping"
+                )
+                continue
+
             logger.info(f'Parsing \'{config["name"]}\' from \'{config["path"]}\'')
             try:
                 parser = Parser(

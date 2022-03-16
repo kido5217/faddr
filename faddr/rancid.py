@@ -66,7 +66,7 @@ class RancidGroup:
             if len(router_data) == 3 or len(router_data) == 4:
                 config = {}
                 enabled_map = {"up": True, "down": False}
-                config["enabled"] = enabled_map.get(router_data[2], False)
+                config["is_enabled"] = enabled_map.get(router_data[2], False)
                 config["path"] = Path(self.repo, router_data[0])
                 config["content_type"] = router_data[1]
                 config["name"] = router_data[0].casefold()
