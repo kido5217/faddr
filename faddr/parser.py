@@ -5,7 +5,11 @@ from pathlib import Path
 from ttp import ttp
 
 from faddr import logger
-from faddr.exceptions import FaddrParserConfigFileAbsent, FaddrParserUnknownProfile
+from faddr.exceptions import (
+    FaddrParserConfigFileAbsent,
+    FaddrParserConfigFileEmpty,
+    FaddrParserUnknownProfile,
+)
 
 
 class Parser:
@@ -74,6 +78,9 @@ class Parser:
 
         with open(path, encoding="ascii", errors="ignore") as config_file:
             config = config_file.read()
+
+        if len(config) == 0:
+            raise FaddrParserConfigFileEmpty(path)
 
         return config
 

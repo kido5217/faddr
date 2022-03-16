@@ -7,6 +7,7 @@ from faddr import logger
 from faddr.database import Database
 from faddr.exceptions import (
     FaddrParserConfigFileAbsent,
+    FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
     FaddrSettingsFileFormatError,
 )
@@ -83,5 +84,7 @@ def main():
                 logger.warning(f"Unsupported config: {config}")
             except FaddrParserConfigFileAbsent:
                 logger.warning(f"Config file absent: {config}")
+            except FaddrParserConfigFileEmpty:
+                logger.warning(f"Config file empty: {config}")
 
     database.set_default()
