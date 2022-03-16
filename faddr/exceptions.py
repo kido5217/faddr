@@ -61,3 +61,12 @@ class FaddrParserConfigFileAbsent(FaddrBaseException):
         self.path = path
         self.message = f"File '{self.path}' does not exist."
         super().__init__(self.message)
+
+
+class FaddrParserConfigFileEmpty(FaddrBaseException):
+    """Exception raised when configuration file is empty."""
+
+    def __init__(self, path):
+        self.path = path
+        self.message = f"File '{self.path}' is empty."
+        super().__init__(self.message)
