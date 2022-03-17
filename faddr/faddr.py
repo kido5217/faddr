@@ -64,7 +64,7 @@ def pretty_print_result(result, print_description=False, color=False):
     for column_name in result["header"]:
         table.add_column(
             column_name,
-            no_wrap=(column_name != "Description"),
+            overflow=None,
         )
 
     for row in result["data"]:
