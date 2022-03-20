@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Debug logging in database submodule
+- Detect primary/preferred and vrrp addresses in juniper-junos ttp template
 
 ### Changed
 
