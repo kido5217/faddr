@@ -15,7 +15,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base
 
+from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
+
 
 Base = declarative_base()
 
@@ -101,6 +103,7 @@ class Database:
         self.basename = name
         self.name = name
         self.revision = None
+        logger.debug(f"Created Database class: {self.__dict__}")
 
     @property
     def engine(self):
@@ -121,6 +124,7 @@ class Database:
         self.name = rev_name + suffix
 
         Base.metadata.create_all(self.engine)
+        logger.debug(f"Created new revision: '{self.revision}'")
 
         return self.revision
 
@@ -136,6 +140,8 @@ class Database:
 
         for interface_name, interface_data in device_data.get("interfaces", {}).items():
             self.insert_interface(device_id, interface_name, interface_data)
+
+        logger.debug(f"Inserted device: '{device_data['info']}'")
 
     def insert_interface(self, device_id, name, data):
         """Insert interface data to database."""
@@ -156,6 +162,8 @@ class Database:
         for ip_address in data.get("ip", []):
             self.insert_ip_address(interface_id, ip_address)
 
+        logger.debug(f"Interted interface {data}")
+
     def insert_ip_address(self, interface_id, data):
         """Insert ip_address data to database."""
 
@@ -169,6 +177,8 @@ class Database:
         with Session(self.engine) as session:
             session.add(ip_address)
             session.commit()
+
+        logger.debug(f"Inserted IP address {data}")
 
     def get_devices(self):
         """Get device list from database."""
@@ -185,6 +195,7 @@ class Database:
                 base_file.unlink()
             base_file.symlink_to(rev_file)
             self.name = self.basename
+            logger.debug(f"Created symlink '{base_file}' to '{rev_file}'")
 
     def is_default(self):
         """Check if current revision is default."""
@@ -193,6 +204,7 @@ class Database:
     def find_network(self, network, netmask_min=32, netmask_max=24):
         """Find provided netwkork."""
 
+        logger.debug(f"Searchong for {network}")
         result = {
             "header": [
                 "Device",
@@ -209,10 +221,11 @@ class Database:
 
         networks = []
         for netmask in range(netmask_max, netmask_min + 1):
-            network = ipaddress.ip_network(
+            calculated_network = ipaddress.IPv4Network(
                 (network.split("/")[0], netmask), strict=False
             ).with_prefixlen
-            networks.append(network)
+            networks.append(calculated_network)
+            logger.debug(f"Added {calculated_network} to search list")
 
         stmt = (
             select(
@@ -239,6 +252,7 @@ class Database:
             for row in session.execute(stmt):
                 data = dict(zip(result["header"], row))
                 result["data"].append(data)
+                logger.debug(f"Found address: {data}")
 
         return result
 
