@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Convert device hostname to lovercase in rancid config path
+- Convert device hostname to lowercase in rancid config path
 
 ## [0.0.11] - 2022-03-20
 
