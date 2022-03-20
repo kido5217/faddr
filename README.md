@@ -20,7 +20,7 @@ pip install faddr
 Generate database:
 
 ```bash
-faddr-db -r [RANCID_DIR] -d [DATABASE LOCATION]
+faddr-db
 ```
 
 Find ip address termination point:
