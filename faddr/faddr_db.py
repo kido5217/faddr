@@ -67,7 +67,10 @@ def main():
             try:
                 parser = Parser(
                     config["path"],
-                    rancid_dir.mapping.get(config["content_type"]),
+                    rancid_dir.mapping.get(
+                        config["content_type"],
+                        settings.rancid.mapping.get(config["content_type"]),
+                    ),
                     settings.templates_dir,
                 )
                 data = parser.parse()

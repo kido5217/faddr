@@ -17,12 +17,11 @@ def settings_default():
         "database": {"path": "/var/db/faddr/", "name": "faddr-db.sqlite"},
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "mapping": {}}],
-            "default_mapping": {
+            "mapping": {
                 "cisco": "cisco-ios",
                 "cisco-xr": "cisco-iosxr",
                 "juniper": "juniper-junos",
             },
-            "mapping": {},
         },
     }
     return settings

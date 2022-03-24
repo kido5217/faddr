@@ -63,12 +63,11 @@ class RancidSettings(BaseModel):
     """Rancid settings."""
 
     dirs: List[RancidDirSettings] = [RancidDirSettings()]
-    default_mapping: dict = {
+    mapping: dict = {
         "cisco": "cisco-ios",
         "cisco-xr": "cisco-iosxr",
         "juniper": "juniper-junos",
     }
-    mapping: dict = {}
 
 
 class FaddrSettings(BaseSettings):
