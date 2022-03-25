@@ -98,7 +98,7 @@ class RancidGroup:
             content_type = self.get_content_type(config_path)
             if content_type:
                 config = {}
-                config["enabled"] = True
+                config["is_enabled"] = True
                 config["path"] = config_path
                 config["content_type"] = content_type
                 config["name"] = config_path.name
