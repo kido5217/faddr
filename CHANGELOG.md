@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Renamed 'enabled' to 'is_enabled' in rancid repo dir parser.
+
+### Removed
+
+- Removed 'router_db_raw_string' property as it was user for debug only
+
 ## [0.0.12] - 2022-03-24
 
 ### Changed

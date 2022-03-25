@@ -74,7 +74,6 @@ class RancidGroup:
                     config["hostname"] = router_data[0].casefold()
                 else:
                     config["hostname"] = router_data[3].casefold()
-                config["router_db_raw_string"] = router_string
                 configs.append(config)
             else:
                 logger.debug(f"Ingnoring line '{router_string}' - wrong format")
@@ -82,7 +81,7 @@ class RancidGroup:
         return configs
 
     def get_configs_from_dir(self):
-        """Load config files list and their metadata from dir with files itself."""
+        """Load config files list and their metadata from dir with files themselves."""
 
         configs = []
 
@@ -98,7 +97,7 @@ class RancidGroup:
             content_type = self.get_content_type(config_path)
             if content_type:
                 config = {}
-                config["enabled"] = True
+                config["is_enabled"] = True
                 config["path"] = config_path
                 config["content_type"] = content_type
                 config["name"] = config_path.name
