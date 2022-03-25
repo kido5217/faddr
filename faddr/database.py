@@ -91,7 +91,7 @@ class IP(Base):  # pylint: disable=too-few-public-methods
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name):
+    def __init__(self, path, name, revisions=10):
         self.path = Path(path)
         if not self.path.exists():
             raise FaddrDatabaseDirError(
@@ -100,6 +100,7 @@ class Database:
         if not self.path.is_dir():
             raise FaddrDatabaseDirError(self.path, "path isn't a directory")
 
+        self.revisions = revisions
         self.basename = name
         self.name = name
         self.revision = None
@@ -180,12 +181,6 @@ class Database:
 
         logger.debug(f"Inserted IP address {data}")
 
-    def get_devices(self):
-        """Get device list from database."""
-
-        with Session(self.engine) as session:
-            return session.query(Device).all()
-
     def set_default(self):
         """Make current revision default one."""
         if self.name != self.basename:
@@ -200,6 +195,9 @@ class Database:
     def is_default(self):
         """Check if current revision is default."""
         return self.name == self.basename
+
+    def cleanup(self):
+        pass
 
     def find_network(self, network, netmask_min=32, netmask_max=24):
         """Find provided netwkork."""
