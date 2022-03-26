@@ -6,6 +6,7 @@ import sys
 from faddr import logger
 from faddr.database import Database
 from faddr.exceptions import (
+    FaddrDatabaseDirError,
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
@@ -45,12 +46,16 @@ def main():
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
     except FaddrSettingsFileFormatError as err:
-        logger.info(f"Failed to load settings: {err}")
+        logger.error(f"Failed to load settings: {err}")
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
 
-    database = Database(**settings.database.dict())
-    database.new()
+    try:
+        database = Database(**settings.database.dict())
+    except FaddrDatabaseDirError as err:
+        logger.error(f"Failed to open database: {err}")
+        sys.exit(1)
+    database.new_revision()
 
     for rancid_dir in settings.rancid.dirs:
         rancid = RancidDir(rancid_dir.path)
@@ -97,3 +102,4 @@ def main():
                 logger.warning(f"Config file empty: {config}")
 
     database.set_default()
+    database.cleanup()
