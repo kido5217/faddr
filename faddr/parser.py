@@ -25,8 +25,8 @@ class Parser:
     def __init__(
         self,
         config,
-        profile,
-        template_dir,
+        profile=None,
+        template_dir=None,
     ) -> None:
 
         if profile in self.__class__.SUPPORTED_PROFILES:
@@ -45,6 +45,8 @@ class Parser:
 
     def load_template(self, template_dir):
         """Load ttp template from template dir."""
+        if template_dir is None:
+            template_dir = Path(__file__).parent.joinpath("templates")
         template_name = self.profile + ".ttp"
         template_path = Path(template_dir, template_name)
         with open(template_path, encoding="ascii", errors="ignore") as template_file:

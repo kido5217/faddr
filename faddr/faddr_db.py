@@ -37,6 +37,32 @@ def parse_cmd_args():
     return vars(args)
 
 
+def parse_config(config, profile=None, template_dir=None):
+    """Parse provided configuration and return structured data."""
+    device = {}
+
+    try:
+        parser = Parser(
+            config,
+            profile=profile,
+            template_dir=template_dir,
+        )
+        data = parser.parse()
+        device.update(data)
+        device_stats = {}
+        for category, category_data in data.items():
+            device_stats[category] = len(category_data)
+        logger.info(f"Parsed: {device_stats}")
+    except FaddrParserUnknownProfile:
+        logger.warning(f"Unsupported config: {config}")
+    except FaddrParserConfigFileAbsent:
+        logger.warning(f"Config file absent: {config}")
+    except FaddrParserConfigFileEmpty:
+        logger.warning(f"Config file empty: {config}")
+
+    return device
+
+
 def main():
     """Parsing devices' config files and writing data to database."""
 
@@ -69,37 +95,22 @@ def main():
                 continue
 
             logger.info(f'Parsing \'{config["name"]}\' from \'{config["path"]}\'')
-            try:
-                parser = Parser(
-                    config["path"],
-                    rancid_dir.mapping.get(
-                        config["content_type"],
-                        settings.rancid.mapping.get(config["content_type"]),
-                    ),
-                    settings.templates_dir,
-                )
-                data = parser.parse()
-                device = {
-                    "info": {
-                        "path": str(config["path"]),
-                        "name": str(config["name"]),
-                        "source": "rancid",
-                    }
+            device = parse_config(
+                config["path"],
+                rancid_dir.mapping.get(
+                    config["content_type"],
+                    settings.rancid.mapping.get(config["content_type"]),
+                ),
+                settings.templates_dir,
+            )
+            if len(device) > 0:
+                device_info = {
+                    "path": str(config["path"]),
+                    "name": str(config["name"]),
+                    "source": "rancid",
                 }
-                device.update(data)
+                device["info"] = device_info
                 database.insert_device(device)
-                device_stats = {}
-                for category, category_data in data.items():
-                    if category == "info":
-                        continue
-                    device_stats[category] = len(category_data)
-                logger.info(f'\'{device["info"]["name"]}\' parsed: {device_stats}')
-            except FaddrParserUnknownProfile:
-                logger.warning(f"Unsupported config: {config}")
-            except FaddrParserConfigFileAbsent:
-                logger.warning(f"Config file absent: {config}")
-            except FaddrParserConfigFileEmpty:
-                logger.warning(f"Config file empty: {config}")
 
     database.set_default()
     database.cleanup()
