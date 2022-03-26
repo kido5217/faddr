@@ -14,7 +14,11 @@ def settings_default():
     settings = {
         "debug": False,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
-        "database": {"path": "/var/db/faddr/", "name": "faddr-db.sqlite"},
+        "database": {
+            "path": "/var/db/faddr/",
+            "name": "faddr-db.sqlite",
+            "revisions": 10,
+        },
         "rancid": {
             "dirs": [{"path": "/var/lib/rancid/", "mapping": {}}],
             "mapping": {

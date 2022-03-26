@@ -1,7 +1,8 @@
 ---
 database:
-  path: "/tmp/"
+  path: "/tmp/faddr/"
   name: "faddr-db.sqlite"
+  revisions: 5
 
 rancid:
   dirs:

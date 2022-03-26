@@ -91,15 +91,16 @@ class IP(Base):  # pylint: disable=too-few-public-methods
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name):
+    def __init__(self, path, name, revisions=10):
         self.path = Path(path)
-        if not self.path.exists():
+        try:
+            self.path.mkdir(parents=True, exist_ok=True)
+        except FileExistsError:
             raise FaddrDatabaseDirError(
-                self.path, "path doesn't exist or isn't readable"
-            )
-        if not self.path.is_dir():
-            raise FaddrDatabaseDirError(self.path, "path isn't a directory")
+                self.path, "path isn't a directory or isn't readable"
+            ) from None
 
+        self.revisions = revisions
         self.basename = name
         self.name = name
         self.revision = None
@@ -112,12 +113,12 @@ class Database:
         engine = create_engine(f"sqlite+pysqlite:///{db_file}", future=True)
         return engine
 
-    def new(self, revision=None):
+    def new_revision(self, revision=None):
         """Create new revision and return it."""
         if revision:
             self.revision = revision
         else:
-            self.revision = self.gen_revision()
+            self.revision = self.gen_revision_id()
 
         rev_name = Path(self.basename).stem + "-" + self.revision
         suffix = Path(self.basename).suffix
@@ -180,12 +181,6 @@ class Database:
 
         logger.debug(f"Inserted IP address {data}")
 
-    def get_devices(self):
-        """Get device list from database."""
-
-        with Session(self.engine) as session:
-            return session.query(Device).all()
-
     def set_default(self):
         """Make current revision default one."""
         if self.name != self.basename:
@@ -200,6 +195,25 @@ class Database:
     def is_default(self):
         """Check if current revision is default."""
         return self.name == self.basename
+
+    def cleanup(self):
+        """Delete revisions that exceed the maximum number of allowed revisions."""
+        if self.revisions == -1:
+            logger.debug(
+                f"'database.revisions' is '{self.revisions}', keeping all revisions."
+            )
+            return
+        revision_list = []
+        for revision_candidate in self.path.iterdir():
+            if len(revision_candidate.name) == len(self.basename) + 15:
+                revision_list.append(revision_candidate)
+        revision_list.sort(reverse=True)
+        logger.debug(f"Found {len(revision_list)} revisions: {revision_list}")
+        if len(revision_list) > self.revisions:
+            logger.debug(f"Deleting {len(revision_list) - self.revisions} revisions...")
+            for revision_to_delete in revision_list[self.revisions :]:
+                revision_to_delete.unlink()
+                logger.debug(f"Deleted {revision_to_delete}")
 
     def find_network(self, network, netmask_min=32, netmask_max=24):
         """Find provided netwkork."""
@@ -257,7 +271,7 @@ class Database:
         return result
 
     @staticmethod
-    def gen_revision():
+    def gen_revision_id():
         """Generate revision."""
         date_format = "%Y%m%d%H%M%S"
         revision = datetime.now().strftime(date_format)

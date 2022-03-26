@@ -11,7 +11,7 @@ class FaddrDatabaseDirError(FaddrBaseException):
     def __init__(self, path, problem):
         self.path = path
         self.problem = problem
-        self.message = f"Wrong {self.path}: {self.problem}"
+        self.message = f"{self.path}: {self.problem}"
         super().__init__(self.message)
 
 
