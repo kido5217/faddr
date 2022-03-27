@@ -95,9 +95,9 @@ class Database:
         self.path = Path(path)
         try:
             self.path.mkdir(parents=True, exist_ok=True)
-        except FileExistsError:
+        except (FileExistsError, PermissionError):
             raise FaddrDatabaseDirError(
-                self.path, "path isn't a directory or isn't readable"
+                self.path, "path isn't a directory or isn't readable or writable."
             ) from None
 
         self.revisions = revisions
