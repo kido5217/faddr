@@ -73,6 +73,7 @@ def main():
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
+    # Load settings
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
     except FaddrSettingsFileFormatError:
@@ -80,6 +81,7 @@ def main():
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
 
+    # Connect to database and create new revision
     try:
         database = Database(**settings.database.dict())
     except FaddrDatabaseDirError:
@@ -87,6 +89,7 @@ def main():
         sys.exit(1)
     database.new_revision()
 
+    # Init multiprocess framework
     ray.init()
     data_ids = []
 
@@ -123,5 +126,7 @@ def main():
             logger.info(f'Inserting {device["info"]["name"]} info DB...')
             database.insert_device(device)
 
+        # Only mark revision as active and remove older revions
+        # if at least one device has been parsed successfully
         database.set_default()
         database.cleanup()
