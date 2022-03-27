@@ -2,6 +2,8 @@
 
 import argparse
 import sys
+import ray
+
 
 from faddr import logger
 from faddr.database import Database
@@ -37,22 +39,24 @@ def parse_cmd_args():
     return vars(args)
 
 
+@ray.remote
 def parse_config(config, profile=None, template_dir=None):
     """Parse provided configuration and return structured data."""
-    device = {}
-
+    device = {
+        "info": {
+            "path": str(config["path"]),
+            "name": str(config["name"]),
+            "source": "rancid",
+        }
+    }
     try:
         parser = Parser(
-            config,
+            config["path"],
             profile=profile,
             template_dir=template_dir,
         )
         data = parser.parse()
         device.update(data)
-        device_stats = {}
-        for category, category_data in data.items():
-            device_stats[category] = len(category_data)
-        logger.info(f"Parsed: {device_stats}")
     except FaddrParserUnknownProfile:
         logger.warning(f"Unsupported content-type '{profile}' in '{config}'")
     except FaddrParserConfigFileAbsent:
@@ -83,6 +87,9 @@ def main():
         sys.exit(1)
     database.new_revision()
 
+    ray.init()
+    data_ids = []
+
     for rancid_dir in settings.rancid.dirs:
         rancid = RancidDir(rancid_dir.path)
         logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
@@ -95,22 +102,26 @@ def main():
                 continue
 
             logger.info(f'Parsing \'{config["name"]}\' from \'{config["path"]}\'')
-            device = parse_config(
-                config["path"],
-                rancid_dir.mapping.get(
-                    config["content_type"],
-                    settings.rancid.mapping.get(config["content_type"]),
-                ),
-                settings.templates_dir,
+            profile = rancid_dir.mapping.get(
+                config["content_type"],
+                settings.rancid.mapping.get(config["content_type"]),
             )
-            if len(device) > 0:
-                device_info = {
-                    "path": str(config["path"]),
-                    "name": str(config["name"]),
-                    "source": "rancid",
-                }
-                device["info"] = device_info
-                database.insert_device(device)
+            device = parse_config.remote(
+                config,
+                profile=profile,
+                template_dir=settings.templates_dir,
+            )
+            data_ids.append(device)
 
-    database.set_default()
-    database.cleanup()
+    # All exception handling should be inside parse_config function,
+    # so we don't catch any exceptions here
+    devices = ray.get(data_ids)
+    logger.info(f"Total devices parsed: {len(devices)}.")
+
+    if len(devices) > 0:
+        for device in devices:
+            logger.info(f'Inserting {device["info"]["name"]} info DB...')
+            database.insert_device(device)
+
+        database.set_default()
+        database.cleanup()
