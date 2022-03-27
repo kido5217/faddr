@@ -54,11 +54,11 @@ def parse_config(config, profile=None, template_dir=None):
             device_stats[category] = len(category_data)
         logger.info(f"Parsed: {device_stats}")
     except FaddrParserUnknownProfile:
-        logger.warning(f"Unsupported config: {config}")
+        logger.warning(f"Unsupported content-type '{profile}' in '{config}'")
     except FaddrParserConfigFileAbsent:
-        logger.warning(f"Config file absent: {config}")
+        logger.warning(f"Config file absent: '{config}'")
     except FaddrParserConfigFileEmpty:
-        logger.warning(f"Config file empty: {config}")
+        logger.warning(f"Config file empty: '{config}'")
 
     return device
 
@@ -71,15 +71,15 @@ def main():
 
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
-    except FaddrSettingsFileFormatError as err:
-        logger.error(f"Failed to load settings: {err}")
+    except FaddrSettingsFileFormatError:
+        logger.exception("Failed to load settings")
         sys.exit(1)
     logger.debug(f"Generated settings: {settings.dict()}")
 
     try:
         database = Database(**settings.database.dict())
-    except FaddrDatabaseDirError as err:
-        logger.error(f"Failed to open database: {err}")
+    except FaddrDatabaseDirError:
+        logger.exception("Failed to open database")
         sys.exit(1)
     database.new_revision()
 
