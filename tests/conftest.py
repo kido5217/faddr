@@ -13,6 +13,7 @@ def settings_default():
     """Default settings."""
     settings = {
         "debug": False,
+        "processes": 1,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
         "database": {
             "path": "/var/db/faddr/",

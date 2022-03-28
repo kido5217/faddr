@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Multiprocess data parsing with [ray](https://www.ray.io/) framework.
+- Settings option for number of processes to spawn. Default is 1.
+
 ### Changed
 
 - Improved some logging messages.

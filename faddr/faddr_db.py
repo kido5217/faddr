@@ -2,8 +2,8 @@
 
 import argparse
 import sys
-import ray
 
+import ray
 
 from faddr import logger
 from faddr.database import Database
@@ -63,7 +63,6 @@ def parse_config(config, profile=None, template_dir=None):
         logger.warning(f"Config file absent: '{config}'")
     except FaddrParserConfigFileEmpty:
         logger.warning(f"Config file empty: '{config}'")
-
     return device
 
 
@@ -89,8 +88,8 @@ def main():
         sys.exit(1)
     database.new_revision()
 
-    # Init multiprocess framework
-    ray.init()
+    # Init multiprocessing framework
+    ray.init(num_cpus=settings.processes, num_gpus=0)
     data_ids = []
 
     for rancid_dir in settings.rancid.dirs:
@@ -118,15 +117,19 @@ def main():
 
     # All exception handling should be inside parse_config function,
     # so we don't catch any exceptions here
+    logger.info("Waiting for parser processes to finish...")
     devices = ray.get(data_ids)
-    logger.info(f"Total devices parsed: {len(devices)}.")
+    logger.info(f"Devices parsed: {len(devices)}")
 
     if len(devices) > 0:
         for device in devices:
             logger.info(f'Inserting {device["info"]["name"]} info DB...')
             database.insert_device(device)
+        logger.info(f"Devices inserted: {len(devices)}")
 
         # Only mark revision as active and remove older revions
         # if at least one device has been parsed successfully
         database.set_default()
-        database.cleanup()
+        logger.info("Deleting old revisions...")
+        deleted_revions = database.cleanup()
+        logger.info(f"Revisions deleted: {deleted_revions}")

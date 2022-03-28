@@ -75,6 +75,7 @@ class FaddrSettings(BaseSettings):
     """Faddr settings root."""
 
     debug: bool = False
+    processes: int = 1
     templates_dir: Path = Path(__file__).parent.joinpath("templates")
     database: DatabaseSettings = DatabaseSettings()
     rancid: RancidSettings = RancidSettings()
