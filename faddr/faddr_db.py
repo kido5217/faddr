@@ -58,7 +58,7 @@ def parse_config(config, profile=None, template_dir=None):
         data = parser.parse()
         device.update(data)
     except FaddrParserUnknownProfile:
-        logger.warning(f"Unsupported content-type '{profile}' in '{config}'")
+        logger.warning(f"Unsupported content-type in '{config}'")
     except FaddrParserConfigFileAbsent:
         logger.warning(f"Config file absent: '{config}'")
     except FaddrParserConfigFileEmpty:
