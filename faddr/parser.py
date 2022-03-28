@@ -29,7 +29,7 @@ class Parser:
         template_dir=None,
     ) -> None:
 
-        if profile in self.__class__.SUPPORTED_PROFILES:
+        if profile in self.SUPPORTED_PROFILES:
             self.profile = profile
             logger.debug(f"Using profile '{self.profile}'")
         else:

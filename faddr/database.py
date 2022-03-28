@@ -3,7 +3,6 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
-from tkinter import N
 
 from sqlalchemy import (
     Boolean,
@@ -116,7 +115,13 @@ class Database:
     def engine(self):
         """Create SQLAlchemy engine."""
         db_file = Path(self.path, self.name)
-        engine = create_engine(f"sqlite+pysqlite:///{db_file}", future=True)
+        # SQLite 'dataabse is locked' workaround for multiprocessing.
+        # In the future, when we'll support others DB drivers,
+        # using sqlite should imply settings.processes=1 and disable multiprocessing
+        connect_args = {"timeout": 300}
+        engine = create_engine(
+            f"sqlite+pysqlite:///{db_file}", future=True, connect_args=connect_args
+        )
         return engine
 
     def new_revision(self, revision=None):

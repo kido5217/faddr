@@ -49,6 +49,8 @@ def parse_config(config, profile=None, template_dir=None):
             "source": "rancid",
         }
     }
+
+    logger.info(f'Parsing \'{config["name"]}\'')
     try:
         parser = Parser(
             config["path"],
@@ -66,6 +68,18 @@ def parse_config(config, profile=None, template_dir=None):
     return device
 
 
+@ray.remote
+def store_in_db(database, device):
+    """Insert device data to database."""
+    if len(device) < 2:
+        logger.warning(f'Device \'{device["info"]["name"]}\' data is empty, skipping')
+        return False
+
+    logger.info(f'Inserting \'{device["info"]["name"]}\' info DB')
+    database.insert_device(device)
+    return True
+
+
 def main():
     """Parsing devices' config files and writing data to database."""
 
@@ -73,6 +87,7 @@ def main():
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
     # Load settings
+    logger.info("Loading settings")
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
     except FaddrSettingsFileFormatError:
@@ -81,6 +96,7 @@ def main():
     logger.debug(f"Generated settings: {settings.dict()}")
 
     # Connect to database and create new revision
+    logger.info("Connecting to database and creating new revision")
     try:
         database = Database(**settings.database.dict())
     except FaddrDatabaseDirError:
@@ -89,9 +105,13 @@ def main():
     database.new_revision()
 
     # Init multiprocessing framework
+    logger.info("Initializing multiprocessing framework")
     ray.init(num_cpus=settings.processes, num_gpus=0)
-    data_ids = []
+    inserted_ids = []
 
+    skipped_devices = 0
+
+    logger.info("Parsing rancid dirs")
     for rancid_dir in settings.rancid.dirs:
         rancid = RancidDir(rancid_dir.path)
         logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
@@ -101,35 +121,48 @@ def main():
                 logger.info(
                     f"Config '{config['name']}' is disabled in router.db, skipping"
                 )
+                skipped_devices += 1
                 continue
 
-            logger.info(f'Parsing \'{config["name"]}\' from \'{config["path"]}\'')
+            # Get profile from dir's mapping.
+            # If Absent - get if from global rancid mapping.
+            # If it isn't there as well - try using raw content_type
             profile = rancid_dir.mapping.get(
                 config["content_type"],
-                settings.rancid.mapping.get(config["content_type"]),
+                settings.rancid.mapping.get(
+                    config["content_type"], config["content_type"]
+                ),
             )
-            device = parse_config.remote(
+            if profile not in Parser.SUPPORTED_PROFILES:
+                logger.warning(f"Unsupported content-type in '{config}'")
+                skipped_devices += 1
+                continue
+
+            data_id = parse_config.options(name="faddr::parse_config()").remote(
                 config,
                 profile=profile,
                 template_dir=settings.templates_dir,
             )
-            data_ids.append(device)
+            inserted_id = store_in_db.options(name="faddr::store_in_db()").remote(
+                database, data_id
+            )
+            inserted_ids.append(inserted_id)
 
-    # All exception handling should be inside parse_config function,
+    # All exception handling should be inside @ray.remote functions,
     # so we don't catch any exceptions here
-    logger.info("Waiting for parser processes to finish...")
-    devices = ray.get(data_ids)
-    logger.info(f"Devices parsed: {len(devices)}")
+    logger.info("Waiting for parser and database processes to finish")
+    result = [ray.get(inserted_id) for inserted_id in inserted_ids]
 
-    if len(devices) > 0:
-        for device in devices:
-            logger.info(f'Inserting {device["info"]["name"]} info DB...')
-            database.insert_device(device)
-        logger.info(f"Devices inserted: {len(devices)}")
+    # Statistics
+    parsed_devices = result.count(True)
+    skipped_devices = skipped_devices + result.count(False)
+    logger.info(f"Devices parsed and inserted: {parsed_devices}")
+    logger.info(f"Devices skipped: {skipped_devices}")
 
-        # Only mark revision as active and remove older revions
-        # if at least one device has been parsed successfully
+    # Only mark revision as active and remove older revisions
+    # if at least one device has been parsed successfully
+    if parsed_devices > 0:
         database.set_default()
-        logger.info("Deleting old revisions...")
+        logger.info("Deleting old revisions")
         deleted_revions = database.cleanup()
         logger.info(f"Revisions deleted: {deleted_revions}")
