@@ -18,7 +18,6 @@ from sqlalchemy.orm import Session, declarative_base
 from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
 
-
 Base = declarative_base()
 
 
@@ -202,18 +201,24 @@ class Database:
             logger.debug(
                 f"'database.revisions' is '{self.revisions}', keeping all revisions."
             )
-            return
+            return 0
+
         revision_list = []
         for revision_candidate in self.path.iterdir():
             if len(revision_candidate.name) == len(self.basename) + 15:
                 revision_list.append(revision_candidate)
         revision_list.sort(reverse=True)
-        logger.debug(f"Found {len(revision_list)} revisions: {revision_list}")
+        logger.debug(
+            f"Found {len(revision_list)} revisions: {[revision.name for revision in revision_list]}"
+        )
+
         if len(revision_list) > self.revisions:
             logger.debug(f"Deleting {len(revision_list) - self.revisions} revisions...")
             for revision_to_delete in revision_list[self.revisions :]:
                 revision_to_delete.unlink()
                 logger.debug(f"Deleted {revision_to_delete}")
+            return len(revision_list) - self.revisions
+        return 0
 
     def find_network(self, network, netmask_min=32, netmask_max=24):
         """Find provided netwkork."""

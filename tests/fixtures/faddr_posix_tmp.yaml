@@ -12,3 +12,5 @@ rancid:
         "cisco-xr-faddr": "cisco-iosxr"
         "huawei-faddr": "huawei-vrp"
         "juniper-faddr": "juniper-junos"
+
+processes: 10
