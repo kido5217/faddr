@@ -3,6 +3,7 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
+from tkinter import N
 
 from sqlalchemy import (
     Boolean,
@@ -90,7 +91,7 @@ class IP(Base):  # pylint: disable=too-few-public-methods
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name, revisions=10):
+    def __init__(self, path, name, revision=None, revisions=10):
         self.path = Path(path)
         try:
             self.path.mkdir(parents=True, exist_ok=True)
@@ -101,8 +102,14 @@ class Database:
 
         self.revisions = revisions
         self.basename = name
-        self.name = name
-        self.revision = None
+        self.revision = revision
+        if self.revision is None:
+            self.name = name
+        else:
+            rev_name = Path(self.basename).stem + "-" + self.revision
+            suffix = Path(self.basename).suffix
+            self.name = rev_name + suffix
+
         logger.debug(f"Created Database class: {self.__dict__}")
 
     @property
