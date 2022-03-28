@@ -6,7 +6,7 @@ import sys
 from rich import box
 from rich.table import Table
 
-from faddr import console, logger
+from faddr import __version__, console, logger
 from faddr.database import Database
 from faddr.exceptions import FaddrSettingsFileFormatError
 from faddr.settings import load_settings
@@ -42,6 +42,12 @@ def parse_cmd_args():
         "-s",
         "--settings-file",
         help="Faddr settings file  location",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="Print version and exit",
     )
 
     args = parser.parse_args()
@@ -87,6 +93,11 @@ def main():
 
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
+
+    if cmd_args.get("version", False):
+        logger.debug("Version was requested. Printing and exiting")
+        print(__version__)
+        sys.exit(0)
 
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))

@@ -90,7 +90,7 @@ class IP(Base):  # pylint: disable=too-few-public-methods
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name, revisions=10):
+    def __init__(self, path, name, revision=None, revisions=10):
         self.path = Path(path)
         try:
             self.path.mkdir(parents=True, exist_ok=True)
@@ -101,15 +101,27 @@ class Database:
 
         self.revisions = revisions
         self.basename = name
-        self.name = name
-        self.revision = None
+        self.revision = revision
+        if self.revision is None:
+            self.name = name
+        else:
+            rev_name = Path(self.basename).stem + "-" + self.revision
+            suffix = Path(self.basename).suffix
+            self.name = rev_name + suffix
+
         logger.debug(f"Created Database class: {self.__dict__}")
 
     @property
     def engine(self):
         """Create SQLAlchemy engine."""
         db_file = Path(self.path, self.name)
-        engine = create_engine(f"sqlite+pysqlite:///{db_file}", future=True)
+        # SQLite 'dataabse is locked' workaround for multiprocessing.
+        # In the future, when we'll support others DB drivers,
+        # using sqlite should imply settings.processes=1 and disable multiprocessing
+        connect_args = {"timeout": 300}
+        engine = create_engine(
+            f"sqlite+pysqlite:///{db_file}", future=True, connect_args=connect_args
+        )
         return engine
 
     def new_revision(self, revision=None):
