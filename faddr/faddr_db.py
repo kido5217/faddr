@@ -5,7 +5,7 @@ import sys
 
 import ray
 
-from faddr import logger
+from faddr import __version__, logger
 from faddr.database import Database
 from faddr.exceptions import (
     FaddrDatabaseDirError,
@@ -33,6 +33,12 @@ def parse_cmd_args():
         "-s",
         "--settings-file",
         help="Faddr settings file  location",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="Print version and exit",
     )
 
     args = parser.parse_args()
@@ -85,6 +91,11 @@ def main():
 
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
+
+    if cmd_args.get("version", False):
+        logger.debug("Version was requested. Printing and exiting")
+        print(__version__)
+        sys.exit(0)
 
     # Load settings
     logger.info("Loading settings")
