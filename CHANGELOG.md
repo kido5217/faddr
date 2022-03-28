@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Use multiprocessing for database operations.
+
 ### Fixed
 
 - Logging of unsupported content-type
