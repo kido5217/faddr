@@ -13,10 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Multiprocess data parsing with [ray](https://www.ray.io/) framework.
 - Settings option for number of processes to spawn. Default is 1.
+- Initial unit tests for faddr-db cli entry point.
 
 ### Changed
 
 - Improved some logging messages.
+
+### Removed
+
+- Disable python 3.10 support for now, as [ray doesn't support it yet](https://github.com/ray-project/ray/issues/19116).
 
 ## [0.1.0] - 2022-03-26
 

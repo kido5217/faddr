@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+import ray
 
 from faddr.parser import Parser
 
@@ -50,7 +51,6 @@ def settings_file_wrong_format():
     return Path("tests/fixtures/faddr_wrong_format.yml")
 
 
-# @pytest.fixture
 def parser_get_config_path(profile):
     """Get config name for provided profile."""
     config_name = profile + ".conf"
@@ -58,7 +58,6 @@ def parser_get_config_path(profile):
     return config
 
 
-# @pytest.fixture
 def parser_get_config(profile):
     """Get config for provided profile."""
     path = parser_get_config_path(profile)
@@ -67,7 +66,6 @@ def parser_get_config(profile):
     return config
 
 
-# @pytest.fixture
 def parser_get_config_list(profile):
     """Get config as list for provided profile."""
     path = parser_get_config_path(profile)
@@ -76,7 +74,6 @@ def parser_get_config_list(profile):
     return config
 
 
-# @pytest.fixture
 def parser_get_data(profile):
     """Get config data for provided profile."""
     data_name = profile + ".json"
@@ -107,3 +104,11 @@ def template_dir_embedded():
     """Get faddr's embedded template dir."""
     templates_dir = Path(__file__).parent.with_name("faddr").joinpath("templates")
     return templates_dir
+
+
+@pytest.fixture(scope="module")
+def ray_init():
+    """Init ray only ones per tests run and with one process."""
+    ray.init(local_mode=True)
+    yield None
+    ray.shutdown()
