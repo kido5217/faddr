@@ -12,6 +12,7 @@ interface {{ name | _start_ }} point-to-point
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}}
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} native
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} second-dot1q {{ c_vlan }}
+ vrf forwarding {{ vrf }}
  ip vrf forwarding {{ vrf }}
  ip access-group {{ acl_in }} in
  ip access-group {{ acl_out }} out
