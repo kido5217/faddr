@@ -48,7 +48,7 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     __tablename__ = "device"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, index=True)
     path = Column(String)
     source = Column(String)
 
@@ -59,19 +59,19 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     __tablename__ = "interface"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, index=True)
     parent_interface = Column(String)
     unit = Column(String)
     duplex = Column(String)
     speed = Column(String)
-    description = Column(String)
+    description = Column(String, index=True)
     is_disabled = Column(Boolean, default=False)
     encapsulation = Column(String)
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
-    vrf = Column(String)
-    acl_in = Column(String)
-    acl_out = Column(String)
+    vrf = Column(String, index=True)
+    acl_in = Column(String, index=True)
+    acl_out = Column(String, index=True)
 
     device_id = Column(Integer, ForeignKey("device.id"))
 
@@ -87,7 +87,7 @@ class IP(Base):  # pylint: disable=too-few-public-methods
     exploded = Column(String)
     hostmask = Column(String)
     hosts = Column(Integer)
-    ip = Column(String)
+    ip = Column(String, index=True)
     is_link_local = Column(Boolean, default=False)
     is_loopback = Column(Boolean, default=False)
     is_multicast = Column(Boolean, default=False)
@@ -96,8 +96,8 @@ class IP(Base):  # pylint: disable=too-few-public-methods
     is_unspecified = Column(Boolean, default=False)
     max_prefixlen = Column(Integer)
     netmask = Column(String)
-    network = Column(String)
-    network_address = Column(String)
+    network = Column(String, index=True)
+    network_address = Column(String, index=True)
     num_addresses = Column(Integer)
     prefixlen = Column(Integer)
     version = Column(Integer)
