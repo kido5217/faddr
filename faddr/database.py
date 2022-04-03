@@ -3,7 +3,9 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List
 
+from pydantic import BaseModel
 from sqlalchemy import (
     Boolean,
     Column,
@@ -21,13 +23,32 @@ from faddr.exceptions import FaddrDatabaseDirError
 Base = declarative_base()
 
 
+class Result(BaseModel):
+    """Network search result."""
+
+    headers: Dict[str, List[str]] = {
+        "full": [
+            "Query",
+            "Device",
+            "Interface",
+            "IP",
+            "VRF",
+            "ACL in",
+            "ACL out",
+            "Shutdown",
+            "Description",
+        ]
+    }
+    data: List[Dict[str, str]] = []
+
+
 class Device(Base):  # pylint: disable=too-few-public-methods
     """ORM 'device' table data mapping."""
 
     __tablename__ = "device"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, index=True)
     path = Column(String)
     source = Column(String)
 
@@ -38,19 +59,19 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     __tablename__ = "interface"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, index=True)
     parent_interface = Column(String)
     unit = Column(String)
     duplex = Column(String)
     speed = Column(String)
-    description = Column(String)
+    description = Column(String, index=True)
     is_disabled = Column(Boolean, default=False)
     encapsulation = Column(String)
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
-    vrf = Column(String)
-    acl_in = Column(String)
-    acl_out = Column(String)
+    vrf = Column(String, index=True)
+    acl_in = Column(String, index=True)
+    acl_out = Column(String, index=True)
 
     device_id = Column(Integer, ForeignKey("device.id"))
 
@@ -66,7 +87,7 @@ class IP(Base):  # pylint: disable=too-few-public-methods
     exploded = Column(String)
     hostmask = Column(String)
     hosts = Column(Integer)
-    ip = Column(String)
+    ip = Column(String, index=True)
     is_link_local = Column(Boolean, default=False)
     is_loopback = Column(Boolean, default=False)
     is_multicast = Column(Boolean, default=False)
@@ -75,8 +96,8 @@ class IP(Base):  # pylint: disable=too-few-public-methods
     is_unspecified = Column(Boolean, default=False)
     max_prefixlen = Column(Integer)
     netmask = Column(String)
-    network = Column(String)
-    network_address = Column(String)
+    network = Column(String, index=True)
+    network_address = Column(String, index=True)
     num_addresses = Column(Integer)
     prefixlen = Column(Integer)
     version = Column(Integer)
@@ -232,28 +253,27 @@ class Database:
             return len(revision_list) - self.revisions
         return 0
 
-    def find_network(self, network, netmask_min=32, netmask_max=24):
+    def find_networks(self, queries):
+        result = Result()
+
+        for query in queries:
+            result.data.extend(self.find_network(query)["data"])
+
+        return result.dict()
+
+    def find_network(self, query):
         """Find provided netwkork."""
 
-        logger.debug(f"Searchong for {network}")
-        result = {
-            "header": [
-                "Device",
-                "Interface",
-                "IP",
-                "VRF",
-                "ACL in",
-                "ACL out",
-                "Shutdown",
-                "Description",
-            ],
-            "data": [],
-        }
+        netmask_max = 16
+        netmask_min = 32
+
+        logger.debug(f"Searchong for {query}")
+        result = Result()
 
         networks = []
         for netmask in range(netmask_max, netmask_min + 1):
             calculated_network = ipaddress.IPv4Network(
-                (network.split("/")[0], netmask), strict=False
+                (query, netmask), strict=False
             ).with_prefixlen
             networks.append(calculated_network)
             logger.debug(f"Added {calculated_network} to search list")
@@ -281,11 +301,13 @@ class Database:
 
         with Session(self.engine) as session:
             for row in session.execute(stmt):
-                data = dict(zip(result["header"], row))
-                result["data"].append(data)
+                row = list(row)
+                row.insert(0, query)
+                data = dict(zip(result.headers["full"], row))
+                result.data.append(data)
                 logger.debug(f"Found address: {data}")
 
-        return result
+        return result.dict()
 
     @staticmethod
     def gen_revision_id():
