@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2022-04-03
+
 ### Added
 
 - "--table" key to enable fancy table decorations for network search results. Decorations are disabled by default.
 - `faddr` now can receive more than one ip address to search for.
 - Add indexing to some database fields
+
+## Fixed
+
+- Now `dabasese.find_network` searches up to `/16`
 
 ## [0.2.1] - 2022-03-28
 
