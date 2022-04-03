@@ -301,7 +301,6 @@ class Database:
 
         with Session(self.engine) as session:
             for row in session.execute(stmt):
-                # row = list(row).insert(0, query)
                 row = list(row)
                 row.insert(0, query)
                 data = dict(zip(result.headers["full"], row))
