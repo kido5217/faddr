@@ -3,7 +3,9 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List
 
+from pydantic import BaseModel
 from sqlalchemy import (
     Boolean,
     Column,
@@ -19,6 +21,25 @@ from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
 
 Base = declarative_base()
+
+
+class Result(BaseModel):
+    """Network search result."""
+
+    headers: Dict[str, List[str]] = {
+        "full": [
+            "Query",
+            "Device",
+            "Interface",
+            "IP",
+            "VRF",
+            "ACL in",
+            "ACL out",
+            "Shutdown",
+            "Description",
+        ]
+    }
+    data: List[Dict[str, str]] = []
 
 
 class Device(Base):  # pylint: disable=too-few-public-methods
@@ -232,28 +253,27 @@ class Database:
             return len(revision_list) - self.revisions
         return 0
 
-    def find_network(self, network, netmask_min=32, netmask_max=24):
+    def find_networks(self, queries):
+        result = Result()
+
+        for query in queries:
+            result.data.extend(self.find_network(query)["data"])
+
+        return result.dict()
+
+    def find_network(self, query):
         """Find provided netwkork."""
 
-        logger.debug(f"Searchong for {network}")
-        result = {
-            "header": [
-                "Device",
-                "Interface",
-                "IP",
-                "VRF",
-                "ACL in",
-                "ACL out",
-                "Shutdown",
-                "Description",
-            ],
-            "data": [],
-        }
+        netmask_max = 16
+        netmask_min = 32
+
+        logger.debug(f"Searchong for {query}")
+        result = Result()
 
         networks = []
         for netmask in range(netmask_max, netmask_min + 1):
             calculated_network = ipaddress.IPv4Network(
-                (network.split("/")[0], netmask), strict=False
+                (query, netmask), strict=False
             ).with_prefixlen
             networks.append(calculated_network)
             logger.debug(f"Added {calculated_network} to search list")
@@ -281,11 +301,14 @@ class Database:
 
         with Session(self.engine) as session:
             for row in session.execute(stmt):
-                data = dict(zip(result["header"], row))
-                result["data"].append(data)
+                # row = list(row).insert(0, query)
+                row = list(row)
+                row.insert(0, query)
+                data = dict(zip(result.headers["full"], row))
+                result.data.append(data)
                 logger.debug(f"Found address: {data}")
 
-        return result
+        return result.dict()
 
     @staticmethod
     def gen_revision_id():

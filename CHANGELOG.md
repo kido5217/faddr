@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- "--table" key to enable fancy table decorations for network search results. Decorations are disabled by default.
+- `faddr` now can receive more than one ip address to search for.
+
 ## [0.2.1] - 2022-03-28
 
 ### Added

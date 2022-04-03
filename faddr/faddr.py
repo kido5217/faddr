@@ -18,6 +18,7 @@ def parse_cmd_args():
 
     parser.add_argument(
         "ip_address",
+        nargs="*",
         help="IP address to search",
     )
     parser.add_argument(
@@ -44,6 +45,12 @@ def parse_cmd_args():
         help="Faddr settings file  location",
     )
     parser.add_argument(
+        "-t",
+        "--table",
+        action="store_true",
+        help="Print table borders",
+    )
+    parser.add_argument(
         "-v",
         "--version",
         action="store_true",
@@ -54,20 +61,39 @@ def parse_cmd_args():
     return vars(args)
 
 
-def pretty_print_result(result, print_description=False, color=False):
+def parse_input(input_data):
+    """Remove masks from input ip addresses."""
+    query = []
+    for address in input_data:
+        query.append(address.split("/")[0])
+    return query
+
+
+def pretty_print_result(
+    result,
+    description=False,
+    color=False,
+    table=False,
+    query_number=1,
+):
     """Print data with pretty formatting."""
 
-    if print_description is False:
-        result["header"].remove("Description")
+    header = result["headers"]["full"].copy()
+    if description is False:
+        header.remove("Description")
+    if query_number == 1:
+        header.remove("Query")
 
     table = Table(
-        expand=True,
+        expand=table,
         highlight=color,
         header_style=None,
-        box=box.SQUARE,
+        box=box.SQUARE if table else None,
+        safe_box=True,
+        padding=(0, 1, 0, 1) if table else (0, 1, 0, 0),
     )
 
-    for column_name in result["header"]:
+    for column_name in header:
         table.add_column(
             column_name,
             overflow=None,
@@ -83,7 +109,7 @@ def pretty_print_result(result, print_description=False, color=False):
             elif isinstance(value, bool) and not value:
                 row[key] = "-"
 
-        table.add_row(*[str(row.get(cell_name, "-")) for cell_name in result["header"]])
+        table.add_row(*[str(row.get(cell_name, "-")) for cell_name in header])
 
     console.print(table)
 
@@ -99,6 +125,8 @@ def main():
         print(__version__)
         sys.exit(0)
 
+    query = parse_input(cmd_args.get("ip_address"))
+
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
     except FaddrSettingsFileFormatError as err:
@@ -108,10 +136,12 @@ def main():
 
     database = Database(**settings.database.dict())
 
-    result = database.find_network(cmd_args.get("ip_address"))
+    result = database.find_networks(query)
 
     pretty_print_result(
         result,
-        print_description=cmd_args.get("description", False),
+        description=cmd_args.get("description", False),
         color=cmd_args.get("color", False),
+        table=cmd_args.get("table", False),
+        query_number=len(query),
     )
