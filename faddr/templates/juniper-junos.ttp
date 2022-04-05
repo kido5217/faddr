@@ -23,6 +23,7 @@ set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet a
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip | PREFIX | to_ip | ip_info }} vrrp-group {{ ignore }} virtual-address {{ ignore | IP }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip | PREFIX | to_ip | ip_info }} preferred
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip | PREFIX | to_ip | ip_info }} primary
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip | PREFIX | to_ip | ip_info }} virtual-gateway-address {{ ignore | IP }}
 </group>
 
 <group name="interfaces.{{ name }}**" method="table">
