@@ -254,6 +254,8 @@ class Database:
         return 0
 
     def find_networks(self, queries):
+        """Find provided networks."""
+
         result = Result()
 
         for query in queries:
@@ -262,7 +264,7 @@ class Database:
         return result.dict()
 
     def find_network(self, query):
-        """Find provided netwkork."""
+        """Find provided network."""
 
         netmask_max = 16
         netmask_min = 32
