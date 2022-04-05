@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Cisco ASR901 vrf detection
+- Junos IP detection in some cases
 
 ## [0.2.2] - 2022-04-03
 
