@@ -90,7 +90,7 @@ def pretty_print_result(
         header_style=None,
         box=box.SQUARE if table else None,
         safe_box=True,
-        padding=(0, 1, 0, 1) if table else (0, 1, 0, 0),
+        padding=(0, 1, 0, 1) if table else (0, 2, 0, 0),
     )
 
     for column_name in header:
