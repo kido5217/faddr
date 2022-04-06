@@ -76,7 +76,7 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     device_id = Column(Integer, ForeignKey("device.id"))
 
 
-class IP(Base):  # pylint: disable=too-few-public-methods
+class IPAddress(Base):  # pylint: disable=too-few-public-methods
     """ORM 'ip' table data mapping."""
 
     __tablename__ = "ip"
@@ -146,7 +146,7 @@ class Database:
         return engine
 
     def new_revision(self, revision=None):
-        """Create new revision and return it."""
+        """Create new revision and IP it."""
         if revision:
             self.revision = revision
         else:
@@ -201,11 +201,11 @@ class Database:
         """Insert ip_address data to database."""
 
         table_data = {}
-        for key in IP.__table__.columns.keys():
+        for key in IPAddress.__table__.columns.keys():
             table_data[key] = data.get(key)
         table_data["interface_id"] = interface_id
 
-        ip_address = IP(**table_data)
+        ip_address = IPAddress(**table_data)
 
         with Session(self.engine) as session:
             session.add(ip_address)
@@ -284,7 +284,7 @@ class Database:
             select(
                 Device.name.label("device"),
                 Interface.name.label("interface"),
-                IP.with_prefixlen,
+                IPAddress.with_prefixlen,
                 Interface.vrf,
                 Interface.acl_in,
                 Interface.acl_out,
@@ -292,13 +292,13 @@ class Database:
                 Interface.description,
             )
             .where(
-                IP.network.in_(networks),
-                Interface.id == IP.interface_id,
+                IPAddress.network.in_(networks),
+                Interface.id == IPAddress.interface_id,
                 Device.id == Interface.device_id,
             )
             .order_by(Device.name)
             .order_by(Interface.name)
-            .order_by(IP.with_prefixlen)
+            .order_by(IPAddress.with_prefixlen)
         )
 
         with Session(self.engine) as session:

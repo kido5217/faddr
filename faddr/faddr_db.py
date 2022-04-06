@@ -5,8 +5,11 @@ import sys
 
 import ray
 
+from pydantic import ValidationError
+
 from faddr import __version__, logger
 from faddr.database import Database
+from faddr.dataclasses import DeviceModel
 from faddr.exceptions import (
     FaddrDatabaseDirError,
     FaddrParserConfigFileAbsent,
@@ -17,6 +20,10 @@ from faddr.exceptions import (
 from faddr.parser import Parser
 from faddr.rancid import RancidDir
 from faddr.settings import load_settings
+
+from rich import print, traceback
+
+traceback.install()
 
 
 def parse_cmd_args():
@@ -49,11 +56,9 @@ def parse_cmd_args():
 def parse_config(config, profile=None, template_dir=None):
     """Parse provided configuration and return structured data."""
     device = {
-        "info": {
-            "path": str(config["path"]),
-            "name": str(config["name"]),
-            "source": "rancid",
-        }
+        "path": str(config["path"]),
+        "name": str(config["name"]),
+        # "source": "rancid",
     }
 
     logger.info(f'Parsing \'{config["name"]}\'')
@@ -65,23 +70,26 @@ def parse_config(config, profile=None, template_dir=None):
         )
         data = parser.parse()
         device.update(data)
+        device = DeviceModel.parse_obj(device)
     except FaddrParserUnknownProfile:
         logger.warning(f"Unsupported content-type in '{config}'")
     except FaddrParserConfigFileAbsent:
         logger.warning(f"Config file absent: '{config}'")
     except FaddrParserConfigFileEmpty:
         logger.warning(f"Config file empty: '{config}'")
+    except ValidationError as err:
+        logger.warning(f"Failed to postprocess '{config}': {err.json()}")
     return device
 
 
 @ray.remote
 def store_in_db(database, device):
     """Insert device data to database."""
-    if len(device) < 2:
-        logger.warning(f'Device \'{device["info"]["name"]}\' data is empty, skipping')
+    if len(device) < 4:
+        logger.warning(f'Device \'{device["name"]}\' data is empty, skipping')
         return False
 
-    logger.info(f'Inserting \'{device["info"]["name"]}\' info DB')
+    logger.info(f'Inserting \'{device["name"]}\' info DB')
     database.insert_device(device)
     return True
 
@@ -154,11 +162,14 @@ def main():
                 profile=profile,
                 template_dir=settings.templates_dir,
             )
-            inserted_id = store_in_db.options(name="faddr::store_in_db()").remote(
-                database, data_id
-            )
-            inserted_ids.append(inserted_id)
+            # inserted_id = store_in_db.options(name="faddr::store_in_db()").remote(
+            #    database, data_id
+            # )
+            # inserted_ids.append(inserted_id)
+            print(ray.get(data_id))
 
+
+"""
     # All exception handling should be inside @ray.remote functions,
     # so we don't catch any exceptions here
     logger.info("Waiting for parser and database processes to finish")
@@ -177,3 +188,4 @@ def main():
         logger.info("Deleting old revisions")
         deleted_revions = database.cleanup()
         logger.info(f"Revisions deleted: {deleted_revions}")
+"""
