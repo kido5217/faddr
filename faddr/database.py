@@ -15,7 +15,7 @@ from sqlalchemy import (
     create_engine,
     select,
 )
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy.orm import Session, declarative_base, relationship
 
 from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
@@ -52,6 +52,8 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     path = Column(String)
     source = Column(String)
 
+    interfaces = relationship("Interface", back_populates="device")
+
 
 class Interface(Base):  # pylint: disable=too-few-public-methods
     """ORM 'interface' table data mapping."""
@@ -74,6 +76,9 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     acl_out = Column(String, index=True)
 
     device_id = Column(Integer, ForeignKey("device.id"))
+    device = relationship("Device", back_populates="interfaces")
+
+    ip_addresses = relationship("IPAddress", back_populates="interface")
 
 
 class IPAddress(Base):  # pylint: disable=too-few-public-methods
@@ -106,6 +111,7 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     with_prefixlen = Column(String)
 
     interface_id = Column(Integer, ForeignKey("interface.id"))
+    interface = relationship("Interface", back_populates="ip_addresses")
 
 
 class Database:
@@ -164,17 +170,17 @@ class Database:
     def insert_device(self, device_data):
         """Insert device data to database."""
 
-        device = Device(**device_data["info"])
+        device = make_sqla_object(Device, device_data)
 
         with Session(self.engine) as session:
             session.add(device)
             session.commit()
-            device_id = device.id
 
-        for interface_name, interface_data in device_data.get("interfaces", {}).items():
-            self.insert_interface(device_id, interface_name, interface_data)
+        # for interface_name, interface_data in device_data.get("interfaces", {}).items():
+        #    self.insert_interface(device_id, interface_name, interface_data)
 
-        logger.debug(f"Inserted device: '{device_data['info']}'")
+        logger.debug(f"Inserted device: '{device_data['name']}'")
+        # return device
 
     def insert_interface(self, device_id, name, data):
         """Insert interface data to database."""
@@ -318,3 +324,18 @@ class Database:
         revision = datetime.now().strftime(date_format)
 
         return revision
+
+
+def make_sqla_object(sqla_class, data):
+    """Create SQLAlchemy table object from provided data."""
+    obj_data = {}
+    for key in sqla_class.__table__.columns.keys():
+        obj_data[key] = data.get(key)
+
+    for relative, sqla_sub_class in data.get("sqla_mapping", {}).items():
+        if isinstance(data.get(relative), list):
+            obj_data[relative] = []
+            for sub in data.get(relative):
+                obj_data[relative].append(make_sqla_object(sqla_sub_class, sub))
+
+    return sqla_class(**obj_data)

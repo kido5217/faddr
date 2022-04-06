@@ -7,9 +7,9 @@ interface {{ name }}
  description {{ description | _line_ }}
  vrf {{ vrf }}
  {{ is_disabled | equal("shutdown") | let(True) }}
- <group name="ip*" method="table" itemize="ip">
- ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }}
- ipv4 address {{ ip | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
+ <group name="ip_addresses*" method="table" itemize="ip_addresses">
+ ipv4 address {{ ip_addresses | re(IP_SPACE_MASK) | to_ip | ip_info }}
+ ipv4 address {{ ip_addresses | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
  </group>
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT }}
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT }} second-dot1q {{ c_vlan }}
