@@ -304,13 +304,7 @@ def make_sqla_object(sqla_class, data):
     return sqla_class(**sqla_obj_data)
 
 
-class RootModel(BaseModel):
-    """Faddr's root model."""
-
-    sqla_mapping: Dict[str, Any] = Field({}, exclude=True)
-
-
-class InterfaceModel(RootModel):
+class InterfaceModel(BaseModel):
     """Interface data container."""
 
     name: str
@@ -340,7 +334,7 @@ class InterfaceModel(RootModel):
         return ip_addresses
 
 
-class DeviceModel(RootModel):
+class DeviceModel(BaseModel):
     """Device root data container."""
 
     name: str = None
