@@ -5,6 +5,7 @@ from pathlib import Path
 from ttp import ttp
 
 from faddr import logger
+from faddr.database import DeviceModel
 from faddr.exceptions import (
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
@@ -95,5 +96,5 @@ class Parser:
         """Parse provided configuration and return structured data."""
         parser = ttp(data=self.config, template=self.template)
         parser.parse()
-        result = parser.result()[0][0]
+        result = DeviceModel.parse_obj(parser.result()[0][0]).dict(exclude_unset=True)
         return result

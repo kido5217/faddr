@@ -9,7 +9,6 @@ from pydantic import ValidationError
 
 from faddr import __version__, logger
 from faddr.database import Database
-from faddr.dataclasses import DeviceModel
 from faddr.exceptions import (
     FaddrDatabaseDirError,
     FaddrParserConfigFileAbsent,
@@ -51,11 +50,6 @@ def parse_cmd_args():
 @ray.remote
 def parse_config(config, profile=None, template_dir=None):
     """Parse provided configuration and return structured data."""
-    device = {
-        "path": str(config["path"]),
-        "name": str(config["name"]),
-        "source": "rancid",
-    }
 
     logger.info(f'Parsing \'{config["name"]}\'')
     try:
@@ -64,9 +58,7 @@ def parse_config(config, profile=None, template_dir=None):
             profile=profile,
             template_dir=template_dir,
         )
-        data = parser.parse()
-        device.update(data)
-        device = DeviceModel.parse_obj(device)
+        device = parser.parse()
     except FaddrParserUnknownProfile:
         logger.warning(f"Unsupported content-type in '{config}'")
     except FaddrParserConfigFileAbsent:
@@ -75,6 +67,15 @@ def parse_config(config, profile=None, template_dir=None):
         logger.warning(f"Config file empty: '{config}'")
     except ValidationError as err:
         logger.warning(f"Failed to postprocess '{config}': {err.json()}")
+
+    device.update(
+        {
+            "path": str(config["path"]),
+            "name": str(config["name"]),
+            "source": "rancid",
+        }
+    )
+
     return device
 
 
@@ -84,15 +85,15 @@ def store_in_db(database, device):
     data_fields = ("interfaces",)
     device_have_data = False
     for data_field in data_fields:
-        if len(device.dict()[data_field]) > 0:
+        if len(device[data_field]) > 0:
             device_have_data = True
 
     if not device_have_data:
-        logger.warning(f"Device '{device.name}' data is empty, skipping")
+        logger.warning(f'Device \'{device["name"]}\' data is empty, skipping')
         return False
 
-    logger.info(f"Inserting '{device.name}' info DB")
-    database.insert_device(device.dict())
+    logger.info(f'Inserting \'{device["name"]}\' info DB')
+    database.insert_device(device)
     return True
 
 

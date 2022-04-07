@@ -3,9 +3,9 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 from sqlalchemy import (
     Boolean,
     Column,
@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session, declarative_base, relationship
 
 from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
+
 
 Base = declarative_base()
 
@@ -39,7 +40,7 @@ class Result(BaseModel):
             "Description",
         ]
     }
-    data: List[Dict[str, str]] = []
+    data: List[Dict] = []
 
 
 class Device(Base):  # pylint: disable=too-few-public-methods
@@ -170,54 +171,16 @@ class Database:
     def insert_device(self, device_data):
         """Insert device data to database."""
 
-        device = make_sqla_object(Device, device_data)
+        # device_data = DeviceModel.parse_obj(device_data)
+
+        # print(device_data)
+        device = make_sqla_object(Device, DeviceModel.parse_obj(device_data))
 
         with Session(self.engine) as session:
             session.add(device)
             session.commit()
 
-        # for interface_name, interface_data in device_data.get("interfaces", {}).items():
-        #    self.insert_interface(device_id, interface_name, interface_data)
-
         logger.debug(f"Inserted device: '{device_data['name']}'")
-        # return device
-
-    def insert_interface(self, device_id, name, data):
-        """Insert interface data to database."""
-
-        table_data = {}
-        for key in Interface.__table__.columns.keys():
-            table_data[key] = data.get(key)
-        table_data["name"] = name
-        table_data["device_id"] = device_id
-
-        interface = Interface(**table_data)
-
-        with Session(self.engine) as session:
-            session.add(interface)
-            session.commit()
-            interface_id = interface.id
-
-        for ip_address in data.get("ip", []):
-            self.insert_ip_address(interface_id, ip_address)
-
-        logger.debug(f"Interted interface {data}")
-
-    def insert_ip_address(self, interface_id, data):
-        """Insert ip_address data to database."""
-
-        table_data = {}
-        for key in IPAddress.__table__.columns.keys():
-            table_data[key] = data.get(key)
-        table_data["interface_id"] = interface_id
-
-        ip_address = IPAddress(**table_data)
-
-        with Session(self.engine) as session:
-            session.add(ip_address)
-            session.commit()
-
-        logger.debug(f"Inserted IP address {data}")
 
     def set_default(self):
         """Make current revision default one."""
@@ -328,14 +291,72 @@ class Database:
 
 def make_sqla_object(sqla_class, data):
     """Create SQLAlchemy table object from provided data."""
-    obj_data = {}
+    sqla_obj_data = {}
     for key in sqla_class.__table__.columns.keys():
-        obj_data[key] = data.get(key)
+        sqla_obj_data[key] = dict(data).get(key)
 
-    for relative, sqla_sub_class in data.get("sqla_mapping", {}).items():
-        if isinstance(data.get(relative), list):
-            obj_data[relative] = []
-            for sub in data.get(relative):
-                obj_data[relative].append(make_sqla_object(sqla_sub_class, sub))
+    for (relative, sqla_sub_class) in dict(data).get("sqla_mapping", {}).items():
+        if isinstance(dict(data).get(relative), list):
+            sqla_obj_data[relative] = []
+            for sub in dict(data).get(relative):
+                sqla_obj_data[relative].append(make_sqla_object(sqla_sub_class, sub))
 
-    return sqla_class(**obj_data)
+    return sqla_class(**sqla_obj_data)
+
+
+class RootModel(BaseModel):
+    """Faddr's root model."""
+
+    sqla_mapping: Dict[str, Any] = Field({}, exclude=True)
+
+
+class InterfaceModel(RootModel):
+    """Interface data container."""
+
+    name: str
+    ip_addresses: List[Dict] = []
+    parent_interface: str = None
+    unit: str = None
+    duplex: str = None
+    speed: str = None
+    description: str = None
+    is_disabled: bool = None
+    encapsulation: str = None
+    s_vlan: str = None
+    c_vlan: str = None
+    vrf: str = None
+    # acl_in: List[str] = []
+    # acl_out: List[str] = []
+
+    sqla_mapping: Dict[str, Any] = Field({"ip_addresses": IPAddress}, exclude=True)
+
+    @validator("ip_addresses")
+    def dedup_ip(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Delete duplicate ip addresses from interface."""
+        ip_addresses = []
+        for ip_address in values:
+            if ip_address not in ip_addresses:
+                ip_addresses.append(ip_address)
+        return ip_addresses
+
+
+class DeviceModel(RootModel):
+    """Device root data container."""
+
+    name: str = None
+    path: str = None
+    source: str = None
+    interfaces: List[InterfaceModel] = []
+
+    sqla_mapping: Dict[str, Any] = Field({"interfaces": Interface}, exclude=True)
+
+    @validator("interfaces", pre=True)
+    def flatten_interfaces(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Convert dict of interfaces to list of dicts."""
+        if isinstance(values, Dict):
+            interfaces = []
+            for name, data in values.items():
+                data["name"] = name
+                interfaces.append(data)
+            return interfaces
+        return values

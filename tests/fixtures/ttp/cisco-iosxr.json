@@ -1,7 +1,8 @@
 {
-    "interfaces": {
-        "GigabitEthernet0/0/0/0": {
+    "interfaces": [
+        {
+            "name": "GigabitEthernet0/0/0/0",
             "description": "FIXTURE_TTP_TEST"
         }
-    }
+    ]
 }
