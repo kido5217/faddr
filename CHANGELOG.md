@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Pydantic model `DeviceModel` for parsed data normalization and validation.
 - `sqla_mapping` dictionary to map `DeviceModel` nested data into database tables.
+- `Device` <--> `IPAddress` direct relationship.
 
 ### Changed
 

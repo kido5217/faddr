@@ -18,6 +18,7 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     source = Column(String)
 
     interfaces = relationship("Interface", back_populates="device")
+    ip_addresses = relationship("IPAddress", back_populates="device")
 
 
 class Interface(Base):  # pylint: disable=too-few-public-methods
@@ -74,6 +75,9 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     with_hostmask = Column(String)
     with_netmask = Column(String)
     with_prefixlen = Column(String)
+
+    device_id = Column(Integer, ForeignKey("device.id"))
+    device = relationship("Device", back_populates="ip_addresses")
 
     interface_id = Column(Integer, ForeignKey("interface.id"))
     interface = relationship("Interface", back_populates="ip_addresses")
