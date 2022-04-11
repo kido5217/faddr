@@ -4,7 +4,6 @@ import argparse
 import sys
 
 import ray
-
 from pydantic import ValidationError
 
 from faddr import __version__, logger

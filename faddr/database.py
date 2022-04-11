@@ -3,116 +3,17 @@
 import ipaddress
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field, validator
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    create_engine,
-    select,
-)
-from sqlalchemy.orm import Session, declarative_base, relationship
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 
 from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
+from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
+from faddr.schemas import DeviceSchema, Result
 
 
-Base = declarative_base()
-
-
-class Result(BaseModel):
-    """Network search result."""
-
-    headers: Dict[str, List[str]] = {
-        "full": [
-            "Query",
-            "Device",
-            "Interface",
-            "IP",
-            "VRF",
-            "ACL in",
-            "ACL out",
-            "Shutdown",
-            "Description",
-        ]
-    }
-    data: List[Dict] = []
-
-
-class Device(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'device' table data mapping."""
-
-    __tablename__ = "device"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
-    path = Column(String)
-    source = Column(String)
-
-    interfaces = relationship("Interface", back_populates="device")
-
-
-class Interface(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'interface' table data mapping."""
-
-    __tablename__ = "interface"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
-    parent_interface = Column(String)
-    unit = Column(String)
-    duplex = Column(String)
-    speed = Column(String)
-    description = Column(String, index=True)
-    is_disabled = Column(Boolean, default=False)
-    encapsulation = Column(String)
-    s_vlan = Column(Integer)
-    c_vlan = Column(Integer)
-    vrf = Column(String, index=True)
-    acl_in = Column(String, index=True)
-    acl_out = Column(String, index=True)
-
-    device_id = Column(Integer, ForeignKey("device.id"))
-    device = relationship("Device", back_populates="interfaces")
-
-    ip_addresses = relationship("IPAddress", back_populates="interface")
-
-
-class IPAddress(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'ip' table data mapping."""
-
-    __tablename__ = "ip"
-
-    id = Column(Integer, primary_key=True)
-    broadcast_address = Column(String)
-    compressed = Column(String)
-    exploded = Column(String)
-    hostmask = Column(String)
-    hosts = Column(Integer)
-    ip = Column(String, index=True)
-    is_link_local = Column(Boolean, default=False)
-    is_loopback = Column(Boolean, default=False)
-    is_multicast = Column(Boolean, default=False)
-    is_private = Column(Boolean, default=False)
-    is_reserved = Column(Boolean, default=False)
-    is_unspecified = Column(Boolean, default=False)
-    max_prefixlen = Column(Integer)
-    netmask = Column(String)
-    network = Column(String, index=True)
-    network_address = Column(String, index=True)
-    num_addresses = Column(Integer)
-    prefixlen = Column(Integer)
-    version = Column(Integer)
-    with_hostmask = Column(String)
-    with_netmask = Column(String)
-    with_prefixlen = Column(String)
-
-    interface_id = Column(Integer, ForeignKey("interface.id"))
-    interface = relationship("Interface", back_populates="ip_addresses")
+factory = ModelFactory()
 
 
 class Database:
@@ -174,7 +75,7 @@ class Database:
         # device_data = DeviceModel.parse_obj(device_data)
 
         # print(device_data)
-        device = make_sqla_object(Device, DeviceModel.parse_obj(device_data))
+        device = make_sa_object(Device, DeviceSchema.parse_obj(device_data))
 
         with Session(self.engine) as session:
             session.add(device)
@@ -289,68 +190,18 @@ class Database:
         return revision
 
 
-def make_sqla_object(sqla_class, data):
+def make_sa_object(sa_class, data):
     """Create SQLAlchemy table object from provided data."""
-    sqla_obj_data = {}
-    for key in sqla_class.__table__.columns.keys():
-        sqla_obj_data[key] = dict(data).get(key)
+    sa_obj_data = {}
+    for key in sa_class.__table__.columns.keys():
+        sa_obj_data[key] = dict(data).get(key)
 
-    for (relative, sqla_sub_class) in dict(data).get("sqla_mapping", {}).items():
+    for (relative, sa_sub_class_name) in dict(data).get("sa_mapping", {}).items():
+        sa_sub_class = factory.get(sa_sub_class_name)
         if isinstance(dict(data).get(relative), list):
-            sqla_obj_data[relative] = []
+
+            sa_obj_data[relative] = []
             for sub in dict(data).get(relative):
-                sqla_obj_data[relative].append(make_sqla_object(sqla_sub_class, sub))
+                sa_obj_data[relative].append(make_sa_object(sa_sub_class, sub))
 
-    return sqla_class(**sqla_obj_data)
-
-
-class InterfaceModel(BaseModel):
-    """Interface data container."""
-
-    name: str
-    ip_addresses: List[Dict] = []
-    parent_interface: str = None
-    unit: str = None
-    duplex: str = None
-    speed: str = None
-    description: str = None
-    is_disabled: bool = None
-    encapsulation: str = None
-    s_vlan: str = None
-    c_vlan: str = None
-    vrf: str = None
-    # acl_in: List[str] = []
-    # acl_out: List[str] = []
-
-    sqla_mapping: Dict[str, Any] = Field({"ip_addresses": IPAddress}, exclude=True)
-
-    @validator("ip_addresses")
-    def dedup_ip(cls, values):  # pylint: disable=no-self-argument,no-self-use
-        """Delete duplicate ip addresses from interface."""
-        ip_addresses = []
-        for ip_address in values:
-            if ip_address not in ip_addresses:
-                ip_addresses.append(ip_address)
-        return ip_addresses
-
-
-class DeviceModel(BaseModel):
-    """Device root data container."""
-
-    name: str = None
-    path: str = None
-    source: str = None
-    interfaces: List[InterfaceModel] = []
-
-    sqla_mapping: Dict[str, Any] = Field({"interfaces": Interface}, exclude=True)
-
-    @validator("interfaces", pre=True)
-    def flatten_interfaces(cls, values):  # pylint: disable=no-self-argument,no-self-use
-        """Convert dict of interfaces to list of dicts."""
-        if isinstance(values, Dict):
-            interfaces = []
-            for name, data in values.items():
-                data["name"] = name
-                interfaces.append(data)
-            return interfaces
-        return values
+    return sa_class(**sa_obj_data)
