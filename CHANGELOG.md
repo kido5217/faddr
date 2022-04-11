@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Data is now inserted into database recursively, using `sqla_mapping` dictionary from `DeviceModel`
+- Separated SQLAlchemy and Pydantic models into their own submodules
 
 ### Fixed
 

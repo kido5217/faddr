@@ -3,6 +3,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import declarative_base, relationship
 
+
 Base = declarative_base()
 
 
@@ -78,7 +79,7 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     interface = relationship("Interface", back_populates="ip_addresses")
 
 
-class ModelFactory:
+class ModelFactory:  # pylint: disable=too-few-public-methods
     """Factory for SQLAlchemy class generation."""
 
     @staticmethod

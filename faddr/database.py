@@ -13,7 +13,7 @@ from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
 from faddr.schemas import DeviceSchema, Result
 
 
-factory = ModelFactory()
+model_factory = ModelFactory()
 
 
 class Database:
@@ -197,7 +197,7 @@ def make_sa_object(sa_class, data):
         sa_obj_data[key] = dict(data).get(key)
 
     for (relative, sa_sub_class_name) in dict(data).get("sa_mapping", {}).items():
-        sa_sub_class = factory.get(sa_sub_class_name)
+        sa_sub_class = model_factory.get(sa_sub_class_name)
         if isinstance(dict(data).get(relative), list):
 
             sa_obj_data[relative] = []
