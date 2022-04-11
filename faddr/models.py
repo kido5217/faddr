@@ -48,9 +48,9 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
 
 
 class IPAddress(Base):  # pylint: disable=too-few-public-methods
-    """ORM 'ip' table data mapping."""
+    """ORM 'ip_address' table data mapping."""
 
-    __tablename__ = "ip"
+    __tablename__ = "ip_address"
 
     id = Column(Integer, primary_key=True)
     broadcast_address = Column(String)
