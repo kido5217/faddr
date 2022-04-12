@@ -10,6 +10,7 @@ from faddr.exceptions import (
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
 )
+from faddr.schemas import DeviceSchema
 
 
 class Parser:
@@ -95,5 +96,5 @@ class Parser:
         """Parse provided configuration and return structured data."""
         parser = ttp(data=self.config, template=self.template)
         parser.parse()
-        result = parser.result()[0][0]
+        result = DeviceSchema.parse_obj(parser.result()[0][0]).dict(exclude_unset=True)
         return result

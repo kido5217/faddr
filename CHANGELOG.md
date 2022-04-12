@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Pydantic model `DeviceModel` for parsed data normalization and validation.
+- `sqla_mapping` dictionary to map `DeviceModel` nested data into database tables.
+- `Device` <--> `IPAddress` direct relationship.
+
+### Changed
+
+- Data is now inserted into database recursively, using `sqla_mapping` dictionary from `DeviceModel`
+- Separated SQLAlchemy and Pydantic models into their own submodules
+
+### Fixed
+
+- Remove duplicated ip addresses with parser's postprocessing.
+
 ## [0.2.3] - 2022-04-05
 
 ### Fixed
