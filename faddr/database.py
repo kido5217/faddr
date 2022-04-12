@@ -16,6 +16,23 @@ from faddr.schemas import DeviceSchema, Result
 model_factory = ModelFactory()
 
 
+def make_sa_object(sa_class, data):
+    """Create SQLAlchemy table object from provided data."""
+    sa_obj_data = {}
+    for key in sa_class.__table__.columns.keys():
+        sa_obj_data[key] = dict(data).get(key)
+
+    for (relative, sa_subclass_name) in dict(data).get("sa_mapping", {}).items():
+        sa_sub_class = model_factory.get(sa_subclass_name)
+        # Create one-to-many relatives
+        if isinstance(dict(data).get(relative), list):
+            sa_obj_data[relative] = []
+            for sub in dict(data).get(relative):
+                sa_obj_data[relative].append(make_sa_object(sa_sub_class, sub))
+
+    return sa_class(**sa_obj_data)
+
+
 class Database:
     """Create db, connect to it, modify and search."""
 
@@ -188,20 +205,3 @@ class Database:
         revision = datetime.now().strftime(date_format)
 
         return revision
-
-
-def make_sa_object(sa_class, data):
-    """Create SQLAlchemy table object from provided data."""
-    sa_obj_data = {}
-    for key in sa_class.__table__.columns.keys():
-        sa_obj_data[key] = dict(data).get(key)
-
-    for (relative, sa_sub_class_name) in dict(data).get("sa_mapping", {}).items():
-        sa_sub_class = model_factory.get(sa_sub_class_name)
-        if isinstance(dict(data).get(relative), list):
-
-            sa_obj_data[relative] = []
-            for sub in dict(data).get(relative):
-                sa_obj_data[relative].append(make_sa_object(sa_sub_class, sub))
-
-    return sa_class(**sa_obj_data)
