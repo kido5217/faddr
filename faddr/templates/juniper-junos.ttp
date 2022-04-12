@@ -14,8 +14,6 @@ set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} description {
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-id {{ s_vlan }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags outer {{ s_vlan }}
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} vlan-tags inner {{ c_vlan }}
-set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter input {{ acl_in }}
-set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter output {{ acl_out }}
 </group>
 
 <group name="interfaces.{{ name }}**.ip_addresses*" method="table" itemize="ip_addresses">
@@ -24,6 +22,14 @@ set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet a
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip_addresses | PREFIX | to_ip | ip_info }} preferred
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip_addresses | PREFIX | to_ip | ip_info }} primary
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet address {{ ip_addresses | PREFIX | to_ip | ip_info }} virtual-gateway-address {{ ignore | IP }}
+</group>
+
+<group name="interfaces.{{ name }}**.acls_in*" method="table" itemize="acls_in">
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter input {{ acls_in }}
+</group>
+
+<group name="interfaces.{{ name }}**.acls_out*" method="table" itemize="acls_out">
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter output {{ acls_out }}
 </group>
 
 <group name="interfaces.{{ name }}**" method="table">

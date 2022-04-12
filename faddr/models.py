@@ -18,7 +18,6 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     source = Column(String)
 
     interfaces = relationship("Interface", back_populates="device")
-    ip_addresses = relationship("IPAddress", back_populates="device")
 
 
 class Interface(Base):  # pylint: disable=too-few-public-methods
@@ -38,13 +37,12 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
     vrf = Column(String, index=True)
-    acl_in = Column(String, index=True)
-    acl_out = Column(String, index=True)
 
     device_id = Column(Integer, ForeignKey("device.id"))
     device = relationship("Device", back_populates="interfaces")
 
     ip_addresses = relationship("IPAddress", back_populates="interface")
+    acls = relationship("InterfaceACL", back_populates="interface")
 
 
 class IPAddress(Base):  # pylint: disable=too-few-public-methods
@@ -76,11 +74,22 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     with_netmask = Column(String)
     with_prefixlen = Column(String)
 
-    device_id = Column(Integer, ForeignKey("device.id"))
-    device = relationship("Device", back_populates="ip_addresses")
-
     interface_id = Column(Integer, ForeignKey("interface.id"))
     interface = relationship("Interface", back_populates="ip_addresses")
+
+
+class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'ip_address' table data mapping."""
+
+    __tablename__ = "interface_acl"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, index=True)
+    sequence_number = Column(Integer)
+    direction = Column(String, index=True)
+
+    interface_id = Column(Integer, ForeignKey("interface.id"))
+    interface = relationship("Interface", back_populates="acls")
 
 
 class ModelFactory:  # pylint: disable=too-few-public-methods

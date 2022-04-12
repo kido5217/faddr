@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, root_validator, validator
 
 
 class Result(BaseModel):
@@ -15,8 +15,8 @@ class Result(BaseModel):
             "Interface",
             "IP",
             "VRF",
-            "ACL in",
-            "ACL out",
+            # "ACL in",
+            # "ACL out",
             "Shutdown",
             "Description",
         ]
@@ -39,10 +39,15 @@ class InterfaceSchema(BaseModel):
     s_vlan: str = None
     c_vlan: str = None
     vrf: str = None
-    # acl_in: List[str] = []
-    # acl_out: List[str] = []
+    acls: List[Dict] = []
 
-    sa_mapping: Dict[str, Any] = Field({"ip_addresses": "IPAddress"}, exclude=True)
+    sa_mapping: Dict[str, str] = Field(
+        {
+            "ip_addresses": "IPAddress",
+            "acls": "InterfaceACL",
+        },
+        exclude=True,
+    )
 
     @validator("ip_addresses")
     def dedup_ip(cls, values):  # pylint: disable=no-self-argument,no-self-use
@@ -52,6 +57,56 @@ class InterfaceSchema(BaseModel):
             if ip_address not in ip_addresses:
                 ip_addresses.append(ip_address)
         return ip_addresses
+
+    @root_validator(pre=True)
+    def acls_to_lists(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Convert single asls to lists"""
+        for acl_container in ("acls_in", "acls_out"):
+            acls = values.get(acl_container, [])
+            if isinstance(acls, str):
+                acls = [acls]
+            elif not isinstance(acls, list):
+                raise ValueError("must be str or list")
+            if len(acls) > 0:
+                values[acl_container] = acls
+
+        return values
+
+    @root_validator(pre=True)
+    def unpack_acls(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """combine acls_in and acls_out into 'acls' list of dicts."""
+        acls = values.get("acls", [])
+        if acls is None:
+            acls = []
+
+        acls_data = {
+            "acls_in": values.get("acls_in"),
+            "acls_out": values.get("acls_out"),
+        }
+        for direction_key, acl_data in acls_data.items():
+            if acl_data is None:
+                continue
+
+            direction = "in" if direction_key == "acls_in" else "out"
+
+            for sequence_number, acl in enumerate(acl_data):
+                if isinstance(acl, str):
+                    acl = {
+                        "name": acl,
+                        "sequence_number": sequence_number,
+                        "direction": direction,
+                    }
+                elif isinstance(acl, dict):
+                    acl["sequence_number"] = sequence_number
+                    acl["direction"] = direction
+                else:
+                    raise ValueError("must be str or dict")
+                acls.append(acl)
+
+        if len(acls) > 0:
+            values["acls"] = acls
+
+        return values
 
 
 class DeviceSchema(BaseModel):

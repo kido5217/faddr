@@ -13,6 +13,10 @@ interface {{ name }}
  </group>
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT }}
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT }} second-dot1q {{ c_vlan }}
- ipv4 access-group {{ acl_in }} ingress
- ipv4 access-group {{ acl_out }} egress
+ <group name="acls_in*" method="table" itemize="acls_in">
+ ipv4 access-group {{ acls_in }} ingress
+ </group>
+ <group name="acls_out*" method="table" itemize="acls_out">
+ ipv4 access-group {{ acls_out }} egress
+ </group>
 </group>

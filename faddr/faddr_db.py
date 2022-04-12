@@ -51,13 +51,16 @@ def parse_config(config, profile=None, template_dir=None):
     """Parse provided configuration and return structured data."""
 
     logger.info(f'Parsing \'{config["name"]}\'')
+
+    device = {}
+
     try:
         parser = Parser(
             config["path"],
             profile=profile,
             template_dir=template_dir,
         )
-        device = parser.parse()
+        device.update(parser.parse())
     except FaddrParserUnknownProfile:
         logger.warning(f"Unsupported content-type in '{config}'")
     except FaddrParserConfigFileAbsent:

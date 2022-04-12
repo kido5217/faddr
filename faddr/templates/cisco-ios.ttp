@@ -14,8 +14,12 @@ interface {{ name | _start_ }} point-to-point
  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} second-dot1q {{ c_vlan }}
  vrf forwarding {{ vrf }}
  ip vrf forwarding {{ vrf }}
- ip access-group {{ acl_in }} in
- ip access-group {{ acl_out }} out
+ <group name="acls_in*" method="table" itemize="acls_in">
+ ip access-group {{ acls_in }} in
+ </group>
+ <group name="acls_out*" method="table" itemize="acls_out">
+ ip access-group {{ acls_out }} out
+ </group>
  <group name="ip_addresses" method="table" itemize="ip_addresses">
  ip address {{ ip_addresses | re(IP_SPACE_MASK) | to_ip | ip_info }}
  ip address {{ ip_addresses | re(IP_SPACE_MASK) | to_ip | ip_info }} secondary
