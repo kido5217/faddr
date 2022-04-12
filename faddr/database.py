@@ -89,9 +89,6 @@ class Database:
     def insert_device(self, device_data):
         """Insert device data to database."""
 
-        # device_data = DeviceModel.parse_obj(device_data)
-
-        # print(device_data)
         device = make_sa_object(Device, DeviceSchema.parse_obj(device_data))
 
         with Session(self.engine) as session:
