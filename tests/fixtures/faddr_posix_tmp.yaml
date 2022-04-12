@@ -13,4 +13,4 @@ rancid:
         "huawei-faddr": "huawei-vrp"
         "juniper-faddr": "juniper-junos"
 
-processes: 10
+processes: 1

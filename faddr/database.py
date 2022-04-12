@@ -66,7 +66,9 @@ class Database:
         # using sqlite should imply settings.processes=1 and disable multiprocessing
         connect_args = {"timeout": 300}
         engine = create_engine(
-            f"sqlite+pysqlite:///{db_file}", future=True, connect_args=connect_args
+            f"sqlite+pysqlite:///{db_file}",
+            future=True,
+            connect_args=connect_args,
         )
         return engine
 
@@ -170,8 +172,6 @@ class Database:
                 Interface.name.label("interface"),
                 IPAddress.with_prefixlen,
                 Interface.vrf,
-                Interface.acl_in,
-                Interface.acl_out,
                 Interface.is_disabled,
                 Interface.description,
             )
