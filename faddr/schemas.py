@@ -59,6 +59,20 @@ class InterfaceSchema(BaseModel):
         return ip_addresses
 
     @root_validator(pre=True)
+    def acls_to_lists(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Convert single asls to lists"""
+        for acl_container in ("acls_in", "acls_out"):
+            acls = values.get(acl_container, [])
+            if isinstance(acls, str):
+                acls = [acls]
+            elif not isinstance(acls, list):
+                raise ValueError("must be str or list")
+            if len(acls) > 0:
+                values[acl_container] = acls
+
+        return values
+
+    @root_validator(pre=True)
     def unpack_acls(cls, values):  # pylint: disable=no-self-argument,no-self-use
         """combine acls_in and acls_out into 'acls' list of dicts."""
         acls = values.get("acls", [])
@@ -74,10 +88,6 @@ class InterfaceSchema(BaseModel):
                 continue
 
             direction = "in" if direction_key == "acls_in" else "out"
-            if isinstance(acl_data, str):
-                acl_data = [acl_data]
-            elif not isinstance(acl_data, list):
-                raise ValueError("must be str or list")
 
             for sequence_number, acl in enumerate(acl_data):
                 if isinstance(acl, str):
