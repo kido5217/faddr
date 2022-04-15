@@ -1286,6 +1286,9 @@ set interfaces ge-0/0/1 unit 122 family inet address 10.122.122.122/24
 set interfaces ge-0/0/1 unit 123 disable
 set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 10.123.123.123/24"
 set interfaces ge-0/0/1 unit 123 vlan-id 123
+set interfaces ge-0/0/1 unit 123 family inet filter input-list ACLinList01
+set interfaces ge-0/0/1 unit 123 family inet filter input-list ACLinList02
+set interfaces ge-0/0/1 unit 123 family inet filter input-list ACLinList03
 set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
 set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
 set interfaces ge-0/0/1 unit 123 family inet address 20.20.20.20/24 preferred
