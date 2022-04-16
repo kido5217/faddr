@@ -172,6 +172,8 @@ class Database:
                 Interface.name.label("interface"),
                 IPAddress.with_prefixlen,
                 Interface.vrf,
+                Interface.acl_in,
+                Interface.acl_out,
                 Interface.is_disabled,
                 Interface.description,
             )
@@ -190,7 +192,8 @@ class Database:
                 row = list(row)
                 row.insert(0, query)
                 data = dict(zip(result.headers["full"], row))
-                result.data.append(data)
+                if data not in result.data:
+                    result.data.append(data)
                 logger.debug(f"Found address: {data}")
 
         return result.dict()

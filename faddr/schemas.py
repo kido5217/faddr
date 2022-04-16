@@ -15,8 +15,8 @@ class Result(BaseModel):
             "Interface",
             "IP",
             "VRF",
-            # "ACL in",
-            # "ACL out",
+            "ACL in",
+            "ACL out",
             "Shutdown",
             "Description",
         ]
