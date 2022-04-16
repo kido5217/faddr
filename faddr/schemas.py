@@ -39,6 +39,8 @@ class InterfaceSchema(BaseModel):
     s_vlan: str = None
     c_vlan: str = None
     vrf: str = None
+    acl_in: str = None
+    acl_out: str = None
     acls: List[Dict] = []
 
     sa_mapping: Dict[str, str] = Field(
@@ -59,52 +61,40 @@ class InterfaceSchema(BaseModel):
         return ip_addresses
 
     @root_validator(pre=True)
-    def acls_to_lists(cls, values):  # pylint: disable=no-self-argument,no-self-use
-        """Convert single asls to lists"""
-        for acl_container in ("acls_in", "acls_out"):
-            acls = values.get(acl_container, [])
-            if isinstance(acls, str):
-                acls = [acls]
-            elif not isinstance(acls, list):
-                raise ValueError("must be str or list")
-            if len(acls) > 0:
-                values[acl_container] = acls
+    def acls_to_dicts(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Convert acls lists from parset into single list of dicts."""
+        if len(values.get("acls", [])) > 0:
+            return values
+
+        acls = []
+        directions = ("in", "out")
+        for direction in directions:
+            container = "acls_" + direction
+            if values.get(container) is not None:
+                acl_list = values.get(container)
+                acl_list = list(acl_list) if isinstance(acl_list, str) else acl_list
+                for sequence_number, name in enumerate(acl_list):
+                    acl = {
+                        "name": name,
+                        "sequence_number": sequence_number,
+                        "direction": direction,
+                    }
+                    acls.append(acl)
+
+        if len(acls) > 0:
+            values["acls"] = acls
 
         return values
 
     @root_validator(pre=True)
-    def unpack_acls(cls, values):  # pylint: disable=no-self-argument,no-self-use
-        """combine acls_in and acls_out into 'acls' list of dicts."""
-        acls = values.get("acls", [])
-        if acls is None:
-            acls = []
-
-        acls_data = {
-            "acls_in": values.get("acls_in"),
-            "acls_out": values.get("acls_out"),
-        }
-        for direction_key, acl_data in acls_data.items():
-            if acl_data is None:
-                continue
-
-            direction = "in" if direction_key == "acls_in" else "out"
-
-            for sequence_number, acl in enumerate(acl_data):
-                if isinstance(acl, str):
-                    acl = {
-                        "name": acl,
-                        "sequence_number": sequence_number,
-                        "direction": direction,
-                    }
-                elif isinstance(acl, dict):
-                    acl["sequence_number"] = sequence_number
-                    acl["direction"] = direction
-                else:
-                    raise ValueError("must be str or dict")
-                acls.append(acl)
-
-        if len(acls) > 0:
-            values["acls"] = acls
+    def acls_to_acl_string(cls, values):  # pylint: disable=no-self-argument,no-self-use
+        """Add acl's from general list into subcategies for easier search."""
+        directions = ("in", "out")
+        for direction in directions:
+            list_key = "acls_" + direction
+            key = "acl_" + direction
+            if values.get(key) is None and values.get(list_key) is not None:
+                values[key] = ", ".join(values.get(list_key))
 
         return values
 
