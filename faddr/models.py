@@ -37,6 +37,8 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     s_vlan = Column(Integer)
     c_vlan = Column(Integer)
     vrf = Column(String, index=True)
+    acl_in = Column(String)
+    acl_out = Column(String)
 
     device_id = Column(Integer, ForeignKey("device.id"))
     device = relationship("Device", back_populates="interfaces")
