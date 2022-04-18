@@ -22,6 +22,7 @@ ttp = "^0.8.4"
 rich = {version = "^11.1.0", python = ">=3.6.2,<4.0"}
 SQLAlchemy = "^1.4"
 ray = "^1.11.0"
+redis = {version = "^4.2.2", python = ">=3.6,<3.10", platform = "windows"}
 
 
 [tool.poetry.dev-dependencies]
