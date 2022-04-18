@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2022-04-18
+
 ### Added
 
 - Pydantic model `DeviceModel` for parsed data normalization and validation.
-- `sqla_mapping` dictionary to map `DeviceModel` nested data into database tables.
-- `Device` <--> `IPAddress` direct relationship.
+- `sa_mapping` dictionary to map `DeviceModel` nested data into database tables.
+- Store ACLs from interfaces in their own table.
+- `NetworkResult` class for search results de/serialization and printing
 
 ### Changed
 
@@ -21,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Remove duplicated ip addresses with parser's postprocessing.
+
+### Removed
+
+- Remove windows platform from tests for now
 
 ## [0.2.3] - 2022-04-05
 

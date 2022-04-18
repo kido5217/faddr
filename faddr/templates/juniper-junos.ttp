@@ -26,10 +26,12 @@ set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet a
 
 <group name="interfaces.{{ name }}**.acls_in*" method="table" itemize="acls_in">
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter input {{ acls_in }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter input-list {{ acls_in }}
 </group>
 
 <group name="interfaces.{{ name }}**.acls_out*" method="table" itemize="acls_out">
 set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter output {{ acls_out }}
+set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet filter output-list {{ acls_out }}
 </group>
 
 <group name="interfaces.{{ name }}**" method="table">

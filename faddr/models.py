@@ -15,7 +15,7 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
     path = Column(String)
-    source = Column(String)
+    source = Column(String, index=True)
 
     interfaces = relationship("Interface", back_populates="device")
 
@@ -28,17 +28,19 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
     parent_interface = Column(String)
-    unit = Column(String)
-    duplex = Column(String)
-    speed = Column(String)
+    unit = Column(String, index=True)
+    duplex = Column(String, index=True)
+    speed = Column(String, index=True)
     description = Column(String, index=True)
     is_disabled = Column(Boolean, default=False)
-    encapsulation = Column(String)
-    s_vlan = Column(Integer)
-    c_vlan = Column(Integer)
+    encapsulation = Column(String, index=True)
+    s_vlan = Column(Integer, index=True)
+    c_vlan = Column(Integer, index=True)
     vrf = Column(String, index=True)
+    acl_in = Column(String)
+    acl_out = Column(String)
 
-    device_id = Column(Integer, ForeignKey("device.id"))
+    device_id = Column(Integer, ForeignKey("device.id"), index=True)
     device = relationship("Device", back_populates="interfaces")
 
     ip_addresses = relationship("IPAddress", back_populates="interface")
@@ -74,7 +76,7 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     with_netmask = Column(String)
     with_prefixlen = Column(String)
 
-    interface_id = Column(Integer, ForeignKey("interface.id"))
+    interface_id = Column(Integer, ForeignKey("interface.id"), index=True)
     interface = relationship("Interface", back_populates="ip_addresses")
 
 
@@ -88,7 +90,7 @@ class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
     sequence_number = Column(Integer)
     direction = Column(String, index=True)
 
-    interface_id = Column(Integer, ForeignKey("interface.id"))
+    interface_id = Column(Integer, ForeignKey("interface.id"), index=True)
     interface = relationship("Interface", back_populates="acls")
 
 
