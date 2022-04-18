@@ -3,9 +3,6 @@
 import argparse
 import sys
 
-from rich import box
-from rich.table import Table
-
 from faddr import __version__, console, logger
 from faddr.database import Database
 from faddr.exceptions import FaddrSettingsFileFormatError
@@ -76,51 +73,6 @@ def parse_input(input_data):
     for address in input_data:
         query.append(address.split("/")[0])
     return query
-
-
-def pretty_print_result(
-    result,
-    description=False,
-    color=False,
-    table=False,
-    query_number=1,
-):
-    """Print data with pretty formatting."""
-
-    header = result["headers"]["full"].copy()
-    if description is False:
-        header.remove("Description")
-    if query_number == 1:
-        header.remove("Query")
-
-    table = Table(
-        expand=table,
-        highlight=color,
-        header_style=None,
-        box=box.SQUARE if table else None,
-        safe_box=True,
-        padding=(0, 1, 0, 1) if table else (0, 2, 0, 0),
-    )
-
-    for column_name in header:
-        table.add_column(
-            column_name,
-            overflow=None,
-        )
-
-    for row in result["data"]:
-        # Fix bool and None values.
-        for key, value in row.items():
-            if value is None:
-                row[key] = "-"
-            elif isinstance(value, bool) and value:
-                row[key] = "[bold red]Yes"
-            elif isinstance(value, bool) and not value:
-                row[key] = "-"
-
-        table.add_row(*[str(row.get(cell_name, "-")) for cell_name in header])
-
-    console.print(table)
 
 
 def main():

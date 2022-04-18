@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pydantic model `DeviceModel` for parsed data normalization and validation.
-- `sqla_mapping` dictionary to map `DeviceModel` nested data into database tables.
+- `sa_mapping` dictionary to map `DeviceModel` nested data into database tables.
 - Store ACLs from interfaces in their own table.
 - `NetworkResult` class for search results de/serialization and printing
 
