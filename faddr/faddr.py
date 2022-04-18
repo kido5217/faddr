@@ -9,6 +9,7 @@ from rich.table import Table
 from faddr import __version__, console, logger
 from faddr.database import Database
 from faddr.exceptions import FaddrSettingsFileFormatError
+from faddr.results import NetworkResult
 from faddr.settings import load_settings
 
 
@@ -38,6 +39,14 @@ def parse_cmd_args():
         "--description",
         action="store_true",
         help="Print description column",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        choices=("table", "json"),
+        default="table",
+        help="Output format, default is 'table'",
     )
     parser.add_argument(
         "-s",
@@ -125,8 +134,6 @@ def main():
         print(__version__)
         sys.exit(0)
 
-    query = parse_input(cmd_args.get("ip_address"))
-
     try:
         settings = load_settings(settings_file=cmd_args.get("settings_file"))
     except FaddrSettingsFileFormatError as err:
@@ -136,12 +143,10 @@ def main():
 
     database = Database(**settings.database.dict())
 
-    result = database.find_networks(query)
-
-    pretty_print_result(
-        result,
-        description=cmd_args.get("description", False),
-        color=cmd_args.get("color", False),
-        table=cmd_args.get("table", False),
-        query_number=len(query),
+    result = NetworkResult(database.find_networks(cmd_args.get("ip_address")))
+    result.print(
+        include_description=cmd_args.get("description"),
+        output=cmd_args.get("output"),
+        color=cmd_args.get("color"),
+        border=cmd_args.get("table"),
     )

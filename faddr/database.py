@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
 from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
-from faddr.schemas import DeviceSchema, Result
+from faddr.schemas import DeviceSchema
 
 
 model_factory = ModelFactory()
@@ -142,12 +142,12 @@ class Database:
     def find_networks(self, queries):
         """Find provided networks."""
 
-        result = Result()
+        result = {}
 
         for query in queries:
-            result.data.extend(self.find_network(query)["data"])
+            result.update(self.find_network(query))
 
-        return result.dict()
+        return result
 
     def find_network(self, query):
         """Find provided network."""
@@ -156,21 +156,23 @@ class Database:
         netmask_min = 32
 
         logger.debug(f"Searchong for {query}")
-        result = Result()
+
+        result = {query: []}
+        query_addr = query.split("/")[0]
 
         networks = []
         for netmask in range(netmask_max, netmask_min + 1):
             calculated_network = ipaddress.IPv4Network(
-                (query, netmask), strict=False
+                (query_addr, netmask), strict=False
             ).with_prefixlen
             networks.append(calculated_network)
             logger.debug(f"Added {calculated_network} to search list")
 
-        stmt = (
+        stmt_direct = (
             select(
                 Device.name.label("device"),
                 Interface.name.label("interface"),
-                IPAddress.with_prefixlen,
+                IPAddress.with_prefixlen.label("ip_address"),
                 Interface.vrf,
                 Interface.acl_in,
                 Interface.acl_out,
@@ -188,15 +190,14 @@ class Database:
         )
 
         with Session(self.engine) as session:
-            for row in session.execute(stmt):
-                row = list(row)
-                row.insert(0, query)
-                data = dict(zip(result.headers["full"], row))
-                if data not in result.data:
-                    result.data.append(data)
+            for row in session.execute(stmt_direct):
+                data = dict(row)
+                data["type"] = "direct"
+                if data not in result[query]:
+                    result[query].append(data)
                 logger.debug(f"Found address: {data}")
 
-        return result.dict()
+        return result
 
     @staticmethod
     def gen_revision_id():

@@ -5,25 +5,6 @@ from typing import Any, Dict, List
 from pydantic import BaseModel, Field, root_validator, validator
 
 
-class Result(BaseModel):
-    """Network search result."""
-
-    headers: Dict[str, List[str]] = {
-        "full": [
-            "Query",
-            "Device",
-            "Interface",
-            "IP",
-            "VRF",
-            "ACL in",
-            "ACL out",
-            "Shutdown",
-            "Description",
-        ]
-    }
-    data: List[Dict] = []
-
-
 class InterfaceSchema(BaseModel):
     """Interface data container."""
 
