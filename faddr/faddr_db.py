@@ -87,7 +87,7 @@ def store_in_db(database, device):
     data_fields = ("interfaces",)
     device_have_data = False
     for data_field in data_fields:
-        if len(device[data_field]) > 0:
+        if len(device.get(data_field, [])) > 0:
             device_have_data = True
 
     if not device_have_data:
