@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2022-04-19
+
+### Fixed
+
+- Detecting `deactivated` interface state as `disables` in juniper-junos.ttp
+- Data size calculation before insertion to db in `faddr-db`
+
 ## [0.3.0] - 2022-04-18
 
 ### Added
