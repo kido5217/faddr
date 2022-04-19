@@ -30,4 +30,4 @@ jobs:
         run: poetry install
 
       - name: Run tests
-        run: poetry run pytest --cov=faddr -v
+        run: poetry run pytest -vvv
