@@ -20,7 +20,7 @@ from faddr.settings import load_settings
 # Load settings
 logger.info("Loading settings")
 try:
-    settings = load_settings(settings_file="tests/fixtures/faddr_posix_tmp.yaml")
+    settings = load_settings()
 except FaddrSettingsFileFormatError:
     logger.exception("Failed to load settings")
     sys.exit(1)
