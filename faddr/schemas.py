@@ -1,5 +1,6 @@
 """Pydantic data schemas."""
 
+from ipaddress import ip_interface
 from typing import Any, Dict, List
 
 from pydantic import BaseModel, Field, root_validator, validator
@@ -100,3 +101,16 @@ class DeviceSchema(BaseModel):
                 interfaces.append(data)
             return interfaces
         return values
+
+
+class APINetworkQueryBody(BaseModel):
+    """REST API network search request."""
+
+    networks: List[str]
+
+    @validator("networks")
+    def is_ip(value):  # pylint: disable=no-self-argument,no-self-use
+        """Check if value is valid ip address or network."""
+        for network in value:
+            ip_interface(network)
+        return value

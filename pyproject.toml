@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "faddr"
-version = "0.3.1"
+version = "0.3.2"
 description = "Tool to parse configuration of network devices such as Juniper routers and store gathered data in database"
 license = "MIT"
 authors = ["Fedor Suchkov <f.suchkov@gmail.com>"]
@@ -22,6 +22,7 @@ ttp = "^0.8.4"
 rich = {version = "^11.1.0", python = ">=3.6.2,<4.0"}
 SQLAlchemy = "^1.4"
 ray = "^1.11.0"
+fastapi = {extras = ["all"], version = "^0.75.2", python = ">=3.6.2,<3.10"}
 
 
 [tool.poetry.dev-dependencies]
@@ -36,9 +37,11 @@ tox-poetry = "^0.4.1"
 prospector = {extras = ["with_bandit", "with_mypy"], version = "^1.6.0", python = ">=3.6.2,<4.0"}
 coverage = "^6"
 pytest-cov = "^3.0.0"
+numpy = "^1.19"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
+faddr-rest = 'faddr.faddr_rest:main'
 faddr = 'faddr.faddr:main'
 
 
