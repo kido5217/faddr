@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- REST API v0 using FastAPI and uvicorn
+
 ## [0.3.1] - 2022-04-19
 
 ### Fixed
