@@ -68,6 +68,7 @@ class RancidSettings(BaseModel):
         "cisco": "cisco-ios",
         "cisco-xr": "cisco-iosxr",
         "juniper": "juniper-junos",
+        "huawei": "huawei-vrp",
     }
 
 
