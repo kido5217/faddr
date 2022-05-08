@@ -1,7 +1,6 @@
 """Init default configuration and read configuration from file."""
 
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
 
 from pydantic import BaseModel, BaseSettings
 

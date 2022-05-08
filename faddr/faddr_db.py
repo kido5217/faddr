@@ -13,7 +13,6 @@ from faddr.exceptions import (
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
-    FaddrSettingsFileFormatError,
     FaddrRepoPathError,
 )
 from faddr.logging import logger
