@@ -10,7 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - REST API v0 using FastAPI and uvicorn
+- `Repo` class to unify config file handling
 - `RepoList` class to aggregate repos
+- `Config` dataclass to store config file data
+
+### Changed
+
+- Settings are now loaded from environment variables
+- Settings can now be optionally set via `.env` file
+- Logger creation moved to it's own submodule
+- Simplified settings loading
 
 ## [0.3.1] - 2022-04-19
 
