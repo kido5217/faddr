@@ -96,9 +96,8 @@ class RepoList:
                         repo_data.get("kind"),
                         repo_data.get("mapping", mapping),
                     )
-                except Exception as err:
+                except ValidationError as err:
                     logger.warning(f"Failed to add {repo_data} to RepoList: {str(err)}")
-                    continue
                 else:
                     self.repos.append(repo)
 
