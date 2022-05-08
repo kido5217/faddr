@@ -1,6 +1,7 @@
 """Configure logging for faddr."""
 
 import sys
+
 from loguru import logger
 
 from faddr.settings import FaddrSettings

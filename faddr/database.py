@@ -12,7 +12,6 @@ from faddr.logging import logger
 from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
 from faddr.schemas import DeviceSchema
 
-
 model_factory = ModelFactory()
 
 

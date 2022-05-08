@@ -3,7 +3,7 @@
 import sys
 
 import uvicorn
-from fastapi import FastAPI, APIRouter, Request, status, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -15,7 +15,6 @@ from faddr.logging import logger
 from faddr.results import NetworkResult
 from faddr.schemas import APINetworkQueryBody
 from faddr.settings import FaddrSettings
-
 
 # Load settings
 settings = FaddrSettings()
