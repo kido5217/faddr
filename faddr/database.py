@@ -7,8 +7,8 @@ from pathlib import Path
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from faddr import logger
 from faddr.exceptions import FaddrDatabaseDirError
+from faddr.logging import logger
 from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
 from faddr.schemas import DeviceSchema
 

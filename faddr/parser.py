@@ -4,12 +4,12 @@ from pathlib import Path
 
 from ttp import ttp
 
-from faddr import logger
 from faddr.exceptions import (
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
 )
+from faddr.logging import logger
 from faddr.schemas import DeviceSchema
 
 

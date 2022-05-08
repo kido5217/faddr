@@ -3,10 +3,7 @@
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-import yaml
 from pydantic import BaseModel, BaseSettings
-
-from faddr import logger
 
 
 class DatabaseSettings(BaseModel):

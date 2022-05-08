@@ -3,7 +3,7 @@
 from itertools import chain
 from pathlib import Path
 
-from faddr import logger
+from faddr.logging import logger
 from faddr.exceptions import FaddrRancidPathError
 
 

@@ -6,8 +6,8 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, ValidationError
 
-from faddr import logger
 from faddr.exceptions import FaddrRepoPathError, FaddrRepoUnsupported
+from faddr.logging import logger
 from faddr.rancid import RancidDir
 
 
