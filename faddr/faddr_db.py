@@ -94,12 +94,7 @@ def main():
     """Parsing devices' config files and writing data to database."""
 
     # Load settings
-    logger.info("Loading settings")
-    try:
-        settings = FaddrSettings()
-    except Exception as exc:
-        logger.exception(f"Failed to load settings: {exc}")
-        sys.exit(1)
+    settings = FaddrSettings()
 
     # Parse CMD args
     cmd_args = parse_cmd_args()

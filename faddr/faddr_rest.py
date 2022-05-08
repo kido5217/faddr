@@ -18,12 +18,8 @@ from faddr.settings import FaddrSettings
 
 
 # Load settings
-logger.info("Loading settings")
-try:
-    settings = FaddrSettings()
-except Exception as exc:
-    logger.exception(f"Failed to load settings: {exc}")
-    sys.exit(1)
+settings = FaddrSettings()
+
 
 # Connect to database
 logger.info("Connecting to database and creating new revision")

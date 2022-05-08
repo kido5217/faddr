@@ -7,27 +7,6 @@ import yaml
 from pydantic import BaseModel, BaseSettings
 
 from faddr import logger
-from faddr.exceptions import FaddrSettingsFileFormatError
-
-
-def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
-    """A simple settings source that loads variables from a YAML file."""
-
-    settings_file_path = Path(settings.__config__.settings_file)
-    if settings_file_path.exists():
-        try:
-            with open(
-                settings_file_path,
-                encoding="ascii",
-                errors="ignore",
-            ) as settings_file:
-                return yaml.safe_load(settings_file)
-        except yaml.scanner.ScannerError as err:
-            logger.debug(
-                f"Failed to parse configuration file '{settings_file_path}': {err}"
-            )
-            raise FaddrSettingsFileFormatError(settings_file_path, err) from None
-    return {}
 
 
 class DatabaseSettings(BaseModel):
