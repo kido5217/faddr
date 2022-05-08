@@ -4,7 +4,6 @@ import argparse
 import sys
 
 import ray
-from loguru import logger
 from pydantic import ValidationError
 
 from faddr import __version__
@@ -17,6 +16,7 @@ from faddr.exceptions import (
     FaddrSettingsFileFormatError,
     FaddrRepoPathError,
 )
+from faddr.logging import logger
 from faddr.parser import Parser
 from faddr.repo import RepoList
 from faddr.settings import FaddrSettings
@@ -98,17 +98,8 @@ def main():
     try:
         settings = FaddrSettings()
     except Exception as exc:
-        logger.error(f"Failed to load settings: {exc}")
+        logger.exception(f"Failed to load settings: {exc}")
         sys.exit(1)
-
-    # Config logging
-    logger.remove()
-    if settings.debug:
-        logger.add(sys.stdout, level="DEBUG")
-    else:
-        logger.add(sys.stdout, level="INFO")
-
-    logger.debug(f"Generated settings: {settings.dict()}")
 
     # Parse CMD args
     cmd_args = parse_cmd_args()

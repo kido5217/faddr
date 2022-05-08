@@ -9,22 +9,21 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from faddr import logger
 from faddr.database import Database
-from faddr.exceptions import FaddrSettingsFileFormatError, FaddrDatabaseDirError
+from faddr.exceptions import FaddrDatabaseDirError
+from faddr.logging import logger
 from faddr.results import NetworkResult
 from faddr.schemas import APINetworkQueryBody
-from faddr.settings import load_settings
+from faddr.settings import FaddrSettings
 
 
 # Load settings
 logger.info("Loading settings")
 try:
-    settings = load_settings()
-except FaddrSettingsFileFormatError:
-    logger.exception("Failed to load settings")
+    settings = FaddrSettings()
+except Exception as exc:
+    logger.exception(f"Failed to load settings: {exc}")
     sys.exit(1)
-logger.debug(f"Generated settings: {settings.dict()}")
 
 # Connect to database
 logger.info("Connecting to database and creating new revision")
