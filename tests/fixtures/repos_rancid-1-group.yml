@@ -1,0 +1,8 @@
+mapping:
+  "cisco-faddr": "cisco-ios"
+  "cisco-xr-faddr": "cisco-iosxr"
+  "huawei-faddr": "huawei-vrp"
+  "juniper-faddr": "juniper-junos"
+repos:
+  - path: "tests/fixtures/rancid/group_01_3rows"
+    kind: "rancid"

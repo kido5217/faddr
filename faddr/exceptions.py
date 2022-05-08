@@ -26,6 +26,24 @@ class FaddrRancidPathError(FaddrBaseException):
         super().__init__(self.message)
 
 
+class FaddrRepoPathError(FaddrBaseException):
+    """Exception raised when requested path doesn't exist."""
+
+    def __init__(self, path):
+        self.path = path
+        self.message = f"Path {self.path} doesn't exist of isn't a valid path."
+        super().__init__(self.message)
+
+
+class FaddrRepoUnsupported(FaddrBaseException):
+    """Exception raised when repo kind isn't supported."""
+
+    def __init__(self, kind):
+        self.kind = kind
+        self.message = f"Repo kind {self.kind} isn't supported."
+        super().__init__(self.message)
+
+
 class FaddrRancidRepoConfigFileFormatError(FaddrBaseException):
     """Exception raised when config file doesn't have correct content-type."""
 

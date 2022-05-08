@@ -4,25 +4,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import yaml
-from pydantic import BaseModel, BaseSettings, ValidationError
-from pydantic.env_settings import SettingsSourceCallable
+from pydantic import BaseModel, BaseSettings
 
 from faddr import logger
 from faddr.exceptions import FaddrSettingsFileFormatError
-
-
-def load_settings(settings_file=None):
-    """Settings loader."""
-
-    if settings_file:
-        FaddrSettings.Config.settings_file = settings_file
-
-    try:
-        settings = FaddrSettings()
-    except ValidationError as err:
-        logger.debug(f"Failed to parse configuration file '{settings_file}': {err}")
-        raise FaddrSettingsFileFormatError(settings_file, err) from None
-    return settings
 
 
 def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
@@ -53,25 +38,6 @@ class DatabaseSettings(BaseModel):
     revisions: int = 10
 
 
-class RancidDirSettings(BaseModel):
-    """Rancid Directory settings."""
-
-    path: str = "/var/lib/rancid/"
-    mapping: dict = {}
-
-
-class RancidSettings(BaseModel):
-    """Rancid settings."""
-
-    dirs: List[RancidDirSettings] = [RancidDirSettings()]
-    mapping: dict = {
-        "cisco": "cisco-ios",
-        "cisco-xr": "cisco-iosxr",
-        "juniper": "juniper-junos",
-        "huawei": "huawei-vrp",
-    }
-
-
 class FaddrSettings(BaseSettings):
     """Faddr settings root."""
 
@@ -79,21 +45,17 @@ class FaddrSettings(BaseSettings):
     processes: int = 1
     templates_dir: Path = Path(__file__).parent.joinpath("templates")
     database: DatabaseSettings = DatabaseSettings()
-    rancid: RancidSettings = RancidSettings()
+    repo_file = "/etc/faddr/faddr.yaml"
+    mapping: dict = {
+        "cisco": "cisco-ios",
+        "cisco-xr": "cisco-iosxr",
+        "juniper": "juniper-junos",
+        "huawei": "huawei-vrp",
+    }
 
     class Config:
-        """pydantic configuration."""
+        """pydantic settings parser configuration."""
 
         env_prefix = "faddr_"
-        settings_file = "/etc/faddr/faddr.yaml"
-
-        @classmethod
-        # pylint: disable=unused-argument
-        def customise_sources(
-            cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
-        ) -> Tuple[SettingsSourceCallable, ...]:
-            """Only return init settings and settings loaded from settings file."""
-            return (init_settings, yaml_config_settings_source, env_settings)
+        env_nested_delimiter = "__"
+        env_file = ".env"
