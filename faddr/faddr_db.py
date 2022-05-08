@@ -112,9 +112,6 @@ def main():
         logger.exception("Failed to parse repo file.")
         sys.exit(1)
 
-    # for config in repo_list.configs:
-    #    print(config)
-
     # Connect to database and create new revision
     logger.info("Connecting to database and creating new revision")
     try:
