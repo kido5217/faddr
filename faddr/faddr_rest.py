@@ -3,28 +3,22 @@
 import sys
 
 import uvicorn
-from fastapi import FastAPI, APIRouter, Request, status, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from faddr import logger
 from faddr.database import Database
-from faddr.exceptions import FaddrSettingsFileFormatError, FaddrDatabaseDirError
+from faddr.exceptions import FaddrDatabaseDirError
+from faddr.logging import logger
 from faddr.results import NetworkResult
 from faddr.schemas import APINetworkQueryBody
-from faddr.settings import load_settings
-
+from faddr.settings import FaddrSettings
 
 # Load settings
-logger.info("Loading settings")
-try:
-    settings = load_settings()
-except FaddrSettingsFileFormatError:
-    logger.exception("Failed to load settings")
-    sys.exit(1)
-logger.debug(f"Generated settings: {settings.dict()}")
+settings = FaddrSettings()
+
 
 # Connect to database
 logger.info("Connecting to database and creating new revision")

@@ -6,35 +6,25 @@ import sys
 import ray
 from pydantic import ValidationError
 
-from faddr import __version__, logger
+from faddr import __version__
 from faddr.database import Database
 from faddr.exceptions import (
     FaddrDatabaseDirError,
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
-    FaddrSettingsFileFormatError,
+    FaddrRepoPathError,
 )
+from faddr.logging import logger
 from faddr.parser import Parser
-from faddr.rancid import RancidDir
-from faddr.settings import load_settings
+from faddr.repo import RepoList
+from faddr.settings import FaddrSettings
 
 
 def parse_cmd_args():
     """Parsing CMD keys."""
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
-    parser.add_argument(
-        "-D",
-        "--debug",
-        action="store_true",
-        help="Enable debug messages",
-    )
-    parser.add_argument(
-        "-s",
-        "--settings-file",
-        help="Faddr settings file  location",
-    )
     parser.add_argument(
         "-v",
         "--version",
@@ -47,17 +37,17 @@ def parse_cmd_args():
 
 
 @ray.remote
-def parse_config(config, profile=None, template_dir=None):
+def parse_config(config, template_dir=None):
     """Parse provided configuration and return structured data."""
 
-    logger.info(f'Parsing \'{config["name"]}\'')
+    logger.info(f"Parsing '{config}'")
 
     device = {}
 
     try:
         parser = Parser(
-            config["path"],
-            profile=profile,
+            config.path,
+            profile=config.profile,
             template_dir=template_dir,
         )
         device.update(parser.parse())
@@ -72,9 +62,9 @@ def parse_config(config, profile=None, template_dir=None):
 
     device.update(
         {
-            "path": str(config["path"]),
-            "name": str(config["name"]),
-            "source": "rancid",
+            "path": str(config.path),
+            "name": config.name,
+            "source": config.source,
         }
     )
 
@@ -102,6 +92,10 @@ def store_in_db(database, device):
 def main():
     """Parsing devices' config files and writing data to database."""
 
+    # Load settings
+    settings = FaddrSettings()
+
+    # Parse CMD args
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
@@ -110,14 +104,13 @@ def main():
         print(__version__)
         sys.exit(0)
 
-    # Load settings
-    logger.info("Loading settings")
+    # Create repo list here
+    repo_list = RepoList(mapping=settings.mapping)
     try:
-        settings = load_settings(settings_file=cmd_args.get("settings_file"))
-    except FaddrSettingsFileFormatError:
-        logger.exception("Failed to load settings")
+        repo_list.parse_file(settings.repo_file)
+    except FaddrRepoPathError:
+        logger.exception("Failed to parse repo file.")
         sys.exit(1)
-    logger.debug(f"Generated settings: {settings.dict()}")
 
     # Connect to database and create new revision
     logger.info("Connecting to database and creating new revision")
@@ -135,42 +128,21 @@ def main():
 
     skipped_devices = 0
 
-    logger.info("Parsing rancid dirs")
-    for rancid_dir in settings.rancid.dirs:
-        rancid = RancidDir(rancid_dir.path)
-        logger.info(f"Parsing configs in rancid dir '{rancid_dir.path}'")
+    logger.info("Parsing configs")
+    for config in repo_list.configs:
+        if config.profile not in Parser.SUPPORTED_PROFILES:
+            logger.warning(f"Unsupported profile in '{config}'")
+            skipped_devices += 1
+            continue
 
-        for config in rancid.configs:
-            if not config.get("is_enabled", False):
-                logger.info(
-                    f"Config '{config['name']}' is disabled in router.db, skipping"
-                )
-                skipped_devices += 1
-                continue
-
-            # Get profile from dir's mapping.
-            # If Absent - get if from global rancid mapping.
-            # If it isn't there as well - try using raw content_type
-            profile = rancid_dir.mapping.get(
-                config["content_type"],
-                settings.rancid.mapping.get(
-                    config["content_type"], config["content_type"]
-                ),
-            )
-            if profile not in Parser.SUPPORTED_PROFILES:
-                logger.warning(f"Unsupported content-type in '{config}'")
-                skipped_devices += 1
-                continue
-
-            data_id = parse_config.options(name="faddr::parse_config()").remote(
-                config,
-                profile=profile,
-                template_dir=settings.templates_dir,
-            )
-            inserted_id = store_in_db.options(name="faddr::store_in_db()").remote(
-                database, data_id
-            )
-            inserted_ids.append(inserted_id)
+        data_id = parse_config.options(name="faddr::parse_config()").remote(
+            config,
+            template_dir=settings.templates_dir,
+        )
+        inserted_id = store_in_db.options(name="faddr::store_in_db()").remote(
+            database, data_id
+        )
+        inserted_ids.append(inserted_id)
 
     # All exception handling should be inside @ray.remote functions,
     # so we don't catch any exceptions here

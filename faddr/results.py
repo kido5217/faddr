@@ -3,9 +3,8 @@
 import json
 
 from rich import box
+from rich.console import Console
 from rich.table import Table
-
-from faddr import console
 
 
 class NetworkResult:
@@ -53,6 +52,7 @@ class NetworkResult:
         border=False,
     ):
         """Print data to stdout."""
+        console = Console()
         if output == "table":
             if self.tables is None:
                 self._make_tables(

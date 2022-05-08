@@ -3,11 +3,11 @@
 import argparse
 import sys
 
-from faddr import __version__, console, logger
+from faddr import __version__
 from faddr.database import Database
-from faddr.exceptions import FaddrSettingsFileFormatError
+from faddr.logging import logger
 from faddr.results import NetworkResult
-from faddr.settings import load_settings
+from faddr.settings import FaddrSettings
 
 
 def parse_cmd_args():
@@ -46,11 +46,6 @@ def parse_cmd_args():
         help="Output format, default is 'table'",
     )
     parser.add_argument(
-        "-s",
-        "--settings-file",
-        help="Faddr settings file  location",
-    )
-    parser.add_argument(
         "-t",
         "--table",
         action="store_true",
@@ -78,6 +73,11 @@ def parse_input(input_data):
 def main():
     """Query database"""
 
+    # Load settings
+    settings = FaddrSettings()
+    logger.debug(f"Generated settings: {settings.dict()}")
+
+    # Parse CMD
     cmd_args = parse_cmd_args()
     logger.debug(f"Arguments from CMD: {cmd_args}")
 
@@ -85,13 +85,6 @@ def main():
         logger.debug("Version was requested. Printing and exiting")
         print(__version__)
         sys.exit(0)
-
-    try:
-        settings = load_settings(settings_file=cmd_args.get("settings_file"))
-    except FaddrSettingsFileFormatError as err:
-        console.print(f"Failed to load settings: {err}")
-        sys.exit(1)
-    logger.debug(f"Generated settings: {settings.dict()}")
 
     database = Database(**settings.database.dict())
 
