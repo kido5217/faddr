@@ -78,4 +78,9 @@ app.include_router(api_v0, prefix="/api/v0")
 
 def main():
     """Start gunicorn server."""
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "faddr.faddr_rest:app",
+        host=settings.api.host,
+        port=settings.api.port,
+        workers=settings.api.workers,
+    )
