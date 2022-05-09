@@ -48,14 +48,6 @@ api_v0 = APIRouter()
 
 
 @api_v0.get("/")
-async def root():
-    """API root."""
-    return {
-        "message": "This is FAddr's REST API root. Please visit /docs for more info."
-    }
-
-
-@api_v0.get("/networks/")
 async def get_network(network: str):
     """Find network"""
     try:
@@ -66,7 +58,7 @@ async def get_network(network: str):
     return result.data
 
 
-@api_v0.post("/networks/")
+@api_v0.post("/")
 async def post_networks(query: APINetworkQueryBody):
     """Find networks"""
     result = NetworkResult(database.find_networks(query.networks))
@@ -78,4 +70,10 @@ app.include_router(api_v0, prefix="/api/v0")
 
 def main():
     """Start gunicorn server."""
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "faddr.faddr_rest:app",
+        host=settings.api.host,
+        port=settings.api.port,
+        workers=settings.api.workers,
+        log_level=settings.log_level.lower(),
+    )
