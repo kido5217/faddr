@@ -48,14 +48,6 @@ api_v0 = APIRouter()
 
 
 @api_v0.get("/")
-async def root():
-    """API root."""
-    return {
-        "message": "This is FAddr's REST API root. Please visit /docs for more info."
-    }
-
-
-@api_v0.get("/networks/")
 async def get_network(network: str):
     """Find network"""
     try:
@@ -66,7 +58,7 @@ async def get_network(network: str):
     return result.data
 
 
-@api_v0.post("/networks/")
+@api_v0.post("/")
 async def post_networks(query: APINetworkQueryBody):
     """Find networks"""
     result = NetworkResult(database.find_networks(query.networks))
