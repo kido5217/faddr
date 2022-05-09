@@ -83,4 +83,5 @@ def main():
         host=settings.api.host,
         port=settings.api.port,
         workers=settings.api.workers,
+        log_level=settings.log_level.lower(),
     )

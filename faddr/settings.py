@@ -1,8 +1,10 @@
 """Init default configuration and read configuration from file."""
 
+from typing import Union
+
 from pathlib import Path
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel, BaseSettings, validator
 
 
 class DatabaseSettings(BaseModel):
@@ -25,6 +27,7 @@ class FaddrSettings(BaseSettings):
     """Faddr settings root."""
 
     debug: bool = False
+    log_level: str = "INFO"
     processes: int = 1
     templates_dir: Path = Path(__file__).parent.joinpath("templates")
     repo_file = "/etc/faddr/faddr.yaml"
@@ -44,3 +47,12 @@ class FaddrSettings(BaseSettings):
         env_prefix = "faddr_"
         env_nested_delimiter = "__"
         env_file = ".env"
+
+    @validator("log_level")
+    def set_log_level_from_debug_key(
+        cls, value, values
+    ):  # pylint: disable=no-self-argument,no-self-use
+        """If debug is enabled, set the log level to debug too."""
+        if values.get("debug", False):
+            value = "DEBUG"
+        return value
