@@ -72,8 +72,6 @@ def main():
     """Start gunicorn server."""
     uvicorn.run(
         "faddr.faddr_rest:app",
-        host=settings.api.host,
-        port=settings.api.port,
-        workers=settings.api.workers,
         log_level=settings.log_level.lower(),
+        **settings.api.dict(),
     )
