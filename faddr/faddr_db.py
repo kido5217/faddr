@@ -94,6 +94,7 @@ def main():
 
     # Load settings
     settings = FaddrSettings()
+    logger.debug(f"Loaded settings: {settings.dict()}")
 
     # Parse CMD args
     cmd_args = parse_cmd_args()
