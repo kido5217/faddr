@@ -93,7 +93,7 @@ class RepoList:
                 try:
                     repo = Repo(
                         repo_data.get("path"),
-                        repo_data.get("kind"),
+                        repo_data.get("kind", "rancid"),
                         repo_data.get("mapping", mapping),
                     )
                 except ValidationError as err:
