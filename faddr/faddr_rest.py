@@ -1,6 +1,7 @@
 """REST API entry point."""
 
 import sys
+from pathlib import Path
 
 import uvicorn
 from fastapi import APIRouter, FastAPI, HTTPException, Request, status
@@ -37,7 +38,11 @@ except FaddrDatabaseDirError:
 
 # REST API app
 app = FastAPI(docs_url=None, redoc_url=None)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount(
+    "/static",
+    StaticFiles(directory=Path(__file__).parent.joinpath("static")),
+    name="static",
+)
 
 
 @app.get("/docs", include_in_schema=False)
