@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RepoList` class to aggregate repos
 - `Config` dataclass to store config file data
 - REST API runner can be configured via environment variables
+- Offline REST API docs
 
 ### Changed
 
