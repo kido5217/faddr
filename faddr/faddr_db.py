@@ -84,7 +84,7 @@ def store_in_db(database, device):
         logger.warning(f'Device \'{device["name"]}\' data is empty, skipping')
         return False
 
-    logger.info(f'Inserting \'{device["name"]}\' info DB')
+    logger.info(f'Inserting \'{device["name"]}\' into DB')
     database.insert_device(device)
     return True
 
@@ -94,6 +94,7 @@ def main():
 
     # Load settings
     settings = FaddrSettings()
+    logger.debug(f"Loaded settings: {settings.dict()}")
 
     # Parse CMD args
     cmd_args = parse_cmd_args()

@@ -1,7 +1,5 @@
 """Init default configuration and read configuration from file."""
 
-from typing import Union
-
 from pathlib import Path
 
 from pydantic import BaseModel, BaseSettings, validator
@@ -41,7 +39,7 @@ class FaddrSettings(BaseSettings):
     database: DatabaseSettings = DatabaseSettings()
     api: APISettings = APISettings()
 
-    class Config:
+    class Config:  # pylint: disable=too-few-public-methods
         """pydantic settings parser configuration."""
 
         env_prefix = "faddr_"
