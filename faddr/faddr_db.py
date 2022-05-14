@@ -84,7 +84,7 @@ def store_in_db(database, device):
         logger.warning(f'Device \'{device["name"]}\' data is empty, skipping')
         return False
 
-    logger.info(f'Inserting \'{device["name"]}\' info DB')
+    logger.info(f'Inserting \'{device["name"]}\' into DB')
     database.insert_device(device)
     return True
 
