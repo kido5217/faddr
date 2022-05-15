@@ -5,4 +5,4 @@ from faddr import __version__
 
 def test_version():
     """Test app version."""
-    assert __version__ == "0.4.0-beta.0"
+    assert __version__ == "0.4.0"

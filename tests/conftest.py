@@ -14,41 +14,24 @@ def settings_default():
     """Default settings."""
     settings = {
         "debug": False,
+        "log_level": "INFO",
         "processes": 1,
         "templates_dir": Path(__file__).parent.with_name("faddr").joinpath("templates"),
+        "mapping": {
+            "cisco": "cisco-ios",
+            "cisco-xr": "cisco-iosxr",
+            "juniper": "juniper-junos",
+            "huawei": "huawei-vrp",
+        },
         "database": {
             "path": "/var/db/faddr/",
             "name": "faddr-db.sqlite",
             "revisions": 10,
         },
-        "rancid": {
-            "dirs": [{"path": "/var/lib/rancid/", "mapping": {}}],
-            "mapping": {
-                "cisco": "cisco-ios",
-                "cisco-xr": "cisco-iosxr",
-                "juniper": "juniper-junos",
-            },
-        },
+        "api": {"host": "0.0.0.0", "port": 8000, "workers": 1},
+        "repo_file": "/etc/faddr/faddr.yaml",
     }
     return settings
-
-
-@pytest.fixture
-def settings_file_absent():
-    """Absent settings file."""
-    return Path("tests/fixtures/nonexistant_settings_file.yaml")
-
-
-@pytest.fixture
-def settings_file_malformed():
-    """Corrupted settings file.'"""
-    return Path("tests/fixtures/faddr_malformed.yaml")
-
-
-@pytest.fixture
-def settings_file_wrong_format():
-    """Wrong format settings file.'"""
-    return Path("tests/fixtures/faddr_wrong_format.yml")
 
 
 def parser_get_config_path(profile):
