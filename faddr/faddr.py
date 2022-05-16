@@ -75,7 +75,6 @@ def main():
 
     # Load settings
     settings = FaddrSettings()
-    print(settings.dict())
     logger.debug(f"Generated settings: {settings.dict()}")
 
     # Parse CMD
