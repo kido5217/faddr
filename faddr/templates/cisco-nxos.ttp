@@ -1,0 +1,22 @@
+<group name="interfaces.{{ name }}**">
+interface {{ name }}
+interface {{ name | _start_ }} point-to-point
+  duplex {{ duplex }}
+  speed {{ speed }}
+  description {{ description | _line_ }}
+  {{ is_disabled | equal("shutdown") | let(True) }}
+  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}}
+  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} native
+  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} second-dot1q {{ c_vlan }}
+  vrf member {{ vrf }}
+  <group name="acls_in*" method="table" itemize="acls_in">
+  ip access-group {{ acls_in }} in
+  </group>
+  <group name="acls_out*" method="table" itemize="acls_out">
+  ip access-group {{ acls_out }} out
+  </group>
+  <group name="ip_addresses" method="table" itemize="ip_addresses">
+  ip address {{ ip_addresses | PREFIX | to_ip | ip_info }}
+  ip address {{ ip_addresses | PREFIX | to_ip | ip_info }} secondary
+  </group>
+</group>

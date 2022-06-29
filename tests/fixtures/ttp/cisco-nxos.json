@@ -1,0 +1,8 @@
+{
+  "interfaces": [
+    {
+      "name": "Vlan100",
+      "description": "FIXTURE_TTP_TEST"
+    }
+  ]
+}

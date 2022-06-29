@@ -1,0 +1,15 @@
+!RANCID-CONTENT-TYPE: cisco-nx-faddr
+!
+! misc data
+!
+interface Vlan100
+  description TEST Descr
+  no shutdown
+  ip access-group ACL_Test_Data in
+  vrf member VRF_Test
+  no ip redirects
+  ip address 10.100.100.1/24
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 100
+    ip 10.100.100.100

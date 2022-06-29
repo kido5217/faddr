@@ -2,3 +2,4 @@ cisco-ios-15-7206;cisco-faddr;up
 juniper-junos-17-vmx;juniper-faddr;up
 cisco-iosxr-6-xrv;cisco-xr-faddr;up
 huawei-vrp-v800-ne40;huawei-faddr;up
+cisco-nexus-test;cisco-nx-faddr;up
