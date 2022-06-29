@@ -1,6 +1,7 @@
 mapping:
   "cisco-faddr": "cisco-ios"
   "cisco-xr-faddr": "cisco-iosxr"
+  "cisco-nx-faddr": "cisco-nxos"
   "huawei-faddr": "huawei-vrp"
   "juniper-faddr": "juniper-junos"
 repos:
