@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2022-06-29
+
+### Changed
+
+- Bump `ttp` version to 0.9 to fix parsing bugs.
+
+### Fixed
+
+- `Cisco Nexus` shutdown on interface detection.
+
 ## [0.4.2] - 2022-06-29
 
 ### Added

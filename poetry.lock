@@ -1523,11 +1523,15 @@ test = ["coverage", "pytest", "pycodestyle", "pylint"]
 
 [[package]]
 name = "ttp"
-version = "0.8.4"
+version = "0.9.0"
 description = "Template Text Parser"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7,<4.0"
+
+[package.extras]
+full = ["cerberus (>=1.3.0,<1.4.0)", "jinja2 (>=3.0.0,<3.1.0)", "pyyaml (==6.0)", "deepdiff (>=5.8.0,<5.9.0)", "openpyxl (>=3.0.0,<3.1.0)", "tabulate (>=0.8.0,<0.9.0)", "ttp_templates (<1.0.0)", "yangson (>=1.4.0,<1.5.0)", "n2g (>=0.2.0,<0.3.0)"]
+docs = ["readthedocs-sphinx-search (==0.1.1)", "Sphinx (==4.3.0)", "sphinx_rtd_theme (==1.0.0)", "sphinxcontrib-applehelp (==1.0.1)", "sphinxcontrib-devhelp (==1.0.1)", "sphinxcontrib-htmlhelp (==2.0.0)", "sphinxcontrib-jsmath (==1.0.1)", "sphinxcontrib-napoleon (==0.7)", "sphinxcontrib-qthelp (==1.0.2)", "sphinxcontrib-serializinghtml (==1.1.5)", "sphinxcontrib-spelling (==7.2.1)"]
 
 [[package]]
 name = "typed-ast"
@@ -1700,7 +1704,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6,<3.10"
-content-hash = "9392f1235c7d8a4d50c67a79b0f48f6774fc4c0136ce0c5931ce90e6a191396a"
+content-hash = "a6ec2b8b328c16960b042fecabc630d963bbd590a3e3408e73505430f8e13b9b"
 
 [metadata.files]
 aiocontextvars = [
@@ -2907,7 +2911,8 @@ tox-poetry = [
     {file = "tox_poetry-0.4.1-py2.py3-none-any.whl", hash = "sha256:11d9cd4e51d4cd9484b3ba63f2650ab4cfb4096e5f0682ecf561ddfc3c8e8c92"},
 ]
 ttp = [
-    {file = "ttp-0.8.4.tar.gz", hash = "sha256:2911e365aa24a85fe97ce6f60e6e9faed386b756e37905157a5c3331363f96ea"},
+    {file = "ttp-0.9.0-py2.py3-none-any.whl", hash = "sha256:db16bdf0446fdb4ec662064d5bc174d573a2240d66cde73ba07d266fb58b599a"},
+    {file = "ttp-0.9.0.tar.gz", hash = "sha256:e53050061450c3ee48476983f23153a9bb55589ba6d79a25d0ebc28d329eec4f"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.3-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:2068531575a125b87a41802130fa7e29f26c09a2833fea68d9a40cf33902eba6"},
