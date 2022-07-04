@@ -97,5 +97,7 @@ class Parser:
         """Parse provided configuration and return structured data."""
         parser = ttp(data=self.config, template=self.template)
         parser.parse()
-        result = DeviceSchema.parse_obj(parser.result()[0][0]).dict(exclude_unset=True)
+        result = DeviceSchema.parse_obj(parser.result()[0][0]).dict(
+            exclude_defaults=True
+        )
         return result

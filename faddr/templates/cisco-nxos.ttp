@@ -1,13 +1,16 @@
+<macro>
+def set_is_disabled(data):
+    for intf_name, intf_data in data[0].get("interfaces", {}).items():
+        if intf_name.startswith("Vlan"):
+            intf_data["is_disabled"] = intf_data.get("is_disabled", True)
+            data[0]["interfaces"][intf_name] = intf_data
+</macro>
+
 <group name="interfaces.{{ name }}**">
 interface {{ name }}
-interface {{ name | _start_ }} point-to-point
-  duplex {{ duplex }}
-  speed {{ speed }}
-  description {{ description | _line_ }}
+  {{ is_disabled | re("no shutdown") | let(False) }}
   {{ is_disabled | equal("shutdown") | let(True) }}
-  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}}
-  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} native
-  encapsulation {{ encapsulation | lower() }} {{ s_vlan | DIGIT}} second-dot1q {{ c_vlan }}
+  description {{ description | _line_ }}
   vrf member {{ vrf }}
   <group name="acls_in*" method="table" itemize="acls_in">
   ip access-group {{ acls_in }} in
@@ -20,3 +23,5 @@ interface {{ name | _start_ }} point-to-point
   ip address {{ ip_addresses | PREFIX | to_ip | ip_info }} secondary
   </group>
 </group>
+
+<output macro="set_is_disabled"/>

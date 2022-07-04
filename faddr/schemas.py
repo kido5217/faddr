@@ -16,7 +16,7 @@ class InterfaceSchema(BaseModel):
     duplex: str = None
     speed: str = None
     description: str = None
-    is_disabled: bool = None
+    is_disabled: bool = False
     encapsulation: str = None
     s_vlan: str = None
     c_vlan: str = None
