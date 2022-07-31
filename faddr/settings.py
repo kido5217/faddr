@@ -10,7 +10,7 @@ class DatabaseSettings(BaseModel):
 
     path: str = "/var/db/faddr/"
     name: str = "faddr-db.sqlite"
-    revisions: int = 10
+    revision_limit: int = 10
 
 
 class APISettings(BaseModel):

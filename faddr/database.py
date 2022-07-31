@@ -6,10 +6,15 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-from faddr.exceptions import FaddrDatabaseDirError
+from faddr.exceptions import (
+    FaddrDatabaseDirError,
+    FaddrDatabaseMultipleRevisionsActive,
+    FaddrDatabaseNoRevisionsActive,
+)
 from faddr.logging import logger
-from faddr.models import Base, Device, Interface, IPAddress, ModelFactory
+from faddr.models import Base, Revision, Device, Interface, IPAddress, ModelFactory
 from faddr.schemas import DeviceSchema
 
 model_factory = ModelFactory()
@@ -35,7 +40,7 @@ def make_sa_object(sa_class, data):
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name, revision=None, revisions=10):
+    def __init__(self, path, name, revision_id=None, revision_limit=10):
         self.path = Path(path)
         try:
             self.path.mkdir(parents=True, exist_ok=True)
@@ -44,23 +49,35 @@ class Database:
                 self.path, "path isn't a directory or isn't readable or writable."
             ) from None
 
-        self.revisions = revisions
-        self.basename = name
-        self.revision = revision
-        if self.revision is None:
-            self.name = name
+        self.revision_limit = revision_limit
+        self.name = name
+
+        if revision_id is None:
+            self.revision_id = self.get_active_revision()
         else:
-            rev_name = Path(self.basename).stem + "-" + self.revision
-            suffix = Path(self.basename).suffix
-            self.name = rev_name + suffix
+            self.revision_id = revision_id
 
         logger.debug(f"Created Database class: {self.__dict__}")
+
+    def get_active_revision(self):
+        """Get the active revision number from database."""
+
+        revision_stmt = select(Revision.id).where(Revision.is_active is True)
+
+        with Session(self.engine) as session:
+            try:
+                revision_id = session.execute(revision_stmt).one()
+            except NoResultFound:
+                raise FaddrDatabaseNoRevisionsActive from None
+            except MultipleResultsFound:
+                raise FaddrDatabaseMultipleRevisionsActive from None
+        return revision_id
 
     @property
     def engine(self):
         """Create SQLAlchemy engine."""
         db_file = Path(self.path, self.name)
-        # SQLite 'dataabse is locked' workaround for multiprocessing.
+        # SQLite 'database is locked' workaround for multiprocessing.
         # In the future, when we'll support others DB drivers,
         # using sqlite should imply settings.processes=1 and disable multiprocessing
         connect_args = {"timeout": 300}
@@ -71,21 +88,19 @@ class Database:
         )
         return engine
 
-    def new_revision(self, revision=None):
+    '''
+    def new_revision(self, revision_id=None):
         """Create new revision and IP it."""
-        if revision:
-            self.revision = revision
+        if revision_id:
+            self.revision_id = revision_id
         else:
-            self.revision = self.gen_revision_id()
-
-        rev_name = Path(self.basename).stem + "-" + self.revision
-        suffix = Path(self.basename).suffix
-        self.name = rev_name + suffix
+            self.revision_id = self.gen_revision_id()
 
         Base.metadata.create_all(self.engine)
         logger.debug(f"Created new revision: '{self.revision}'")
 
         return self.revision
+    '''
 
     def insert_device(self, device_data):
         """Insert device data to database."""
@@ -98,6 +113,7 @@ class Database:
 
         logger.debug(f"Inserted device: '{device_data['name']}'")
 
+    '''
     def set_default(self):
         """Make current revision default one."""
         if self.name != self.basename:
@@ -109,33 +125,40 @@ class Database:
             self.name = self.basename
             logger.debug(f"Created symlink '{base_file}' to '{rev_file}'")
 
+       
     def is_default(self):
         """Check if current revision is default."""
         return self.name == self.basename
 
+    '''
+
     def cleanup(self):
+        return 0
+
+    def cleanup_old(self):
         """Delete revisions that exceed the maximum number of allowed revisions."""
-        if self.revisions == -1:
+        if self.revision_limit == -1:
             logger.debug(
-                f"'database.revisions' is '{self.revisions}', keeping all revisions."
+                f"'database.revision_limit' is '{self.revision_limit}', keeping all revisions."
             )
             return 0
 
         revision_list = []
         for revision_candidate in self.path.iterdir():
-            if len(revision_candidate.name) == len(self.basename) + 15:
-                revision_list.append(revision_candidate)
+            revision_list.append(revision_candidate)
         revision_list.sort(reverse=True)
         logger.debug(
             f"Found {len(revision_list)} revisions: {[revision.name for revision in revision_list]}"
         )
 
-        if len(revision_list) > self.revisions:
-            logger.debug(f"Deleting {len(revision_list) - self.revisions} revisions...")
-            for revision_to_delete in revision_list[self.revisions :]:
+        if len(revision_list) > self.revision_limit:
+            logger.debug(
+                f"Deleting {len(revision_list) - self.revision_limit} revisions..."
+            )
+            for revision_to_delete in revision_list[self.revision_limit :]:
                 revision_to_delete.unlink()
                 logger.debug(f"Deleted {revision_to_delete}")
-            return len(revision_list) - self.revisions
+            return len(revision_list) - self.revision_limit
         return 0
 
     def find_networks(self, queries):

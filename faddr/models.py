@@ -6,6 +6,16 @@ from sqlalchemy.orm import declarative_base, relationship
 Base = declarative_base()
 
 
+class Revision(Base):
+    """ORM 'revision' table data mapping."""
+
+    __tablename__ = "revision"
+
+    id = Column(Integer, primary_key=True)
+    is_active = Column(Boolean, default=False)
+    devices = relationship("Device", back_populates="revision")
+
+
 class Device(Base):  # pylint: disable=too-few-public-methods
     """ORM 'device' table data mapping."""
 
@@ -15,6 +25,8 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     name = Column(String, index=True)
     path = Column(String)
     source = Column(String, index=True)
+
+    revision_id = Column(Integer, ForeignKey("revision.id"), index=True)
 
     interfaces = relationship("Interface", back_populates="device")
 

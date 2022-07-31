@@ -15,6 +15,14 @@ class FaddrDatabaseDirError(FaddrBaseException):
         super().__init__(self.message)
 
 
+class FaddrDatabaseMultipleRevisionsActive(FaddrBaseException):
+    """Exception raised when moe than one revision is active."""
+
+
+class FaddrDatabaseNoRevisionsActive(FaddrBaseException):
+    """Exception raised when moe than one revision is active."""
+
+
 class FaddrRancidPathError(FaddrBaseException):
     """Exception raised when requested path doesn't exist."""
 

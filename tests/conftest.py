@@ -26,7 +26,7 @@ def settings_default():
         "database": {
             "path": "/var/db/faddr/",
             "name": "faddr-db.sqlite",
-            "revisions": 10,
+            "revision_limit": 10,
         },
         "api": {"host": "0.0.0.0", "port": 8000, "workers": 1},
         "repo_file": "/etc/faddr/faddr.yaml",
