@@ -131,10 +131,9 @@ def parse(settings):
         sys.exit(1)
 
     # Connect to database and create new revision
-    revision_id = Database.gen_revision_id()
     logger.info("Connecting to database and creating new revision")
     try:
-        database = Database(revision_id=revision_id, **settings.database.dict())
+        database = Database(**settings.database.dict()).new_revision()
     except FaddrDatabaseDirError:
         logger.exception("Failed to open database")
         sys.exit(1)
@@ -189,4 +188,11 @@ def parse(settings):
 
 def init(settings):
     """Init new database."""
-    print(settings)
+
+    # Connect to database and create tables
+    logger.info("Connecting to database and creating tables")
+    try:
+        Database(init=True, **settings.database.dict())
+    except FaddrDatabaseDirError:
+        logger.exception("Failed to open database")
+        sys.exit(1)

@@ -27,6 +27,7 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     source = Column(String, index=True)
 
     revision_id = Column(Integer, ForeignKey("revision.id"), index=True)
+    revision = relationship("Revision", back_populates="devices")
 
     interfaces = relationship("Interface", back_populates="device")
 

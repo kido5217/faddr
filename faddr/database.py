@@ -40,7 +40,7 @@ def make_sa_object(sa_class, data):
 class Database:
     """Create db, connect to it, modify and search."""
 
-    def __init__(self, path, name, revision_id=None, revision_limit=10):
+    def __init__(self, path, name, revision_limit=10, init=False):
         self.path = Path(path)
         try:
             self.path.mkdir(parents=True, exist_ok=True)
@@ -52,10 +52,8 @@ class Database:
         self.revision_limit = revision_limit
         self.name = name
 
-        if revision_id is None:
-            self.revision_id = self.get_active_revision()
-        else:
-            self.revision_id = revision_id
+        if init is True:
+            Base.metadata.create_all(self.engine)
 
         logger.debug(f"Created Database class: {self.__dict__}")
 
@@ -88,7 +86,6 @@ class Database:
         )
         return engine
 
-    '''
     def new_revision(self, revision_id=None):
         """Create new revision and IP it."""
         if revision_id:
@@ -96,16 +93,21 @@ class Database:
         else:
             self.revision_id = self.gen_revision_id()
 
-        Base.metadata.create_all(self.engine)
-        logger.debug(f"Created new revision: '{self.revision}'")
+        revision = Revision(**{"id": self.revision_id})
+        with Session(self.engine) as session:
+            session.add(revision)
+            session.commit()
 
-        return self.revision
-    '''
+        # Base.metadata.create_all(self.engine)
+        logger.debug(f"Created new revision: '{self.revision_id}'")
+
+        return self
 
     def insert_device(self, device_data):
         """Insert device data to database."""
 
         device = make_sa_object(Device, DeviceSchema.parse_obj(device_data))
+        device.revision_id = self.revision_id
 
         with Session(self.engine) as session:
             session.add(device)
