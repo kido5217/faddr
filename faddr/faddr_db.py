@@ -119,6 +119,18 @@ def main():
         init(settings)
 
 
+def init(settings):
+    """Init new database."""
+
+    # Connect to database and create tables
+    logger.info("Connecting to database and creating tables")
+    try:
+        Database(init=True, **settings.database.dict())
+    except FaddrDatabaseDirError:
+        logger.exception("Failed to open database")
+        sys.exit(1)
+
+
 def parse(settings):
     """Parse configs and store them in database."""
 
@@ -177,22 +189,9 @@ def parse(settings):
 
     # Only mark revision as active and remove older revisions
     # if at least one device has been parsed successfully
-    """
+
     if parsed_devices > 0:
-        database.set_default()
+        database.set_active_revision()
         logger.info("Deleting old revisions")
-        deleted_revions = database.cleanup()
-        logger.info(f"Revisions deleted: {deleted_revions}")
-    """
-
-
-def init(settings):
-    """Init new database."""
-
-    # Connect to database and create tables
-    logger.info("Connecting to database and creating tables")
-    try:
-        Database(init=True, **settings.database.dict())
-    except FaddrDatabaseDirError:
-        logger.exception("Failed to open database")
-        sys.exit(1)
+        # deleted_revions = database.cleanup()
+        # logger.info(f"Revisions deleted: {deleted_revions}")

@@ -4,7 +4,7 @@ import ipaddress
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -51,29 +51,24 @@ class Database:
 
         self.revision_limit = revision_limit
         self.name = name
+        self.revision_id = None
 
         if init is True:
             Base.metadata.create_all(self.engine)
+        """
+        else:
+            try:
+                self.get_active_revision()
+            except FaddrDatabaseNoRevisionsActive:
+                self.new_revision()
+        """
 
         logger.debug(f"Created Database class: {self.__dict__}")
-
-    def get_active_revision(self):
-        """Get the active revision number from database."""
-
-        revision_stmt = select(Revision.id).where(Revision.is_active is True)
-
-        with Session(self.engine) as session:
-            try:
-                revision_id = session.execute(revision_stmt).one()
-            except NoResultFound:
-                raise FaddrDatabaseNoRevisionsActive from None
-            except MultipleResultsFound:
-                raise FaddrDatabaseMultipleRevisionsActive from None
-        return revision_id
 
     @property
     def engine(self):
         """Create SQLAlchemy engine."""
+
         db_file = Path(self.path, self.name)
         # SQLite 'database is locked' workaround for multiprocessing.
         # In the future, when we'll support others DB drivers,
@@ -86,19 +81,31 @@ class Database:
         )
         return engine
 
-    def new_revision(self, revision_id=None):
-        """Create new revision and IP it."""
-        if revision_id:
-            self.revision_id = revision_id
-        else:
-            self.revision_id = self.gen_revision_id()
+    def get_active_revision(self):
+        """Get the active revision number from database."""
 
-        revision = Revision(**{"id": self.revision_id})
+        revision_stmt = select(Revision.id).where(Revision.is_active == True)
+
+        with Session(self.engine) as session:
+            try:
+                revision_id = session.execute(revision_stmt).one()[0]
+            except NoResultFound:
+                raise FaddrDatabaseNoRevisionsActive from None
+            except MultipleResultsFound:
+                raise FaddrDatabaseMultipleRevisionsActive from None
+        self.revision_id = revision_id
+        logger.debug(f"Active revision_id is {self.revision_id}")
+        return self
+
+    def new_revision(self):
+        """Create new revision and IP it."""
+
+        revision = Revision()
         with Session(self.engine) as session:
             session.add(revision)
             session.commit()
 
-        # Base.metadata.create_all(self.engine)
+            self.revision_id = revision.id
         logger.debug(f"Created new revision: '{self.revision_id}'")
 
         return self
@@ -134,11 +141,30 @@ class Database:
 
     '''
 
+    def set_active_revision(self):
+        """Set current revision as active."""
+
+        stmt_activate_revision = (
+            update(Revision)
+            .where(Revision.id == self.revision_id)
+            .values(is_active=True)
+        )
+        stmt_deactivate_other_revisions = (
+            update(Revision)
+            .where(Revision.id != self.revision_id)
+            .values(is_active=False)
+        )
+        with Session(self.engine) as session:
+            session.execute(stmt_activate_revision)
+            session.execute(stmt_deactivate_other_revisions)
+            session.commit()
+
     def cleanup(self):
         return 0
 
     def cleanup_old(self):
         """Delete revisions that exceed the maximum number of allowed revisions."""
+
         if self.revision_limit == -1:
             logger.debug(
                 f"'database.revision_limit' is '{self.revision_limit}', keeping all revisions."
@@ -176,10 +202,15 @@ class Database:
     def find_network(self, query):
         """Find provided network."""
 
+        if self.revision_id is None:
+            self.get_active_revision()
+
+        logger.debug(f"Using revision_id {self.revision_id}")
+
         netmask_max = 16
         netmask_min = 32
 
-        logger.debug(f"Searchong for {query}")
+        logger.debug(f"Searching for {query}")
 
         result = {query: []}
         query_addr = query.split("/")[0]
@@ -207,6 +238,7 @@ class Database:
                 IPAddress.network.in_(networks),
                 Interface.id == IPAddress.interface_id,
                 Device.id == Interface.device_id,
+                Device.revision_id == self.revision_id,
             )
             .order_by(Device.name)
             .order_by(Interface.name)
@@ -222,11 +254,3 @@ class Database:
                 logger.debug(f"Found address: {data}")
 
         return result
-
-    @staticmethod
-    def gen_revision_id():
-        """Generate revision."""
-        date_format = "%Y%m%d%H%M%S"
-        revision = datetime.now().strftime(date_format)
-
-        return revision

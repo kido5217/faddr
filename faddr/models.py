@@ -1,18 +1,22 @@
 """SQLAlchemy data models."""
 
+from datetime import datetime
+
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
 
-class Revision(Base):
+class Revision(Base):  # pylint: disable=too-few-public-methods
     """ORM 'revision' table data mapping."""
 
     __tablename__ = "revision"
 
     id = Column(Integer, primary_key=True)
+    created = Column(String, default=str(datetime.now()))
     is_active = Column(Boolean, default=False)
+
     devices = relationship("Device", back_populates="revision")
 
 
