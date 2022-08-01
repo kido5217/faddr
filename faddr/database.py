@@ -1,7 +1,6 @@
 """Database operations."""
 
 import ipaddress
-from datetime import datetime
 from pathlib import Path
 
 from sqlalchemy import create_engine, select, update
@@ -55,13 +54,6 @@ class Database:
 
         if init is True:
             Base.metadata.create_all(self.engine)
-        """
-        else:
-            try:
-                self.get_active_revision()
-            except FaddrDatabaseNoRevisionsActive:
-                self.new_revision()
-        """
 
         logger.debug(f"Created Database class: {self.__dict__}")
 
@@ -84,7 +76,7 @@ class Database:
     def get_active_revision(self):
         """Get the active revision number from database."""
 
-        revision_stmt = select(Revision.id).where(Revision.is_active == True)
+        revision_stmt = select(Revision.id).where(Revision.is_active.is_(True))
 
         with Session(self.engine) as session:
             try:
@@ -121,25 +113,6 @@ class Database:
             session.commit()
 
         logger.debug(f"Inserted device: '{device_data['name']}'")
-
-    '''
-    def set_default(self):
-        """Make current revision default one."""
-        if self.name != self.basename:
-            base_file = Path(self.path, self.basename)
-            rev_file = Path(self.path, self.name)
-            if base_file.exists():
-                base_file.unlink()
-            base_file.symlink_to(rev_file)
-            self.name = self.basename
-            logger.debug(f"Created symlink '{base_file}' to '{rev_file}'")
-
-       
-    def is_default(self):
-        """Check if current revision is default."""
-        return self.name == self.basename
-
-    '''
 
     def set_active_revision(self):
         """Set current revision as active."""

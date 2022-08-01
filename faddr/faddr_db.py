@@ -11,7 +11,6 @@ from faddr.database import Database
 from faddr.exceptions import (
     FaddrDatabaseDirError,
     FaddrDatabaseMultipleRevisionsActive,
-    FaddrDatabaseNoRevisionsActive,
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
