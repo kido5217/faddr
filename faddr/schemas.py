@@ -124,4 +124,7 @@ class RevisionSchema(BaseModel):
     is_active: bool = False
 
     class Config:
+        """Pydantic config."""
+
+        # Enable parsing SQLAlchemy objects
         orm_mode = True
