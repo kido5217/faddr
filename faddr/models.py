@@ -17,7 +17,12 @@ class Revision(Base):  # pylint: disable=too-few-public-methods
     created = Column(String, default=str(datetime.now()))
     is_active = Column(Boolean, default=False)
 
-    devices = relationship("Device", back_populates="revision")
+    devices = relationship(
+        "Device",
+        back_populates="revision",
+        cascade="all, delete, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class Device(Base):  # pylint: disable=too-few-public-methods
@@ -30,10 +35,17 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     path = Column(String)
     source = Column(String, index=True)
 
-    revision_id = Column(Integer, ForeignKey("revision.id"), index=True)
-    revision = relationship("Revision", back_populates="devices")
+    revision_id = Column(
+        Integer,
+        ForeignKey("revision.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    revision = relationship("Revision", back_populates="devices", passive_deletes=True)
 
-    interfaces = relationship("Interface", back_populates="device")
+    interfaces = relationship(
+        "Interface", back_populates="device", cascade="all, delete, delete-orphan"
+    )
 
 
 class Interface(Base):  # pylint: disable=too-few-public-methods
@@ -56,11 +68,17 @@ class Interface(Base):  # pylint: disable=too-few-public-methods
     acl_in = Column(String)
     acl_out = Column(String)
 
-    device_id = Column(Integer, ForeignKey("device.id"), index=True)
+    device_id = Column(
+        Integer, ForeignKey("device.id", ondelete="CASCADE"), index=True, nullable=False
+    )
     device = relationship("Device", back_populates="interfaces")
 
-    ip_addresses = relationship("IPAddress", back_populates="interface")
-    acls = relationship("InterfaceACL", back_populates="interface")
+    ip_addresses = relationship(
+        "IPAddress", back_populates="interface", cascade="all, delete, delete-orphan"
+    )
+    acls = relationship(
+        "InterfaceACL", back_populates="interface", cascade="all, delete, delete-orphan"
+    )
 
 
 class IPAddress(Base):  # pylint: disable=too-few-public-methods
@@ -92,7 +110,12 @@ class IPAddress(Base):  # pylint: disable=too-few-public-methods
     with_netmask = Column(String)
     with_prefixlen = Column(String)
 
-    interface_id = Column(Integer, ForeignKey("interface.id"), index=True)
+    interface_id = Column(
+        Integer,
+        ForeignKey("interface.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     interface = relationship("Interface", back_populates="ip_addresses")
 
 
@@ -106,7 +129,12 @@ class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
     sequence_number = Column(Integer)
     direction = Column(String, index=True)
 
-    interface_id = Column(Integer, ForeignKey("interface.id"), index=True)
+    interface_id = Column(
+        Integer,
+        ForeignKey("interface.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     interface = relationship("Interface", back_populates="acls")
 
 

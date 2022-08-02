@@ -3,7 +3,8 @@
 import ipaddress
 from pathlib import Path
 
-from sqlalchemy import create_engine, delete, select, update
+from sqlalchemy import create_engine, event, delete, select, update
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -51,11 +52,19 @@ class Database:
         self.revision_limit = revision_limit
         self.name = name
         self.revision_id = None
+        self.db_type = "sqlite"
 
         if init is True:
             Base.metadata.create_all(self.engine)
 
         logger.debug(f"Created Database class: {self.__dict__}")
+
+        # Enable Foreign Keys support for SQLite
+        @event.listens_for(Engine, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            cursor = dbapi_connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.close()
 
     @property
     def engine(self):
@@ -71,6 +80,7 @@ class Database:
             future=True,
             connect_args=connect_args,
         )
+
         return engine
 
     def get_active_revision(self):
@@ -158,7 +168,7 @@ class Database:
             session.execute(stmt_delete_revisions)
             session.commit()
 
-        return revisions_to_delete
+        return len(revisions_to_delete)
 
     def insert_device(self, device_data):
         """Insert device data to database."""
