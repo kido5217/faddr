@@ -3,7 +3,7 @@
 import ipaddress
 from pathlib import Path
 
-from sqlalchemy import create_engine, select, update
+from sqlalchemy import create_engine, delete, select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -14,7 +14,7 @@ from faddr.exceptions import (
 )
 from faddr.logging import logger
 from faddr.models import Base, Revision, Device, Interface, IPAddress, ModelFactory
-from faddr.schemas import DeviceSchema
+from faddr.schemas import DeviceSchema, RevisionSchema
 
 model_factory = ModelFactory()
 
@@ -123,34 +123,42 @@ class Database:
     def cleanup(self):
         """Delete revisions that exceed the maximum number of allowed revisions."""
 
-        return 0
-
-    def cleanup_old(self):
-        """Delete revisions that exceed the maximum number of allowed revisions."""
-
-        if self.revision_limit == -1:
+        logger.debug(f"'database.revision_limit' is '{self.revision_limit}'")
+        if self.revision_limit < 0:
             logger.debug(
                 f"'database.revision_limit' is '{self.revision_limit}', keeping all revisions."
             )
             return 0
 
-        revision_list = []
-        for revision_candidate in self.path.iterdir():
-            revision_list.append(revision_candidate)
-        revision_list.sort(reverse=True)
-        logger.debug(
-            f"Found {len(revision_list)} revisions: {[revision.name for revision in revision_list]}"
-        )
+        inactive_revisions = []
 
-        if len(revision_list) > self.revision_limit:
-            logger.debug(
-                f"Deleting {len(revision_list) - self.revision_limit} revisions..."
-            )
-            for revision_to_delete in revision_list[self.revision_limit :]:
-                revision_to_delete.unlink()
-                logger.debug(f"Deleted {revision_to_delete}")
-            return len(revision_list) - self.revision_limit
-        return 0
+        stmt_inactive_revisions = select(Revision.id, Revision.created).where(
+            Revision.is_active.is_(False)
+        )
+        with Session(self.engine) as session:
+            for row in session.execute(stmt_inactive_revisions).all():
+                inactive_revisions.append(RevisionSchema.from_orm(row))
+        logger.debug(f"Found {len(inactive_revisions)} inactive revisions.")
+
+        spare_revision_count = len(inactive_revisions) - self.revision_limit + 1
+        if spare_revision_count < 1:
+            logger.debug("Nothing to delete.")
+            return 0
+
+        inactive_revisions.sort(key=lambda x: x.created)
+        revisions_to_delete = [
+            revision.id for revision in inactive_revisions[:spare_revision_count]
+        ]
+        logger.debug(f"Revisions to delete: {len(revisions_to_delete)}")
+
+        stmt_delete_revisions = delete(Revision).where(
+            Revision.id.in_(revisions_to_delete)
+        )
+        with Session(self.engine) as session:
+            session.execute(stmt_delete_revisions)
+            session.commit()
+
+        return revisions_to_delete
 
     def insert_device(self, device_data):
         """Insert device data to database."""

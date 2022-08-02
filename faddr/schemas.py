@@ -114,3 +114,14 @@ class APINetworkQueryBody(BaseModel):
         for network in value:
             ip_interface(network)
         return value
+
+
+class RevisionSchema(BaseModel):
+    """Revision DB search result."""
+
+    id: int
+    created: str
+    is_active: bool = False
+
+    class Config:
+        orm_mode = True

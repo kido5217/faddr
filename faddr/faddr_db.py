@@ -192,5 +192,5 @@ def parse(settings):
     if parsed_devices > 0:
         database.set_active_revision()
         logger.info("Deleting old revisions")
-        # deleted_revions = database.cleanup()
-        # logger.info(f"Revisions deleted: {deleted_revions}")
+        deleted_revions = database.cleanup()
+        logger.info(f"Revisions deleted: {deleted_revions}")
