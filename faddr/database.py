@@ -89,31 +89,6 @@ class Database:
         logger.debug(f"Active revision_id is {self.revision_id}")
         return self
 
-    def new_revision(self):
-        """Create new revision and IP it."""
-
-        revision = Revision()
-        with Session(self.engine) as session:
-            session.add(revision)
-            session.commit()
-
-            self.revision_id = revision.id
-        logger.debug(f"Created new revision: '{self.revision_id}'")
-
-        return self
-
-    def insert_device(self, device_data):
-        """Insert device data to database."""
-
-        device = make_sa_object(Device, DeviceSchema.parse_obj(device_data))
-        device.revision_id = self.revision_id
-
-        with Session(self.engine) as session:
-            session.add(device)
-            session.commit()
-
-        logger.debug(f"Inserted device: '{device_data['name']}'")
-
     def set_active_revision(self):
         """Set current revision as active."""
 
@@ -132,7 +107,22 @@ class Database:
             session.execute(stmt_deactivate_other_revisions)
             session.commit()
 
+    def new_revision(self):
+        """Create new revision and IP it."""
+
+        revision = Revision()
+        with Session(self.engine) as session:
+            session.add(revision)
+            session.commit()
+
+            self.revision_id = revision.id
+        logger.debug(f"Created new revision: '{self.revision_id}'")
+
+        return self
+
     def cleanup(self):
+        """Delete revisions that exceed the maximum number of allowed revisions."""
+
         return 0
 
     def cleanup_old(self):
@@ -161,6 +151,18 @@ class Database:
                 logger.debug(f"Deleted {revision_to_delete}")
             return len(revision_list) - self.revision_limit
         return 0
+
+    def insert_device(self, device_data):
+        """Insert device data to database."""
+
+        device = make_sa_object(Device, DeviceSchema.parse_obj(device_data))
+        device.revision_id = self.revision_id
+
+        with Session(self.engine) as session:
+            session.add(device)
+            session.commit()
+
+        logger.debug(f"Inserted device: '{device_data['name']}'")
 
     def find_networks(self, queries):
         """Find provided networks."""
