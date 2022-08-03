@@ -10,6 +10,7 @@ from faddr import __version__
 from faddr.database import Database
 from faddr.exceptions import (
     FaddrDatabaseDirError,
+    FaddrDatabaseMultipleRevisionsActive,
     FaddrParserConfigFileAbsent,
     FaddrParserConfigFileEmpty,
     FaddrParserUnknownProfile,
@@ -25,6 +26,12 @@ def parse_cmd_args():
     """Parsing CMD keys."""
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 
+    parser.add_argument(
+        "action",
+        type=str,
+        choices=("init", "parse"),
+        help="Action to perform",
+    )
     parser.add_argument(
         "-v",
         "--version",
@@ -105,6 +112,27 @@ def main():
         print(__version__)
         sys.exit(0)
 
+    if cmd_args.get("action") == "parse":
+        parse(settings)
+    elif cmd_args.get("action") == "init":
+        init(settings)
+
+
+def init(settings):
+    """Init new database."""
+
+    # Connect to database and create tables
+    logger.info("Connecting to database and creating tables")
+    try:
+        Database(init=True, **settings.database.dict())
+    except FaddrDatabaseDirError:
+        logger.exception("Failed to open database")
+        sys.exit(1)
+
+
+def parse(settings):
+    """Parse configs and store them in database."""
+
     # Create repo list here
     repo_list = RepoList(mapping=settings.mapping)
     try:
@@ -116,11 +144,13 @@ def main():
     # Connect to database and create new revision
     logger.info("Connecting to database and creating new revision")
     try:
-        database = Database(**settings.database.dict())
+        database = Database(**settings.database.dict()).new_revision()
     except FaddrDatabaseDirError:
         logger.exception("Failed to open database")
         sys.exit(1)
-    database.new_revision()
+    except FaddrDatabaseMultipleRevisionsActive:
+        logger.exception("More than one revision is marked as active")
+        sys.exit(1)
 
     # Init multiprocessing framework
     logger.info("Initializing multiprocessing framework")
@@ -158,8 +188,9 @@ def main():
 
     # Only mark revision as active and remove older revisions
     # if at least one device has been parsed successfully
+
     if parsed_devices > 0:
-        database.set_default()
+        database.set_active_revision()
         logger.info("Deleting old revisions")
         deleted_revions = database.cleanup()
         logger.info(f"Revisions deleted: {deleted_revions}")
