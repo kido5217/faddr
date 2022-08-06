@@ -1434,6 +1434,18 @@ pymysql = ["pymysql (<1)", "pymysql"]
 sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
+name = "sqlalchemy-stubs"
+version = "0.4"
+description = "SQLAlchemy stubs and mypy plugin"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+mypy = ">=0.790"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 name = "starlette"
 version = "0.17.1"
 description = "The little ASGI library that shines."
@@ -1715,7 +1727,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6,<3.10"
-content-hash = "a4c42da15203ec10f6b1082c71c7a124cce0fa535bc17cab6afb522f5db68962"
+content-hash = "cc3d6c5a124506747654c229e88c1d553ab985e032f5ac90307eff7125b791f5"
 
 [metadata.files]
 aiocontextvars = [
@@ -2870,6 +2882,7 @@ sqlalchemy = [
     {file = "SQLAlchemy-1.4.35-cp39-cp39-win_amd64.whl", hash = "sha256:53c7469b86a60fe2babca4f70111357e6e3d5150373bc85eb3b914356983e89a"},
     {file = "SQLAlchemy-1.4.35.tar.gz", hash = "sha256:2ffc813b01dc6473990f5e575f210ca5ac2f5465ace3908b78ffd6d20058aab5"},
 ]
+sqlalchemy-stubs = []
 starlette = [
     {file = "starlette-0.17.1-py3-none-any.whl", hash = "sha256:26a18cbda5e6b651c964c12c88b36d9898481cd428ed6e063f5f29c418f73050"},
     {file = "starlette-0.17.1.tar.gz", hash = "sha256:57eab3cc975a28af62f6faec94d355a410634940f10b30d68d31cb5ec1b44ae8"},

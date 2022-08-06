@@ -39,6 +39,7 @@ coverage = "^6"
 pytest-cov = "^3.0.0"
 numpy = "^1.19"
 types-PyYAML = "^6.0.11"
+sqlalchemy-stubs = "^0.4"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
