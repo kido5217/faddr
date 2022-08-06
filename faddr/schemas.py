@@ -1,7 +1,7 @@
 """Pydantic data schemas."""
 
 from ipaddress import ip_interface
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel, Field, root_validator, validator
 
@@ -11,18 +11,18 @@ class InterfaceSchema(BaseModel):
 
     name: str
     ip_addresses: List[Dict] = []
-    parent_interface: str = None
-    unit: str = None
-    duplex: str = None
-    speed: str = None
-    description: str = None
+    parent_interface: Union[str, None] = None
+    unit: Union[str, None] = None
+    duplex: Union[str, None] = None
+    speed: Union[str, None] = None
+    description: Union[str, None] = None
     is_disabled: bool = False
-    encapsulation: str = None
-    s_vlan: str = None
-    c_vlan: str = None
-    vrf: str = None
-    acl_in: str = None
-    acl_out: str = None
+    encapsulation: Union[str, None] = None
+    s_vlan: Union[str, None] = None
+    c_vlan: Union[str, None] = None
+    vrf: Union[str, None] = None
+    acl_in: Union[str, None] = None
+    acl_out: Union[str, None] = None
     acls: List[Dict] = []
 
     sa_mapping: Dict[str, str] = Field(
@@ -84,9 +84,9 @@ class InterfaceSchema(BaseModel):
 class DeviceSchema(BaseModel):
     """Device root data container."""
 
-    name: str = None
-    path: str = None
-    source: str = None
+    name: Union[str, None] = None
+    path: Union[str, None] = None
+    source: Union[str, None] = None
     interfaces: List[InterfaceSchema] = []
 
     sa_mapping: Dict[str, Any] = Field({"interfaces": "Interface"}, exclude=True)
