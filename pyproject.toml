@@ -28,7 +28,7 @@ fastapi = {extras = ["all"], version = "^0.75.2", python = ">=3.6.2,<3.10"}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
 black = {version = "^21.5b2", python = "^3.6.2"}
-mypy = "^0.812"
+mypy = "0.971"
 pylint = "^2.8.3"
 pre-commit = {version = "^2.15", python = "^3.6.1"}
 tox = "^3.24.4"
@@ -38,6 +38,8 @@ prospector = {extras = ["with_bandit", "with_mypy"], version = "^1.6.0", python 
 coverage = "^6"
 pytest-cov = "^3.0.0"
 numpy = "^1.19"
+types-PyYAML = "^6.0.11"
+sqlalchemy-stubs = "^0.4"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
@@ -57,3 +59,7 @@ testpaths = [
 
 [tool.pylint.'MESSAGES CONTROL']
 extension-pkg-whitelist = "pydantic"
+
+[tool.mypy]
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
