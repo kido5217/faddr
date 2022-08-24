@@ -4,6 +4,7 @@ IP_SPACE_MASK = r"(\d{1,3}\.){3}\d{1,3} (\d{1,3}\.){3}\d{1,3}"
 
 <group name="interfaces.{{ name }}**">
 interface {{ name }}
+interface {{ name | _start_ }} l2transport
  description {{ description | _line_ }}
  vrf {{ vrf }}
  {{ is_disabled | equal("shutdown") | let(True) }}
