@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2022-08-24
+
 ### Changed
 
 - Updated `mypy` to version `0.971`
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed some `mypy` warnings/errors
+- Fixed parsing interfaces with `l2transport` in IOS-XR template
 
 ## [0.5.0] - 2022-08-03
 
