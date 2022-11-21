@@ -1,0 +1,11 @@
+---
+services:
+  api:
+    build: .
+    container_name: faddr_api
+    command: poetry run faddr-rest
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+  
