@@ -21,7 +21,7 @@ ttp = "^0.9.1"
 rich = "^12.6.0"
 sqlalchemy = "^1.4.44"
 fastapi = {extras = ["all"], version = "^0.87.0"}
-ray = "^2.1.0"
+ray = "^1"
 
 
 [tool.poetry.scripts]
