@@ -13,39 +13,35 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.6,<3.10"
+python = "^3.10"
+loguru = "^0.6.0"
+pyyaml = "^6.0"
+pydantic = {extras = ["dotenv"], version = "^1.10.2"}
+ttp = "^0.9.1"
+rich = "^12.6.0"
+sqlalchemy = "^1.4.44"
+fastapi = {extras = ["all"], version = "^0.87.0"}
+ray = "^1"
 
-loguru = "^0.6"
-PyYAML = "^6.0"
-pydantic = {version = "^1.8", python = "^3.6.1"}
-ttp = "^0.9"
-rich = {version = "^11.1.0", python = ">=3.6.2,<4.0"}
-SQLAlchemy = "^1.4"
-ray = "^1.11.0"
-fastapi = {extras = ["all"], version = "^0.75.2", python = ">=3.6.2,<3.10"}
-
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2"
-black = {version = "^21.5b2", python = "^3.6.2"}
-mypy = "0.971"
-pylint = "^2.8.3"
-pre-commit = {version = "^2.15", python = "^3.6.1"}
-tox = "^3.24.4"
-poetry = "^1.1.12"
-tox-poetry = "^0.4.1"
-prospector = {extras = ["with_bandit", "with_mypy"], version = "^1.6.0", python = ">=3.6.2,<4.0"}
-coverage = "^6"
-pytest-cov = "^3.0.0"
-numpy = "^1.19"
-types-PyYAML = "^6.0.11"
-sqlalchemy-stubs = "^0.4"
 
 [tool.poetry.scripts]
 faddr-db = 'faddr.faddr_db:main'
 faddr-rest = 'faddr.faddr_rest:main'
 faddr = 'faddr.faddr:main'
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^22.10.0"
+isort = "^5.10.1"
+prospector = {extras = ["with-bandit", "with-mypy"], version = "^1.7.7"}
+mypy = "^0.991"
+pylint = "^2.15.6"
+pre-commit = "^2.20.0"
+coverage = "^6.5.0"
+pytest-cov = "^4.0.0"
+types-pyyaml = "^6.0.12.2"
+sqlalchemy-stubs = "^0.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
