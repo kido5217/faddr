@@ -28,6 +28,8 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN curl -sS https://starship.rs/install.sh | sh -s -- --force
+
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
     PYTHONDONTWRITEBYTECODE=1 \
@@ -50,6 +52,9 @@ WORKDIR /workspace
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
 USER $USERNAME
+
+RUN mkdir -p ~/.config/fish/ \
+    && echo 'starship init fish | source' >> ~/.config/fish/config.fish
 
 COPY ./pyproject.toml /workspace/
 COPY ./*poetry.lock /workspace/
