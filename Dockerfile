@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 # Create nonroot user
-ARG USERNAME=devuser
+ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
@@ -11,10 +11,20 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Install git and other dev tools
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
+    && apt-get install -y \
         build-essential \
+        gpg \
         curl \
         git\
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install fish
+RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list \
+    && curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null \
+    && apt-get update \
+    && apt-get install -y \
+        fish \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,13 +44,13 @@ ENV PYTHONUNBUFFERED=1 \
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # set the working directory
-WORKDIR /app
+WORKDIR /workspace
 
 # install dependencies
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
 USER $USERNAME
 
-COPY ./pyproject.toml /app/
-COPY ./*poetry.lock /app/
+COPY ./pyproject.toml /workspace/
+COPY ./*poetry.lock /workspace/
 RUN poetry install
