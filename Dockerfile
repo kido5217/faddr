@@ -6,27 +6,29 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Create the user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+RUN groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # Install git and other dev tools
-RUN apt-get update \
-    && apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y \
         build-essential \
         gpg \
         curl \
-        git\
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        git \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install fish
-RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list \
-    && curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null \
-    && apt-get update \
-    && apt-get install -y \
+RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list && \
+    curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null && \
+    apt-get update && \
+    apt-get install -y \
         fish \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN curl -sS https://starship.rs/install.sh | sh -s -- --force
 
@@ -53,8 +55,8 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 
 USER $USERNAME
 
-RUN mkdir -p ~/.config/fish/ \
-    && echo 'starship init fish | source' >> ~/.config/fish/config.fish
+RUN mkdir -p ~/.config/fish/ && \
+    echo 'starship init fish | source' >> ~/.config/fish/config.fish
 
 COPY ./pyproject.toml /workspace/
 COPY ./*poetry.lock /workspace/
