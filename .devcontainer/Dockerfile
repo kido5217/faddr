@@ -1,14 +1,5 @@
 FROM python:3.10-slim
 
-# Create nonroot user
-ARG USERNAME=dev
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-
-# Create the user
-RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
-
 # Install git and other dev tools
 RUN apt-get update && \
     apt-get install -y \
@@ -20,7 +11,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install fish
+# Install fish shell
 RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list && \
     curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null && \
     apt-get update && \
@@ -30,8 +21,10 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- --force
 
+# Set python-related envs
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
     PYTHONDONTWRITEBYTECODE=1 \
@@ -47,17 +40,29 @@ ENV PYTHONUNBUFFERED=1 \
 
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
-# set the working directory
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Set the working directory
 WORKDIR /workspace
 
-# install dependencies
-RUN curl -sSL https://install.python-poetry.org | python3 -
+# Create nonroot user
+ARG USERNAME=dev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME -s /usr/bin/fish && \
+    chown -R $USERNAME /workspace
 
 USER $USERNAME
 
+# Setup starship
 RUN mkdir -p ~/.config/fish/ && \
     echo 'starship init fish | source' >> ~/.config/fish/config.fish
 
+# Install project deps into user-owned venv
 COPY ./pyproject.toml /workspace/
 COPY ./*poetry.lock /workspace/
 RUN poetry install
