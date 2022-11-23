@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 # Install git and other dev tools
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install --no-install-recommends -y \
         build-essential \
         gpg \
         curl \
@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list && \
     curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null && \
     apt-get update && \
-    apt-get install -y \
+    apt-get install --no-install-recommends -y \
         fish \
         && \
     apt-get clean && \
@@ -61,9 +61,9 @@ USER $USERNAME
 # Setup shell
 RUN mkdir -p ~/.config/fish/ && \
     echo 'starship init fish | source' >> ~/.config/fish/config.fish && \
-    echo 'function q --wraps=clear --description "alias q=clear"\n  clear $argv;\nend' >> ~/.config/fish/config.fish && \
+    printf 'function q --wraps=clear --description "alias q=clear"\n  clear $argv;\nend' >> ~/.config/fish/config.fish && \
     echo 'command_timeout = 5000' >> ~/.config/starship.toml && \
-    echo '[container]\ndisabled = true' >> ~/.config/starship.toml
+    printf '[container]\ndisabled = true' >> ~/.config/starship.toml
 
 
 # Create folder for vscode extensions and tabnine settings volumes mount
