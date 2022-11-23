@@ -47,7 +47,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 WORKDIR /workspace
 
 # Create nonroot user
-ARG USERNAME=dev
+ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
@@ -62,8 +62,9 @@ USER $USERNAME
 RUN mkdir -p ~/.config/fish/ && \
     echo 'starship init fish | source' >> ~/.config/fish/config.fish
 
-# Create folder for vscode extensions volume mount
-RUN mkdir -p /home/$USERNAME/.vscode-server/extensions
+# Create folder for vscode extensions and tabnine settings volumes mount
+RUN mkdir -p /home/$USERNAME/.vscode-server/extensions && \
+    mkdir -p /home/$USERNAME/.config/TabNine
 
 # Install project deps into user-owned venv
 COPY ./pyproject.toml /workspace/

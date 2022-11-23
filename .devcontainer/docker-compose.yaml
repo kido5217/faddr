@@ -3,15 +3,17 @@ version: "3.9"
 
 services:
 
-  dev:
+  vscode:
     build:
       context: ../
       dockerfile: .devcontainer/Dockerfile
-    user: "dev"
+    user: "vscode"
     volumes:
       - ../.:/workspace:cached
       - vscode_extensions:/home/dev/.vscode-server/extensions
+      - tabnine_settings:/home/dev/.config/TabNine
     tty: true
 
 volumes:
   vscode_extensions:
+  tabnine_settings:
