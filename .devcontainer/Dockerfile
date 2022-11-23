@@ -58,9 +58,13 @@ RUN groupadd --gid $USER_GID $USERNAME && \
 
 USER $USERNAME
 
-# Setup starship
+# Setup shell
 RUN mkdir -p ~/.config/fish/ && \
-    echo 'starship init fish | source' >> ~/.config/fish/config.fish
+    echo 'starship init fish | source' >> ~/.config/fish/config.fish && \
+    echo 'function q --wraps=clear --description "alias q=clear"\n  clear $argv;\nend' >> ~/.config/fish/config.fish && \
+    echo 'command_timeout = 5000' >> ~/.config/starship.toml && \
+    echo '[container]\ndisabled = true' >> ~/.config/starship.toml
+
 
 # Create folder for vscode extensions and tabnine settings volumes mount
 RUN mkdir -p /home/$USERNAME/.vscode-server/extensions && \

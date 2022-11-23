@@ -10,8 +10,8 @@ services:
     user: "vscode"
     volumes:
       - ../.:/workspace:cached
-      - vscode_extensions:/home/dev/.vscode-server/extensions
-      - tabnine_settings:/home/dev/.config/TabNine
+      - vscode_extensions:/home/vscode/.vscode-server/extensions
+      - tabnine_settings:/home/vscode/.config/TabNine
     tty: true
 
 volumes:
