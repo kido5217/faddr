@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Moved dev environment into docker and switched to python 3.10
+
 ## [0.5.1] - 2022-08-24
 
 ### Changed

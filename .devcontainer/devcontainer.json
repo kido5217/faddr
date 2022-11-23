@@ -1,0 +1,63 @@
+{
+  "name": "Python3.10",
+
+  // Update the 'dockerComposeFile' list if you have more compose files or use different names.
+  // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+  "dockerComposeFile": ["docker-compose.yaml"],
+
+  // The 'service' property is the name of the service for the container that VS Code should
+  // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+  "service": "vscode",
+
+  // The optional 'workspaceFolder' property is the path VS Code should open by default when
+  // connected. This is typically a file mount in .devcontainer/docker-compose.yml
+  "workspaceFolder": "/workspace",
+
+  "shutdownAction": "stopCompose",
+
+  "remoteUser": "vscode",
+
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "fish",
+    "terminal.integrated.profiles.linux": {
+      "fish": {
+        "path": "/usr/bin/fish"
+      }
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "aaron-bond.better-comments",
+        "andytruett.TextFSM-Syntax",
+        "codeout.vscode-junos",
+        "DavidAnson.vscode-markdownlint",
+        "donjayamanne.python-environment-manager",
+        "DotJoshJohnson.xml",
+        "jamiewoodio.cisco",
+        "magicstack.MagicPython",
+        "mechatroner.rainbow-csv",
+        "mikestead.dotenv",
+        "ms-azuretools.vscode-docker",
+        "ms-python.isort",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "philxor.iosxr",
+        "rangav.vscode-thunder-client",
+        "redhat.vscode-yaml",
+        "samuelcolvin.jinjahtml",
+        "TabNine.tabnine-vscode",
+        "tamasfe.even-better-toml",
+        "trond-snekvik.simple-rst",
+        "usernamehw.errorlens",
+        "VisualStudioExptTeam.intellicode-api-usage-examples",
+        "VisualStudioExptTeam.vscodeintellicode"
+      ]
+    }
+  }
+}
