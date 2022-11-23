@@ -1,5 +1,5 @@
 {
-  "name": "FAddr",
+  "name": "Python3.10",
 
   // Update the 'dockerComposeFile' list if you have more compose files or use different names.
   // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
@@ -13,7 +13,10 @@
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
   "workspaceFolder": "/workspace",
 
+  "shutdownAction": "stopCompose",
+
   "remoteUser": "dev",
+
   "settings": {
     "terminal.integrated.defaultProfile.linux": "fish",
     "terminal.integrated.profiles.linux": {
