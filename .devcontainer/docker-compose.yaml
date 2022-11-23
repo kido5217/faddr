@@ -8,3 +8,7 @@ services:
     tty: true
     volumes:
       - ../.:/workspace:cached
+      - vscode_extensions:/home/dev/.vscode-server/extensions
+
+volumes:
+  vscode_extensions:

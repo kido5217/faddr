@@ -62,6 +62,9 @@ USER $USERNAME
 RUN mkdir -p ~/.config/fish/ && \
     echo 'starship init fish | source' >> ~/.config/fish/config.fish
 
+# Create folder for vscode extensions volume mount
+RUN mkdir -p /home/$USERNAME/.vscode-server/extensions
+
 # Install project deps into user-owned venv
 COPY ./pyproject.toml /workspace/
 COPY ./*poetry.lock /workspace/
