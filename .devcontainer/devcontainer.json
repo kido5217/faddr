@@ -21,5 +21,40 @@
         "path": "/usr/bin/fish"
       }
     }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "aaron-bond.better-comments",
+        "andytruett.TextFSM-Syntax",
+        "codeout.vscode-junos",
+        "DavidAnson.vscode-markdownlint",
+        "donjayamanne.python-environment-manager",
+        "DotJoshJohnson.xml",
+        "jamiewoodio.cisco",
+        "magicstack.MagicPython",
+        "mechatroner.rainbow-csv",
+        "mikestead.dotenv",
+        "ms-azuretools.vscode-docker",
+        "ms-python.isort",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "philxor.iosxr",
+        "rangav.vscode-thunder-client",
+        "redhat.vscode-yaml",
+        "samuelcolvin.jinjahtml",
+        "TabNine.tabnine-vscode",
+        "tamasfe.even-better-toml",
+        "trond-snekvik.simple-rst",
+        "usernamehw.errorlens",
+        "VisualStudioExptTeam.intellicode-api-usage-examples",
+        "VisualStudioExptTeam.vscodeintellicode"
+      ]
+    }
   }
 }
