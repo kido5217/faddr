@@ -1,8 +1,0 @@
----
-services:
-  dev:
-    build: .
-    user: "dev"
-    tty: true
-    volumes:
-      - .:/workspace:cached

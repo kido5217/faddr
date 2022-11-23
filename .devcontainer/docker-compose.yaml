@@ -1,0 +1,10 @@
+---
+services:
+  dev:
+    build:
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
+    user: "dev"
+    tty: true
+    volumes:
+      - ../.:/workspace:cached
