@@ -88,6 +88,18 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
   - SVI: TBD
   - LAG: TBD
 
+### Routes
+
+- 110.1.0.0/24 nh 10.0.0.1
+- 110.2.0.0/24 nh 10.0.0.2 ad 20
+- 110.3.0.0/24 nh 10.0.0.3 name Static_Route_03
+- 110.4.0.0/24 nh 10.0.0.4 ad 40 name Static_Route_04
+- 110.5.0.0/24 intf port1.500
+- 110.6.0.0/24 intf port1.500 nh 10.0.0.5
+- 110.7.0.0/24 intf port1.500 nh 10.0.0.5 ad 70
+- 110.8.0.0/24 intf port1.500 nh 10.0.0.5 name Static_Route_08
+- 110.9.0.0/24 intf port1.500 nh 10.0.0.5 ad 90 name Static_Route_09
+
 ### VRF
 
 - Test001:
@@ -155,13 +167,14 @@ no logging console
 enable secret faddr123
 username faddr privilege 15 secret faddr123
 no aaa new-model
-line vty 0 4
-login local
 
 hostname cisco-ios-15-7206
 ip domain-name lab.faddr
 crypto key generate rsa [768]
 ip ssh version 2
+
+line vty 0 4
+login local
 transport input telnet ssh
 
 # VRFs
@@ -253,6 +266,17 @@ description vlan 123: acl output ACLout02, ipv4 address 10.123.123.123/24
 encapsulation dot1Q 123
 ip address 10.123.123.123 255.255.255.0
 ip access-group ACLout02 out
+
+# Static Routes
+ip route 110.1.0.0 255.255.255.0 10.0.0.1
+ip route 110.2.0.0 255.255.255.0 10.0.0.2 20
+ip route 110.3.0.0 255.255.255.0 10.0.0.3 name Static_Route_03
+ip route 110.4.0.0 255.255.255.0 10.0.0.4 40 name Static_Route_04
+ip route 110.5.0.0 255.255.255.0 FastEthernet1/0.500
+ip route 110.6.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5
+ip route 110.7.0.0 255.255.255.0 FastEthernet1/0.500 70
+ip route 110.8.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 name Static_Route_08
+ip route 110.9.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 90 name Static_Route_09
 ```
 
 #### IOS-XR

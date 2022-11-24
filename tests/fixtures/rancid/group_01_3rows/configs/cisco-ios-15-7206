@@ -234,6 +234,15 @@ ip forward-protocol nd
 !
 no ip http server
 no ip http secure-server
+ip route 110.1.0.0 255.255.255.0 10.0.0.1
+ip route 110.2.0.0 255.255.255.0 10.0.0.2 20
+ip route 110.3.0.0 255.255.255.0 10.0.0.3 name Static_Route_03
+ip route 110.4.0.0 255.255.255.0 10.0.0.4 40 name Static_Route_04
+ip route 110.5.0.0 255.255.255.0 FastEthernet1/0.500
+ip route 110.6.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5
+ip route 110.7.0.0 255.255.255.0 FastEthernet1/0.500 70
+ip route 110.8.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 name Static_Route_08
+ip route 110.9.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 90 name Static_Route_09
 !
 ip access-list standard ACLin01
  permit any
