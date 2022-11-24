@@ -13,9 +13,9 @@
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
   "workspaceFolder": "/workspace",
 
-  "shutdownAction": "stopCompose",
-
   "remoteUser": "vscode",
+
+  "postStartCommand": ["poetry", "install"],
 
   "settings": {
     "terminal.integrated.defaultProfile.linux": "fish",

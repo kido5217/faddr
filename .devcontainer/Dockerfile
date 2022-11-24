@@ -65,14 +65,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_INSTALLER_MAX_WORKERS=10 \
     POETRY_VERSION=1.2.2
 
-# Install Poetry
+# Install and config Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="/home/$USERNAME/.local/bin:$POETRY_HOME/bin:$PATH"
-
-# Install project deps into user-owned venv
-COPY ./pyproject.toml /workspace/
-COPY ./*poetry.lock /workspace/
-RUN poetry install && \
-    poetry export -f requirements.txt --output /workspace/requirements.txt --with dev && \
-    # For vscode
-    pip install -r /workspace/requirements.txt
+ENV PATH="/home/$USERNAME/.local/bin:$PATH"
+RUN poetry config virtualenvs.in-project true
