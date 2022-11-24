@@ -3,7 +3,7 @@
 import ipaddress
 from pathlib import Path
 
-from sqlalchemy import create_engine, event, delete, select, update
+from sqlalchemy import create_engine, delete, event, select, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -14,7 +14,7 @@ from faddr.exceptions import (
     FaddrDatabaseNoRevisionsActive,
 )
 from faddr.logging import logger
-from faddr.models import Base, Revision, Device, Interface, IPAddress, ModelFactory
+from faddr.models import Base, Device, Interface, IPAddress, ModelFactory, Revision
 from faddr.schemas import DeviceSchema, RevisionSchema
 
 model_factory = ModelFactory()

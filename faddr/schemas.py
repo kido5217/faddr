@@ -81,6 +81,16 @@ class InterfaceSchema(BaseModel):
         return values
 
 
+class StaticRouteSchema(BaseModel):
+    """Static route data container."""
+
+    network: str
+    interface: str = None
+    nexthop: str = None
+    ad: str = None
+    name: str = None
+
+
 class DeviceSchema(BaseModel):
     """Device root data container."""
 

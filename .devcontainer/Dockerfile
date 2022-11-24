@@ -71,5 +71,7 @@ ENV PATH="/home/$USERNAME/.local/bin:$POETRY_HOME/bin:$PATH"
 # Install project deps into user-owned venv
 COPY ./pyproject.toml /workspace/
 COPY ./*poetry.lock /workspace/
-RUN poetry export -f requirements.txt --output /workspace/requirements.txt --with dev && \
+RUN poetry install && \
+    poetry export -f requirements.txt --output /workspace/requirements.txt --with dev && \
+    # For vscode
     pip install -r /workspace/requirements.txt
