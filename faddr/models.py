@@ -46,6 +46,9 @@ class Device(Base):  # pylint: disable=too-few-public-methods
     interfaces = relationship(
         "Interface", back_populates="device", cascade="all, delete, delete-orphan"
     )
+    static_routes = relationship(
+        "StaticRoute", back_populates="device", cascade="all, delete, delete-orphan"
+    )
 
 
 class Interface(Base):  # pylint: disable=too-few-public-methods
@@ -136,6 +139,24 @@ class InterfaceACL(Base):  # pylint: disable=too-few-public-methods
         nullable=False,
     )
     interface = relationship("Interface", back_populates="acls")
+
+
+class StaticRoute(Base):  # pylint: disable=too-few-public-methods
+    """ORM 'static_route' table data mapping."""
+
+    __tablename__ = "static_route"
+
+    id = Column(Integer, primary_key=True)
+    network = Column(String, index=True)
+    interface = Column(String, index=True)
+    nexthop = Column(String, index=True)
+    ad = Column(String)
+    name = Column(String, index=True)
+
+    device_id = Column(
+        Integer, ForeignKey("device.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    device = relationship("Device", back_populates="static_routes")
 
 
 class ModelFactory:  # pylint: disable=too-few-public-methods

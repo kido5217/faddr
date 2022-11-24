@@ -10,6 +10,7 @@ RUN apt-get update && \
         gpg \
         curl \
         git \
+        sqlite3 \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
