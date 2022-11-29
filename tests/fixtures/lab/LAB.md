@@ -90,15 +90,19 @@ rm -rf ~/projects/faddr/tests/fixtures/rancid/.viminfo
 
 ### Routes
 
-- 110.1.0.0/24 nh 10.0.0.1
-- 110.2.0.0/24 nh 10.0.0.2 ad 20
-- 110.3.0.0/24 nh 10.0.0.3 name Static_Route_03
-- 110.4.0.0/24 nh 10.0.0.4 ad 40 name Static_Route_04
-- 110.5.0.0/24 intf port1.500
-- 110.6.0.0/24 intf port1.500 nh 10.0.0.5
-- 110.7.0.0/24 intf port1.500 nh 10.0.0.5 ad 70
-- 110.8.0.0/24 intf port1.500 nh 10.0.0.5 name Static_Route_08
-- 110.9.0.0/24 intf port1.500 nh 10.0.0.5 ad 90 name Static_Route_09
+- GRT
+  - 110.1.0.0/24 nh 10.0.0.1
+  - 110.2.0.0/24 nh 10.0.0.2 ad 20
+  - 110.3.0.0/24 nh 10.0.0.3 name Static_Route_03
+  - 110.4.0.0/24 nh 10.0.0.4 ad 40 name Static_Route_04
+  - 110.5.0.0/24 intf port1.500
+  - 110.6.0.0/24 intf port1.500 nh 10.0.0.5
+  - 110.7.0.0/24 intf port1.500 nh 10.0.0.5 ad 70
+  - 110.8.0.0/24 intf port1.500 nh 10.0.0.5 name Static_Route_08
+  - 110.9.0.0/24 intf port1.500 nh 10.0.0.5 ad 90 name Static_Route_09
+- VRF
+  - 220.1.0.0/24 vrf Test001 nh 20.0.0.2
+  - 220.2.0.0/24 vrf Test002 intf port1.502 nh 20.0.0.2
 
 ### VRF
 
@@ -267,6 +271,25 @@ encapsulation dot1Q 123
 ip address 10.123.123.123 255.255.255.0
 ip access-group ACLout02 out
 
+interface FastEthernet1/0.500
+description intf for static route config
+encapsulation dot1Q 500
+ip address 10.0.0.6 255.255.255.252
+
+interface FastEthernet1/0.501
+description intf for static route in vrf config
+encapsulation dot1Q 501
+ip vrf forwarding Test001
+ip address 20.0.0.1 255.255.255.252
+
+interface FastEthernet1/0.502
+description intf for static route in vrf config
+encapsulation dot1Q 502
+ip vrf forwarding Test002
+ip address 20.0.0.3 255.255.255.254
+no ip redirects
+no ip proxy-arp
+
 # Static Routes
 ip route 110.1.0.0 255.255.255.0 10.0.0.1
 ip route 110.2.0.0 255.255.255.0 10.0.0.2 20
@@ -277,6 +300,8 @@ ip route 110.6.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5
 ip route 110.7.0.0 255.255.255.0 FastEthernet1/0.500 70
 ip route 110.8.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 name Static_Route_08
 ip route 110.9.0.0 255.255.255.0 FastEthernet1/0.500 10.0.0.5 90 name Static_Route_09
+ip route vrf Test001 220.1.0.0 255.255.255.0 20.0.0.2
+ip route vrf Test002 220.2.0.0 255.255.255.0 FastEthernet1/0.502 20.0.0.2
 ```
 
 #### IOS-XR

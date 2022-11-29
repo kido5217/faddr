@@ -35,3 +35,13 @@ ip route {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD 
 ip route {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} name {{ name | WORD }}
 ip route {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} name {{ name | WORD }}
 </group>
+
+<group name="static_routes" method="table">
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD}} {{ ad | DIGIT }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} name {{ name | WORD }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }} name {{ name | WORD }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} name {{ name | WORD }}
+ip route vrf {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} name {{ name | WORD }}
+</group>

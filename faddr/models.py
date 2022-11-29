@@ -148,6 +148,7 @@ class StaticRoute(Base):  # pylint: disable=too-few-public-methods
 
     id = Column(Integer, primary_key=True)
     network = Column(String, index=True)
+    vrf = Column(String, index=True)
     interface = Column(String, index=True)
     nexthop = Column(String, index=True)
     ad = Column(String)

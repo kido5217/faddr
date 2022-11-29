@@ -85,6 +85,7 @@ class StaticRouteSchema(BaseModel):
     """Static route data container."""
 
     network: str
+    vrf: Union[str, None] = None
     interface: Union[str, None] = None
     nexthop: Union[str, None] = None
     ad: Union[str, None] = None
