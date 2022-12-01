@@ -1,7 +1,12 @@
 """CLI entry point for database query."""
 
 import argparse
+import json
 import sys
+
+from rich import box
+from rich.console import Console
+from rich.table import Table
 
 from faddr import __version__
 from faddr.database import Database
@@ -70,6 +75,89 @@ def parse_input(input_data):
     return query
 
 
+def print_result(
+    result, include_description=True, output_format="table", color=True, border=False
+):
+    """Print result to console."""
+
+    console = Console()
+    if output_format == "json":
+        console.print(json.dumps(result.data, indent=2))
+    elif output_format == "table":
+        # Dont try to process empty results
+        if len(result.data.keys()) < 1:
+            return
+
+        tables = {}
+        keys = {}
+
+        if border:
+            table_border = box.SQUARE
+            padding = (0, 1, 0, 1)
+        else:
+            table_border = None
+            padding = (0, 2, 0, 0)
+
+        # Append data to tables
+        for query in result.data.keys():
+            for row_data in result.data[query]:
+                row_type = row_data["type"]
+
+                # Create rich table if it doesn't exist
+                if row_type not in tables:
+                    tables[row_type] = Table(
+                        title=row_type.capitalize(),
+                        expand=False,
+                        highlight=color,
+                        header_style=None,
+                        box=table_border,
+                        safe_box=True,
+                        padding=padding,
+                    )
+
+                    # Prepare header according to passed cli options
+                    header = []
+                    header[:] = result.schema["headers"][row_type]
+                    if not include_description and row_type == "direct":
+                        header.remove("Description")
+                    if len(result.data.keys()) == 1:
+                        header.remove("Query")
+                    for column in header:
+                        tables[row_type].add_column(column)
+
+                    # Filter keys according to passed cli options
+                    keys[row_type] = []
+                    keys[row_type][:] = result.schema["keys"][row_type]
+                    if not include_description and row_type == "direct":
+                        keys[row_type].remove("description")
+                    if len(result.data.keys()) == 1:
+                        keys[row_type].remove("query")
+
+                # Add rows to table
+                row_keys = keys[row_type]
+                if "query" in row_keys:
+                    row_data["query"] = query
+
+                # Normalize cell data
+                # cells = [str(row_data.get(key)) for key in row_keys]
+                cells = []
+                for key in row_keys:
+                    value = row_data.get(key)
+                    if value is None or value is False:
+                        cells.append("-")
+                    elif isinstance(value, bool) and value:
+                        cells.append("[bold red]Yes")
+                    else:
+                        cells.append(str(value))
+
+                tables[row_data["type"]].add_row(*cells)
+
+        # Print tables
+        for table in tables.values():
+            console.print(table)
+            # inspect(table)
+
+
 def main():
     """Query database"""
 
@@ -89,9 +177,11 @@ def main():
     database = Database(**settings.database.dict())
 
     result = NetworkResult(database.find_networks(cmd_args.get("ip_address")))
-    result.print(
+
+    print_result(
+        result,
         include_description=cmd_args.get("description"),
-        output=cmd_args.get("output"),
+        output_format=cmd_args.get("output"),
         color=cmd_args.get("color"),
         border=cmd_args.get("table"),
     )

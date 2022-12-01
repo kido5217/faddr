@@ -184,18 +184,24 @@ class Database:
 
         logger.debug(f"Inserted device: '{device_data['name']}'")
 
-    def find_networks(self, queries):
+    def find_networks(self, queries, network_type=None):
         """Find provided networks."""
+
+        if network_type is None:
+            network_type = ["direct"]
 
         result = {}
 
         for query in queries:
-            result.update(self.find_network(query))
+            result.update(self.find_network(query, network_type))
 
         return result
 
-    def find_network(self, query):
+    def find_network(self, query, network_type=None):
         """Find provided network."""
+
+        if network_type is None:
+            network_type = ["direct"]
 
         if self.revision_id is None:
             self.get_active_revision()
@@ -242,10 +248,11 @@ class Database:
 
         with Session(self.engine) as session:
             for row in session.execute(stmt_direct):
-                data = dict(row)
-                data["type"] = "direct"
-                if data not in result[query]:
-                    result[query].append(data)
-                logger.debug(f"Found address: {data}")
+                if "direct" in network_type:
+                    data = dict(row)
+                    data["type"] = "direct"
+                    if data not in result[query]:
+                        result[query].append(data)
+                    logger.debug(f"Found direct address: {data}")
 
         return result
