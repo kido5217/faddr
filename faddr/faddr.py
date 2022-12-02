@@ -75,6 +75,47 @@ def parse_input(input_data):
     return query
 
 
+def make_table(result, row_type, include_description=True, color=True, border=False):
+    """Create rich table according to search results and cli arguments."""
+
+    if border:
+        table_border = box.SQUARE
+        padding = (0, 1, 0, 1)
+    else:
+        table_border = None
+        padding = (0, 2, 0, 0)
+
+    table = Table(
+        title=row_type.capitalize(),
+        highlight=color,
+        header_style=None,
+        box=table_border,
+        safe_box=True,
+        padding=padding,
+    )
+
+    keys = []
+
+    # Prepare header according to passed cli options
+    header = []
+    header[:] = result.schema["headers"][row_type]
+    if not include_description and row_type == "direct":
+        header.remove("Description")
+    if len(result.data.keys()) == 1:
+        header.remove("Query")
+    for column in header:
+        table.add_column(column)
+
+    # Filter keys according to passed cli options
+    keys[:] = result.schema["keys"][row_type]
+    if not include_description and row_type == "direct":
+        keys.remove("description")
+    if len(result.data.keys()) == 1:
+        keys.remove("query")
+
+    return table, keys
+
+
 def print_result(
     result, include_description=True, output_format="table", color=True, border=False
 ):
@@ -91,13 +132,6 @@ def print_result(
         tables = {}
         keys = {}
 
-        if border:
-            table_border = box.SQUARE
-            padding = (0, 1, 0, 1)
-        else:
-            table_border = None
-            padding = (0, 2, 0, 0)
-
         # Append data to tables
         for query in result.data.keys():
             for row_data in result.data[query]:
@@ -105,32 +139,9 @@ def print_result(
 
                 # Create rich table if it doesn't exist
                 if row_type not in tables:
-                    tables[row_type] = Table(
-                        title=row_type.capitalize(),
-                        highlight=color,
-                        header_style=None,
-                        box=table_border,
-                        safe_box=True,
-                        padding=padding,
+                    tables[row_type], keys[row_type] = make_table(
+                        result, row_type, include_description, color, border
                     )
-
-                    # Prepare header according to passed cli options
-                    header = []
-                    header[:] = result.schema["headers"][row_type]
-                    if not include_description and row_type == "direct":
-                        header.remove("Description")
-                    if len(result.data.keys()) == 1:
-                        header.remove("Query")
-                    for column in header:
-                        tables[row_type].add_column(column)
-
-                    # Filter keys according to passed cli options
-                    keys[row_type] = []
-                    keys[row_type][:] = result.schema["keys"][row_type]
-                    if not include_description and row_type == "direct":
-                        keys[row_type].remove("description")
-                    if len(result.data.keys()) == 1:
-                        keys[row_type].remove("query")
 
                 # Add rows to table
                 row_keys = keys[row_type]
@@ -158,7 +169,6 @@ def print_result(
             if table in tables:
                 console.print(tables[table])
                 console.print()
-            # inspect(table)
 
 
 def main():
