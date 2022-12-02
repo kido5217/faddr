@@ -19,9 +19,10 @@ class NetworkResult:
             ),
             "static": (
                 "Query",
+                "Device",
+                "Interface",
                 "Network",
                 "VRF",
-                "Interface",
                 "Nexthop",
                 "Name",
             ),
@@ -40,9 +41,10 @@ class NetworkResult:
             ),
             "static": (
                 "query",
+                "device",
+                "interface",
                 "network",
                 "vrf",
-                "interface",
                 "nexthop",
                 "name",
             ),

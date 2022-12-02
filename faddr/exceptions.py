@@ -16,11 +16,20 @@ class FaddrDatabaseDirError(FaddrBaseException):
 
 
 class FaddrDatabaseMultipleRevisionsActive(FaddrBaseException):
-    """Exception raised when moe than one revision is active."""
+    """Exception raised when more than one revision is active."""
 
 
 class FaddrDatabaseNoRevisionsActive(FaddrBaseException):
-    """Exception raised when moe than one revision is active."""
+    """Exception raised when more than one revision is active."""
+
+
+class FaddrDatabaseUnknownQueryType(FaddrBaseException):
+    """Exception raised when requested query type isn't supported."""
+
+    def __init__(self, query_type):
+        self.query_type = query_type
+        self.message = f"Requested query type '{self.query_type}' isn't supported."
+        super().__init__(self.message)
 
 
 class FaddrRancidPathError(FaddrBaseException):

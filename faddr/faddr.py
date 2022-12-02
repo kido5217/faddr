@@ -107,7 +107,6 @@ def print_result(
                 if row_type not in tables:
                     tables[row_type] = Table(
                         title=row_type.capitalize(),
-                        expand=False,
                         highlight=color,
                         header_style=None,
                         box=table_border,
@@ -153,8 +152,12 @@ def print_result(
                 tables[row_data["type"]].add_row(*cells)
 
         # Print tables
-        for table in tables.values():
-            console.print(table)
+        table_order = ("direct", "static")
+        console.print()
+        for table in table_order:
+            if table in tables:
+                console.print(tables[table])
+                console.print()
             # inspect(table)
 
 
@@ -176,7 +179,11 @@ def main():
 
     database = Database(**settings.database.dict())
 
-    result = NetworkResult(database.find_networks(cmd_args.get("ip_address")))
+    result = NetworkResult(
+        database.find_networks(
+            cmd_args.get("ip_address"), network_types=("direct", "static")
+        )
+    )
 
     print_result(
         result,
