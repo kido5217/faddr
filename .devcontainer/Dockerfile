@@ -1,5 +1,8 @@
 FROM python:3.10-slim
 
+# Set the working directory
+WORKDIR /workspace
+
 # Install git and other dev tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
@@ -7,6 +10,7 @@ RUN apt-get update && \
         gpg \
         curl \
         git \
+        sqlite3 \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -24,34 +28,12 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3
 # Install starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- --force
 
-# Set python-related envs
-ENV PYTHONUNBUFFERED=1 \
-    # prevents python creating .pyc files
-    PYTHONDONTWRITEBYTECODE=1 \
-    # pip
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100 \
-    # poetry settings
-    POETRY_NO_INTERACTION=1 \
-    POETRY_INSTALLER_MAX_WORKERS=10 \
-    POETRY_HOME="/poetry" \
-    POETRY_VERSION=1.2.2
-
-ENV PATH="$POETRY_HOME/bin:$PATH"
-
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-# Set the working directory
-WORKDIR /workspace
-
-# Create nonroot user
+# Config nonroot user
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Create the user
+# Create nonroot user
 RUN groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME -s /usr/bin/fish && \
     chown -R $USERNAME /workspace
@@ -70,7 +52,20 @@ RUN mkdir -p ~/.config/fish/ && \
 RUN mkdir -p /home/$USERNAME/.vscode-server/extensions && \
     mkdir -p /home/$USERNAME/.config/TabNine
 
-# Install project deps into user-owned venv
-COPY ./pyproject.toml /workspace/
-COPY ./*poetry.lock /workspace/
-RUN poetry install
+# Set python-related envs
+ENV PYTHONUNBUFFERED=1 \
+    # prevents python creating .pyc files
+    PYTHONDONTWRITEBYTECODE=1 \
+    # pip
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    # poetry settings
+    POETRY_NO_INTERACTION=1 \
+    POETRY_INSTALLER_MAX_WORKERS=10 \
+    POETRY_VERSION=1.2.2
+
+# Install and config Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/home/$USERNAME/.local/bin:$PATH"
+RUN poetry config virtualenvs.in-project true

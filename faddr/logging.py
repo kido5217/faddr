@@ -6,7 +6,6 @@ from loguru import logger
 
 from faddr.settings import FaddrSettings
 
-
 settings = FaddrSettings()
 
 # Update logging level from settings

@@ -3,7 +3,7 @@
 import ipaddress
 from pathlib import Path
 
-from sqlalchemy import create_engine, event, delete, select, update
+from sqlalchemy import create_engine, delete, event, select, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -12,9 +12,18 @@ from faddr.exceptions import (
     FaddrDatabaseDirError,
     FaddrDatabaseMultipleRevisionsActive,
     FaddrDatabaseNoRevisionsActive,
+    FaddrDatabaseUnknownQueryType,
 )
 from faddr.logging import logger
-from faddr.models import Base, Revision, Device, Interface, IPAddress, ModelFactory
+from faddr.models import (
+    Base,
+    Device,
+    Interface,
+    IPAddress,
+    ModelFactory,
+    Revision,
+    StaticRoute,
+)
 from faddr.schemas import DeviceSchema, RevisionSchema
 
 model_factory = ModelFactory()
@@ -184,18 +193,30 @@ class Database:
 
         logger.debug(f"Inserted device: '{device_data['name']}'")
 
-    def find_networks(self, queries):
+    def find_networks(self, queries, network_types=None):
         """Find provided networks."""
+
+        if network_types is None:
+            network_types = ["direct"]
+        for network_type in network_types:
+            if network_type not in ("direct", "static"):
+                raise FaddrDatabaseUnknownQueryType(network_type)
 
         result = {}
 
         for query in queries:
-            result.update(self.find_network(query))
+            result.update(self.find_network(query, network_types))
 
         return result
 
-    def find_network(self, query):
+    def find_network(self, query, network_types=None):
         """Find provided network."""
+
+        if network_types is None:
+            network_types = ["direct"]
+        for network_type in network_types:
+            if network_type not in ("direct", "static"):
+                raise FaddrDatabaseUnknownQueryType(network_type)
 
         if self.revision_id is None:
             self.get_active_revision()
@@ -218,34 +239,51 @@ class Database:
             networks.append(calculated_network)
             logger.debug(f"Added {calculated_network} to search list")
 
-        stmt_direct = (
-            select(
-                Device.name.label("device"),
-                Interface.name.label("interface"),
-                IPAddress.with_prefixlen.label("ip_address"),
-                Interface.vrf,
-                Interface.acl_in,
-                Interface.acl_out,
-                Interface.is_disabled,
-                Interface.description,
-            )
-            .where(
-                IPAddress.network.in_(networks),
-                Interface.id == IPAddress.interface_id,
-                Device.id == Interface.device_id,
-                Device.revision_id == self.revision_id,
-            )
-            .order_by(Device.name)
-            .order_by(Interface.name)
-            .order_by(IPAddress.with_prefixlen)
-        )
+            stmts = {
+                "direct": (
+                    select(
+                        Device.name.label("device"),
+                        Interface.name.label("interface"),
+                        IPAddress.with_prefixlen.label("ip_address"),
+                        Interface.vrf,
+                        Interface.acl_in,
+                        Interface.acl_out,
+                        Interface.is_disabled,
+                        Interface.description,
+                    )
+                    .where(
+                        IPAddress.network.in_(networks),
+                        Interface.id == IPAddress.interface_id,
+                        Device.id == Interface.device_id,
+                        Device.revision_id == self.revision_id,
+                    )
+                    .order_by(Device.name)
+                    .order_by(Interface.name)
+                    .order_by(IPAddress.with_prefixlen)
+                ),
+                "static": (
+                    select(
+                        Device.name.label("device"),
+                        StaticRoute.network,
+                        StaticRoute.interface,
+                        StaticRoute.vrf,
+                        StaticRoute.nexthop,
+                        StaticRoute.name,
+                    ).where(
+                        StaticRoute.network.in_(networks),
+                        Device.id == StaticRoute.device_id,
+                        Device.revision_id == self.revision_id,
+                    )
+                ),
+            }
 
         with Session(self.engine) as session:
-            for row in session.execute(stmt_direct):
-                data = dict(row)
-                data["type"] = "direct"
-                if data not in result[query]:
-                    result[query].append(data)
-                logger.debug(f"Found address: {data}")
+            for network_type in network_types:
+                for row in session.execute(stmts[network_type]):
+                    data = dict(row)
+                    data["type"] = network_type
+                    if data not in result[query]:
+                        result[query].append(data)
+                    logger.debug(f"Found {network_type} address: {data}")
 
         return result

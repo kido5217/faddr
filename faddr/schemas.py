@@ -81,6 +81,33 @@ class InterfaceSchema(BaseModel):
         return values
 
 
+class StaticRouteSchema(BaseModel):
+    """Static route data container."""
+
+    network: str
+    vrf: Union[str, None] = None
+    interface: Union[str, None] = None
+    nexthop: Union[str, None] = None
+    ad: Union[str, None] = None
+    name: Union[str, None] = None
+
+    @root_validator(pre=True)
+    def separate_nexthop_and_interface(
+        cls, values
+    ):  # pylint: disable=no-self-argument,no-self-use
+        """Separate nexthop and interface."""
+
+        nexthop_or_interface = values.get("nexthop_or_interface")
+        if nexthop_or_interface is not None:
+            try:
+                ip_interface(nexthop_or_interface)
+                values["nexthop"] = nexthop_or_interface
+            except ValueError:
+                values["interface"] = nexthop_or_interface
+            del values["nexthop_or_interface"]
+        return values
+
+
 class DeviceSchema(BaseModel):
     """Device root data container."""
 
@@ -88,8 +115,15 @@ class DeviceSchema(BaseModel):
     path: Union[str, None] = None
     source: Union[str, None] = None
     interfaces: List[InterfaceSchema] = []
+    static_routes: List[StaticRouteSchema] = []
 
-    sa_mapping: Dict[str, Any] = Field({"interfaces": "Interface"}, exclude=True)
+    sa_mapping: Dict[str, Any] = Field(
+        {
+            "interfaces": "Interface",
+            "static_routes": "StaticRoute",
+        },
+        exclude=True,
+    )
 
     @validator("interfaces", pre=True)
     def flatten_interfaces(cls, values):  # pylint: disable=no-self-argument,no-self-use
