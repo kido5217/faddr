@@ -443,8 +443,14 @@ set chassis network-services enhanced-ip
 # VRFs
 set routing-instances Test001 instance-type vrf
 set routing-instances Test001 interface ge-0/0/1.110
+set routing-instances Test001 interface ge-0/0/1.501
 set routing-instances Test001 route-distinguisher 1.1.1.1:110
 set routing-instances Test001 vrf-target target:64501:110
+
+set routing-instances Test002 instance-type vrf
+set routing-instances Test002 interface ge-0/0/1.502
+set routing-instances Test002 route-distinguisher 64502:110
+set routing-instances Test002 vrf-target target:64502:110
 
 # ACLs
 set firewall family inet filter ACLin01 term 001 then accept
@@ -494,6 +500,20 @@ set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 
 set interfaces ge-0/0/1 unit 123 vlan-id 123
 set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
 set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
+
+set interfaces ge-0/0/1 unit 501 description "intf for static route in vrf config"
+set interfaces ge-0/0/1 unit 501 vlan-id 501
+set interfaces ge-0/0/1 unit 501 family inet address 20.0.0.1/30
+
+set interfaces ge-0/0/1 unit 502 description "intf for static route in vrf config"
+set interfaces ge-0/0/1 unit 502 vlan-id 502
+set interfaces ge-0/0/1 unit 502 family inet address 20.0.0.3/31
+
+# Static routes
+set routing-options static route 110.1.0.0/24 next-hop 10.0.0.1
+set routing-options static route 110.2.0.0/24 next-hop 10.0.0.2
+set routing-options static route 110.2.0.0/24 preference 20
+set routing-instances Test001 routing-options static route 220.1.0.0/24 next-hop 20.0.0.2
 ```
 
 #### Huawei VRP
