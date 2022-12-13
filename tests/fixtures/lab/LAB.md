@@ -338,10 +338,9 @@ no interface MgmtEth0/RP0/CPU0/0 shutdown
 
 ssh server v2
 ssh server vrf default
-line default transport input ssh
-line default transport input telnet
+line default transport input ssh telnet
 
-# Generate SSH keys
+# Generate SSH keys (from normal mode)
 crypto key generate rsa
 
 # VRFs
@@ -349,6 +348,11 @@ vrf Test001
 vrf Test001 address-family ipv4 unicast 
 vrf Test001 address-family ipv4 unicast import route-target 64501:110
 vrf Test001 address-family ipv4 unicast export route-target 64501:110
+
+vrf Test002 
+vrf Test002 address-family ipv4 unicast 
+vrf Test002 address-family ipv4 unicast import route-target 64502:110
+vrf Test002 address-family ipv4 unicast export route-target 64502:110
 
 # ACLs
 ipv4 access-list ACLin01 10 permit ipv4 any any
@@ -399,6 +403,38 @@ interface GigabitEthernet0/0/0/0.123 ipv4 address 10.123.123.123 255.255.255.0
 interface GigabitEthernet0/0/0/0.123 shutdown
 interface GigabitEthernet0/0/0/0.123 encapsulation dot1q 123
 interface GigabitEthernet0/0/0/0.123 ipv4 access-group ACLout02 egress
+
+interface GigabitEthernet0/0/0/0.500
+interface GigabitEthernet0/0/0/0.500 description intf for static route config
+interface GigabitEthernet0/0/0/0.500 ipv4 address 10.0.0.6 255.255.255.252
+interface GigabitEthernet0/0/0/0.500 encapsulation dot1q 500
+
+interface GigabitEthernet0/0/0/0.501
+interface GigabitEthernet0/0/0/0.501 description intf for static route in vrf config
+interface GigabitEthernet0/0/0/0.501 vrf Test001
+interface GigabitEthernet0/0/0/0.501 ipv4 address 20.0.0.1 255.255.255.252
+interface GigabitEthernet0/0/0/0.501 encapsulation dot1q 501
+
+interface GigabitEthernet0/0/0/0.502
+interface GigabitEthernet0/0/0/0.502 description intf for static route in vrf config
+interface GigabitEthernet0/0/0/0.502 vrf Test002
+interface GigabitEthernet0/0/0/0.502 ipv4 address 20.0.0.3 255.255.255.254
+interface GigabitEthernet0/0/0/0.502 encapsulation dot1q 502
+
+# Static routes
+router static address-family ipv4 unicast 110.1.0.0/24 10.0.0.1
+router static address-family ipv4 unicast 110.2.0.0/24 10.0.0.2 20
+router static address-family ipv4 unicast 110.3.0.0/24 10.0.0.3 description Static_Route_03
+router static address-family ipv4 unicast 110.4.0.0/24 10.0.0.4 40 description Static_Route_03
+router static address-family ipv4 unicast 110.5.0.0/24 GigabitEthernet0/0/0/0.500
+router static address-family ipv4 unicast 110.6.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5
+router static address-family ipv4 unicast 110.7.0.0/24 GigabitEthernet0/0/0/0.500 70
+router static address-family ipv4 unicast 110.8.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 description Static_Route_08
+router static address-family ipv4 unicast 110.9.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 90 description Static_Route_09
+router static vrf Test001
+router static vrf Test001 address-family ipv4 unicast 220.1.0.0/24 20.0.0.2
+router static vrf Test002
+router static vrf Test002 address-family ipv4 unicast 220.2.0.0/24 GigabitEthernet0/0/0/0.502 20.0.0.2
 ```
 
 ### Juniper
