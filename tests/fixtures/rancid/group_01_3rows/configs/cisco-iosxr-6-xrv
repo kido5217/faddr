@@ -744,7 +744,7 @@ router static
   110.1.0.0/24 10.0.0.1
   110.2.0.0/24 10.0.0.2 20
   110.3.0.0/24 10.0.0.3 description Static_Route_03
-  110.4.0.0/24 10.0.0.4 40 description Static_Route_03
+  110.4.0.0/24 10.0.0.4 40 description Static_Route_04
   110.5.0.0/24 GigabitEthernet0/0/0/0.500
   110.6.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5
   110.7.0.0/24 GigabitEthernet0/0/0/0.500 70
