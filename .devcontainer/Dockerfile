@@ -49,9 +49,8 @@ RUN mkdir -p ~/.config/fish/ && \
     printf '[container]\ndisabled = true' >> ~/.config/starship.toml
 
 
-# Create folder for vscode extensions and tabnine settings volumes mount
-RUN mkdir -p /home/$USERNAME/.vscode-server/extensions && \
-    mkdir -p /home/$USERNAME/.config/TabNine
+# Create folder for vscode extensions volume mount
+RUN mkdir -p /home/$USERNAME/.vscode-server/extensions
 
 # Set python-related envs
 ENV PYTHONUNBUFFERED=1 \
