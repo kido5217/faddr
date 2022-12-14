@@ -12,6 +12,8 @@ RUN apt-get update && \
         git \
         sqlite3 \
         openssh-client \
+        pinentry-tty \
+        pinentry-curses \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
