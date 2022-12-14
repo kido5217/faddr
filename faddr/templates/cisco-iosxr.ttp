@@ -21,3 +21,28 @@ interface {{ name | _start_ }} l2transport
  ipv4 access-group {{ acls_out }} egress
  </group>
 </group>
+
+<group name="static_routes" method="table">
+router static {{ _start_ }}
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }}
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }} description {{ name | WORD }}
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }}
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
+</group>
+
+<group name="static_routes" method="table">
+router static {{ _start_ }}
+<group>
+ vrf {{ vrf }}
+   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
+   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
+   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }}
+   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }} description {{ name | WORD }}
+   {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }}
+   {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
+   {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
+</group>
+</group>

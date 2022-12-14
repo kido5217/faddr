@@ -338,10 +338,9 @@ no interface MgmtEth0/RP0/CPU0/0 shutdown
 
 ssh server v2
 ssh server vrf default
-line default transport input ssh
-line default transport input telnet
+line default transport input ssh telnet
 
-# Generate SSH keys
+# Generate SSH keys (from normal mode)
 crypto key generate rsa
 
 # VRFs
@@ -349,6 +348,11 @@ vrf Test001
 vrf Test001 address-family ipv4 unicast 
 vrf Test001 address-family ipv4 unicast import route-target 64501:110
 vrf Test001 address-family ipv4 unicast export route-target 64501:110
+
+vrf Test002 
+vrf Test002 address-family ipv4 unicast 
+vrf Test002 address-family ipv4 unicast import route-target 64502:110
+vrf Test002 address-family ipv4 unicast export route-target 64502:110
 
 # ACLs
 ipv4 access-list ACLin01 10 permit ipv4 any any
@@ -399,6 +403,38 @@ interface GigabitEthernet0/0/0/0.123 ipv4 address 10.123.123.123 255.255.255.0
 interface GigabitEthernet0/0/0/0.123 shutdown
 interface GigabitEthernet0/0/0/0.123 encapsulation dot1q 123
 interface GigabitEthernet0/0/0/0.123 ipv4 access-group ACLout02 egress
+
+interface GigabitEthernet0/0/0/0.500
+interface GigabitEthernet0/0/0/0.500 description intf for static route config
+interface GigabitEthernet0/0/0/0.500 ipv4 address 10.0.0.6 255.255.255.252
+interface GigabitEthernet0/0/0/0.500 encapsulation dot1q 500
+
+interface GigabitEthernet0/0/0/0.501
+interface GigabitEthernet0/0/0/0.501 description intf for static route in vrf config
+interface GigabitEthernet0/0/0/0.501 vrf Test001
+interface GigabitEthernet0/0/0/0.501 ipv4 address 20.0.0.1 255.255.255.252
+interface GigabitEthernet0/0/0/0.501 encapsulation dot1q 501
+
+interface GigabitEthernet0/0/0/0.502
+interface GigabitEthernet0/0/0/0.502 description intf for static route in vrf config
+interface GigabitEthernet0/0/0/0.502 vrf Test002
+interface GigabitEthernet0/0/0/0.502 ipv4 address 20.0.0.3 255.255.255.254
+interface GigabitEthernet0/0/0/0.502 encapsulation dot1q 502
+
+# Static routes
+router static address-family ipv4 unicast 110.1.0.0/24 10.0.0.1
+router static address-family ipv4 unicast 110.2.0.0/24 10.0.0.2 20
+router static address-family ipv4 unicast 110.3.0.0/24 10.0.0.3 description Static_Route_03
+router static address-family ipv4 unicast 110.4.0.0/24 10.0.0.4 40 description Static_Route_04
+router static address-family ipv4 unicast 110.5.0.0/24 GigabitEthernet0/0/0/0.500
+router static address-family ipv4 unicast 110.6.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5
+router static address-family ipv4 unicast 110.7.0.0/24 GigabitEthernet0/0/0/0.500 70
+router static address-family ipv4 unicast 110.8.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 description Static_Route_08
+router static address-family ipv4 unicast 110.9.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 90 description Static_Route_09
+router static vrf Test001
+router static vrf Test001 address-family ipv4 unicast 220.1.0.0/24 20.0.0.2
+router static vrf Test002
+router static vrf Test002 address-family ipv4 unicast 220.2.0.0/24 GigabitEthernet0/0/0/0.502 20.0.0.2
 ```
 
 ### Juniper
@@ -421,7 +457,7 @@ Notes:
 
 Configuration:
 
-```
+```c
 # Basic settings, AAA, connectivity
 delete chassis auto-image-upgrade
 
@@ -443,8 +479,14 @@ set chassis network-services enhanced-ip
 # VRFs
 set routing-instances Test001 instance-type vrf
 set routing-instances Test001 interface ge-0/0/1.110
+set routing-instances Test001 interface ge-0/0/1.501
 set routing-instances Test001 route-distinguisher 1.1.1.1:110
 set routing-instances Test001 vrf-target target:64501:110
+
+set routing-instances Test002 instance-type vrf
+set routing-instances Test002 interface ge-0/0/1.502
+set routing-instances Test002 route-distinguisher 64502:110
+set routing-instances Test002 vrf-target target:64502:110
 
 # ACLs
 set firewall family inet filter ACLin01 term 001 then accept
@@ -494,13 +536,27 @@ set interfaces ge-0/0/1 unit 123 description "acl output ACLout02, ipv4 address 
 set interfaces ge-0/0/1 unit 123 vlan-id 123
 set interfaces ge-0/0/1 unit 123 family inet filter output ACLout02
 set interfaces ge-0/0/1 unit 123 family inet address 10.123.123.123/24
+
+set interfaces ge-0/0/1 unit 501 description "intf for static route in vrf config"
+set interfaces ge-0/0/1 unit 501 vlan-id 501
+set interfaces ge-0/0/1 unit 501 family inet address 20.0.0.1/30
+
+set interfaces ge-0/0/1 unit 502 description "intf for static route in vrf config"
+set interfaces ge-0/0/1 unit 502 vlan-id 502
+set interfaces ge-0/0/1 unit 502 family inet address 20.0.0.3/31
+
+# Static routes
+set routing-options static route 110.1.0.0/24 next-hop 10.0.0.1
+set routing-options static route 110.2.0.0/24 next-hop 10.0.0.2
+set routing-options static route 110.2.0.0/24 preference 20
+set routing-instances Test001 routing-options static route 220.1.0.0/24 next-hop 20.0.0.2
 ```
 
 #### Huawei VRP
 
 Hostname: `huawei-vrp-v800-ne40`
 
-OAM: `192.168.100.115`
+OAM: `192.168.100.114`
 
 Device: NE40 on [`EVE-NG`](https://www.eve-ng.net/)
 
@@ -515,7 +571,7 @@ Notes:
 
 Configuration:
 
-```
+```c
 # Basic settings, AAA, connectivity
 sysname huawei-vrp-v800-ne40
 
@@ -595,4 +651,17 @@ vlan-type dot1q 123
 description acl output ACLout02, ipv4 address 10.123.123.123/24
 shutdown
 ip address 10.123.123.123 255.255.255.0
+
+# Static routes
+ip route-static 110.1.0.0 255.255.255.0 10.0.0.1
+ip route-static 110.2.0.0 255.255.255.0 10.0.0.2 preference 20
+ip route-static 110.3.0.0 255.255.255.0 10.0.0.3 description Static_Route_03
+ip route-static 110.4.0.0 255.255.255.0 10.0.0.4 preference 40 description Static_Route_04
+ip route-static 110.5.0.0 255.255.255.0 Ethernet1/0/1.500
+ip route-static 110.6.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5
+ip route-static 110.7.0.0 255.255.255.0 Ethernet1/0/1.500 preference 70
+ip route-static 110.8.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 description Static_Route_08
+ip route-static 110.9.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 preference 90 description Static_Route_09
+ip route-static vpn-instance Test001 220.1.0.0 255.255.255.0 20.0.0.2
+ip route-static vpn-instance Test002 220.2.0.0 255.255.255.0 Ethernet1/0/1.502 20.0.0.2
 ```

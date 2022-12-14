@@ -22,3 +22,20 @@ interface {{ name }}
  traffic-policy {{ acls_out }} outbound
  </group>
 </group>
+
+<group name="static_routes" method="table">
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} preference {{ ad | DIGIT }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} preference {{ ad | DIGIT }} description {{ name | WORD }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
+ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} preference {{ ad | DIGIT }} description {{ name | WORD }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} preference {{ ad | DIGIT }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} preference {{ ad | DIGIT }} description {{ name | WORD }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
+ip route-static vpn-instance {{ vrf }} {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ interface | WORD }} {{ nexthop | IP }} preference {{ ad | DIGIT }} description {{ name | WORD }}
+</group>

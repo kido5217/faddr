@@ -207,6 +207,18 @@ ospf 65534 vpn-instance __dcn_vpn__
 !one by running the ne-ip X.X.X.X <MASK> command after the device being online.
 dcn
 #
+ip route-static 110.1.0.0 255.255.255.0 10.0.0.1
+ip route-static 110.2.0.0 255.255.255.0 10.0.0.2 preference 20
+ip route-static 110.3.0.0 255.255.255.0 10.0.0.3 description Static_Route_03
+ip route-static 110.4.0.0 255.255.255.0 10.0.0.4 preference 40 description Static_Route_04
+ip route-static 110.5.0.0 255.255.255.0 Ethernet1/0/1.500
+ip route-static 110.6.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5
+ip route-static 110.7.0.0 255.255.255.0 Ethernet1/0/1.500 preference 70
+ip route-static 110.8.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 description Static_Route_08
+ip route-static 110.9.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 preference 90 description Static_Route_09
+ip route-static vpn-instance Test001 220.1.0.0 255.255.255.0 20.0.0.2
+ip route-static vpn-instance Test002 220.2.0.0 255.255.255.0 Ethernet1/0/1.502 20.0.0.2
+#
 lldp enable
 #
 ssh authorization-type default aaa

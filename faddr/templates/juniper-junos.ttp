@@ -38,3 +38,8 @@ set interfaces {{ name | re(SUBINT_UNIT) | resub(" unit ", ".") }} family inet f
 <group name="interfaces.{{ name }}**" method="table">
 set routing-instances {{ vrf }} interface {{ name }}
 </group>
+
+<group name="static_routes" method="table">
+set routing-options static route {{ network }} next-hop {{ nexthop | IP }}
+set routing-instances {{ vrf }} routing-options static route {{ network }} next-hop {{ nexthop | IP }}
+</group>

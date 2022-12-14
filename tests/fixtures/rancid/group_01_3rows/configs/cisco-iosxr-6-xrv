@@ -713,6 +713,23 @@ interface GigabitEthernet0/0/0/0.123
  encapsulation dot1q 123
  ipv4 access-group ACLout02 egress
 !
+interface GigabitEthernet0/0/0/0.500
+ description intf for static route config
+ ipv4 address 10.0.0.6 255.255.255.252
+ encapsulation dot1q 500
+!
+interface GigabitEthernet0/0/0/0.501
+ description intf for static route in vrf config
+ vrf Test001
+ ipv4 address 20.0.0.1 255.255.255.252
+ encapsulation dot1q 501
+!
+interface GigabitEthernet0/0/0/0.502
+ description intf for static route in vrf config
+ vrf Test002
+ ipv4 address 20.0.0.3 255.255.255.254
+ encapsulation dot1q 502
+!
 interface GigabitEthernet0/0/0/1
  shutdown
 !
@@ -721,6 +738,29 @@ interface GigabitEthernet0/0/0/2
 !
 interface GigabitEthernet0/0/0/3
  shutdown
+!
+router static
+ address-family ipv4 unicast
+  110.1.0.0/24 10.0.0.1
+  110.2.0.0/24 10.0.0.2 20
+  110.3.0.0/24 10.0.0.3 description Static_Route_03
+  110.4.0.0/24 10.0.0.4 40 description Static_Route_04
+  110.5.0.0/24 GigabitEthernet0/0/0/0.500
+  110.6.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5
+  110.7.0.0/24 GigabitEthernet0/0/0/0.500 70
+  110.8.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 description Static_Route_08
+  110.9.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5 90 description Static_Route_09
+ !
+ vrf Test001
+  address-family ipv4 unicast
+   220.1.0.0/24 20.0.0.2
+  !
+ !
+ vrf Test002
+  address-family ipv4 unicast
+   220.2.0.0/24 GigabitEthernet0/0/0/0.502 20.0.0.2
+  !
+ !
 !
 ssh server v2
 ssh server vrf default
