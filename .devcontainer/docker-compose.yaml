@@ -10,8 +10,8 @@ services:
     user: "vscode"
     volumes:
       - ../.:/workspace:cached
-      - vscode_extensions:/home/vscode/.vscode-server/extensions
+      - vscode-extensions:/home/vscode/.vscode-server/extensions
     tty: true
 
 volumes:
-  vscode_extensions:
+  vscode-extensions:

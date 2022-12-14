@@ -15,7 +15,7 @@
 
   "remoteUser": "vscode",
 
-  "postStartCommand": ["poetry", "install"],
+  // "postStartCommand": ["poetry", "install"],
 
   "settings": {
     "terminal.integrated.defaultProfile.linux": "fish",
