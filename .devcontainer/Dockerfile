@@ -45,8 +45,7 @@ RUN mkdir -p ~/.config/fish/functions/ && \
     echo 'starship init fish | source' >> ~/.config/fish/config.fish && \
     echo 'command_timeout = 5000' >> ~/.config/starship.toml && \
     printf '[container]\ndisabled = true' >> ~/.config/starship.toml
-COPY configs/q.fish ~/.config/fish/functions/
-COPY configs/source_venv.fish ~/.config/fish/functions/
+COPY --chown=$USER_UID:$USER_GID .devcontainer/configs/*.fish /home/$USERNAME/.config/fish/functions/
 
 # Create folder for vscode extensions volume mount
 RUN mkdir -p /home/$USERNAME/.vscode-server/extensions
