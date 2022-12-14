@@ -11,6 +11,7 @@ RUN apt-get update && \
         curl \
         git \
         sqlite3 \
+        openssh-client \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
