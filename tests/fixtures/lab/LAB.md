@@ -425,7 +425,7 @@ interface GigabitEthernet0/0/0/0.502 encapsulation dot1q 502
 router static address-family ipv4 unicast 110.1.0.0/24 10.0.0.1
 router static address-family ipv4 unicast 110.2.0.0/24 10.0.0.2 20
 router static address-family ipv4 unicast 110.3.0.0/24 10.0.0.3 description Static_Route_03
-router static address-family ipv4 unicast 110.4.0.0/24 10.0.0.4 40 description Static_Route_03
+router static address-family ipv4 unicast 110.4.0.0/24 10.0.0.4 40 description Static_Route_04
 router static address-family ipv4 unicast 110.5.0.0/24 GigabitEthernet0/0/0/0.500
 router static address-family ipv4 unicast 110.6.0.0/24 GigabitEthernet0/0/0/0.500 10.0.0.5
 router static address-family ipv4 unicast 110.7.0.0/24 GigabitEthernet0/0/0/0.500 70
@@ -457,7 +457,7 @@ Notes:
 
 Configuration:
 
-```
+```c
 # Basic settings, AAA, connectivity
 delete chassis auto-image-upgrade
 
@@ -556,7 +556,7 @@ set routing-instances Test001 routing-options static route 220.1.0.0/24 next-hop
 
 Hostname: `huawei-vrp-v800-ne40`
 
-OAM: `192.168.100.115`
+OAM: `192.168.100.114`
 
 Device: NE40 on [`EVE-NG`](https://www.eve-ng.net/)
 
@@ -571,7 +571,7 @@ Notes:
 
 Configuration:
 
-```
+```c
 # Basic settings, AAA, connectivity
 sysname huawei-vrp-v800-ne40
 
@@ -651,4 +651,17 @@ vlan-type dot1q 123
 description acl output ACLout02, ipv4 address 10.123.123.123/24
 shutdown
 ip address 10.123.123.123 255.255.255.0
+
+# Static routes
+ip route-static 110.1.0.0 255.255.255.0 10.0.0.1
+ip route-static 110.2.0.0 255.255.255.0 10.0.0.2 preference 20
+ip route-static 110.3.0.0 255.255.255.0 10.0.0.3 description Static_Route_03
+ip route-static 110.4.0.0 255.255.255.0 10.0.0.4 preference 40 description Static_Route_04
+ip route-static 110.5.0.0 255.255.255.0 Ethernet1/0/1.500
+ip route-static 110.6.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5
+ip route-static 110.7.0.0 255.255.255.0 Ethernet1/0/1.500 preference 70
+ip route-static 110.8.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 description Static_Route_08
+ip route-static 110.9.0.0 255.255.255.0 Ethernet1/0/1.500 10.0.0.5 preference 90 description Static_Route_09
+ip route-static vpn-instance Test001 220.1.0.0 255.255.255.0 20.0.0.2
+ip route-static vpn-instance Test002 220.2.0.0 255.255.255.0 Ethernet1/0/1.502 20.0.0.2
 ```
