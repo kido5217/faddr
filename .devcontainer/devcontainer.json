@@ -15,7 +15,7 @@
 
   "remoteUser": "vscode",
 
-  "postStartCommand": ["poetry", "install"],
+  // "postStartCommand": ["poetry", "install"],
 
   "settings": {
     "terminal.integrated.defaultProfile.linux": "fish",
@@ -51,7 +51,6 @@
         "rangav.vscode-thunder-client",
         "redhat.vscode-yaml",
         "samuelcolvin.jinjahtml",
-        "TabNine.tabnine-vscode",
         "tamasfe.even-better-toml",
         "trond-snekvik.simple-rst",
         "usernamehw.errorlens",
