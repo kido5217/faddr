@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0a0] - 2022-12-15
+
+### Added
+
+- Static route parsing and storing for all supported vendors
+
 ### Changed
 
-- Moved dev environment into docker and switched to python 3.10
+- Moved dev environment into docker
+- Switched to python 3.10
+- Disabled github actions-based unit tests
 
 ## [0.5.1] - 2022-08-24
 
@@ -27,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Revorked revision system. Revisions are now stored in DB.
+- Reworked revision system. Revisions are now stored in DB.
 - Enable `Foreign Key` support for `SQLite`.
 
 ### Fixed
