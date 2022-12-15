@@ -22,7 +22,7 @@ interface {{ name | _start_ }} l2transport
  </group>
 </group>
 
-<group name="static_routes" method="table">
+<group name="static_routes*" method="table">
 router static {{ _start_ }}
   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
   {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
@@ -33,7 +33,7 @@ router static {{ _start_ }}
   {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
 </group>
 
-<group name="static_routes" method="table">
+<group name="static_routes*" method="table">
 router static {{ _start_ }}
 <group>
  vrf {{ vrf }}
