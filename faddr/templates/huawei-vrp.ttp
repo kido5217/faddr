@@ -23,7 +23,7 @@ interface {{ name }}
  </group>
 </group>
 
-<group name="static_routes" method="table">
+<group name="static_routes*" method="table">
 ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }}
 ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} preference {{ ad | DIGIT }}
 ip route-static {{ network | re(IP_SPACE_MASK) | to_ip | to_str }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}

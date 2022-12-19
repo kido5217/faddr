@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0a1] - 2022-12-15
+
+### Changed
+
+- Disabled static route detection in vrf in IOS-XR for now.
+
+### Fixed
+
+- Always create `static_routes` entry as list, even when there's only one static route in config
+
 ## [0.6.0a0] - 2022-12-15
 
 ### Added
