@@ -91,6 +91,17 @@ class StaticRouteSchema(BaseModel):
     ad: Union[str, None] = None
     name: Union[str, None] = None
 
+    #    @root_validator(pre=True)
+    #    def flatten_vrf(cls, values):  # pylint: disable=no-self-argument,no-self-use
+    #        """Convert dict of dicts to dict."""
+    #
+    #        if len(values.keys()) == 1:
+    #            print(values)
+    #            new_values = list(values.values())[0]
+    #            new_values["vrf"] = list(values.keys())[0]
+    #            return new_values
+    #        return values
+
     @root_validator(pre=True)
     def separate_nexthop_and_interface(
         cls, values

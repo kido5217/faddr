@@ -22,20 +22,80 @@ interface {{ name | _start_ }} l2transport
  </group>
 </group>
 
-<group name="static_routes*" method="table">
-router static {{ _start_ }}
-  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
-  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
-  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }}
-  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }} description {{ name | WORD }}
-  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }}
-  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
-  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
-</group>
-
-<group name="static_routes*" method="table">
+<group name="static_routes*">
 router static {{ _start_ }}
 <group>
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} {{ ad | DIGIT }} description {{ name | WORD }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
+ ! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<group name="static_routes*">
+router static {{ _start_ }}
+<group>
+  {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+ ! {{ _end_ }}
+! {{ _end_ }}
+</group>
+
+<!--
+<group name="static_routes*.{{ vrf }}*" method="table">
+router static
  vrf {{ vrf }}
    {{ network | PREFIX }} {{ nexthop_or_interface | WORD }}
    {{ network | PREFIX }} {{ nexthop_or_interface | WORD }} description {{ name | WORD }}
@@ -44,5 +104,8 @@ router static {{ _start_ }}
    {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }}
    {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} description {{ name | WORD }}
    {{ network | PREFIX }} {{ interface | WORD }} {{ nexthop | IP }} {{ ad | DIGIT }} description {{ name | WORD }}
+  ! {{ _end_ }}
+ ! {{ _end_ }}
+! {{ _end_ }}
 </group>
-</group>
+-->

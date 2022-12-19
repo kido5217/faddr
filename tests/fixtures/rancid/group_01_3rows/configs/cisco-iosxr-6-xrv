@@ -754,6 +754,7 @@ router static
  vrf Test001
   address-family ipv4 unicast
    220.1.0.0/24 20.0.0.2
+   230.3.0.0/24 20.0.0.3
   !
  !
  vrf Test002
@@ -761,6 +762,16 @@ router static
    220.2.0.0/24 GigabitEthernet0/0/0/0.502 20.0.0.2
   !
  !
+!
+prefix-set PFS-FOR-TEST-01
+  10.99.99.0/24 ge 29,
+  10.88.88.0/23 ge 28,
+  10.77.77.0/24 le 16
+end-set
+!
+prefix-set PFS-FOR-TEST-02
+  10.55.55.0/24 ge 24
+end-set
 !
 ssh server v2
 ssh server vrf default
