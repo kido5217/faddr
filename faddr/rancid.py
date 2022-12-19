@@ -1,5 +1,6 @@
 """Get list of configuration backup files in RANCID repos."""
 
+import time
 from itertools import chain
 from pathlib import Path
 
@@ -7,10 +8,23 @@ from faddr.exceptions import FaddrRancidPathError
 from faddr.logging import logger
 
 
+def expire_configs(config_candidates, file_age_limit):
+    """Remove from list files that are older than provided limit."""
+    configs = []
+    for config in config_candidates:
+        file_mtime = config["path"].stat().st_mtime
+        logger.debug(f'Config file {config["path"]} was modified at {file_mtime}')
+        if time.time() - file_mtime < file_age_limit:
+            configs.append(config)
+        else:
+            logger.debug(f'Config file {config["path"]} is too old, skipping')
+    return configs
+
+
 class RancidGroup:
     """Rancid group dir parser."""
 
-    def __init__(self, path, name=None):
+    def __init__(self, path, name=None, file_age_limit=604800):
         self.path = Path(path)
         if not self.path.exists() or not self.path.is_dir():
             raise FaddrRancidPathError(path)
@@ -19,6 +33,8 @@ class RancidGroup:
             self.name = name
         else:
             self.name = self.path.name
+
+        self.file_age_limit = file_age_limit
 
         if Path(self.path, "router.db").exists():
             self.level = "group"
@@ -78,6 +94,8 @@ class RancidGroup:
             else:
                 logger.debug(f"Ingnoring line '{router_string}' - wrong format")
 
+        configs = expire_configs(configs, self.file_age_limit)
+
         return configs
 
     def get_configs_from_dir(self):
@@ -103,6 +121,8 @@ class RancidGroup:
                 config["name"] = config_path.name
                 config["hostname"] = config_path.name
                 configs.append(config)
+
+        configs = expire_configs(configs, self.file_age_limit)
 
         return configs
 
