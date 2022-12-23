@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.0a1] - 2022-12-15
+## [0.6.0a2] - 2022-12-15
 
 ### Added
 
 - Added file expiration limit to skip old files in rancid repos. For now hardcoded as 7 days.
+
+## [0.6.0a1] - 2022-12-15
 
 ### Changed
 
