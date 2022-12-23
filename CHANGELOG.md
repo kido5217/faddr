@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0a1] - 2022-12-15
 
+### Added
+
+- Added file expiration limit to skip old files in rancid repos. For now hardcoded as 7 days.
+
 ### Changed
 
 - Disabled static route detection in vrf in IOS-XR for now.
