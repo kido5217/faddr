@@ -7,33 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.0a2] - 2022-12-15
+## [0.6.0] - 2023-01-12
 
 ### Added
 
-- Added file expiration limit to skip old files in rancid repos. For now hardcoded as 7 days.
-
-## [0.6.0a1] - 2022-12-15
+- File expiration limit to skip old files in rancid repos. For now hardcoded as 7 days.
+- Static route parsing and storing for all supported vendors
+- CLI option to hide interfaces in shutdown state
 
 ### Changed
 
 - Disabled static route detection in vrf in IOS-XR for now.
+- Moved dev environment into docker
+- Switched to python 3.10
+- Disabled github actions-based unit tests
 
 ### Fixed
 
 - Always create `static_routes` entry as list, even when there's only one static route in config
-
-## [0.6.0a0] - 2022-12-15
-
-### Added
-
-- Static route parsing and storing for all supported vendors
-
-### Changed
-
-- Moved dev environment into docker
-- Switched to python 3.10
-- Disabled github actions-based unit tests
 
 ## [0.5.1] - 2022-08-24
 

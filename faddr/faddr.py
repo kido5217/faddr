@@ -42,13 +42,18 @@ def parse_cmd_args():
         action="store_true",
         help="Print description column",
     )
-
     parser.add_argument(
         "-o",
         "--output",
         choices=("table", "json"),
         default="table",
         help="Output format, default is 'table'",
+    )
+    parser.add_argument(
+        "-s",
+        "--no-shutdown",
+        action="store_true",
+        help="Do not show interfaces in disabled state",
     )
     parser.add_argument(
         "-t",
@@ -191,7 +196,9 @@ def main():
 
     result = NetworkResult(
         database.find_networks(
-            cmd_args.get("ip_address"), network_types=("direct", "static")
+            cmd_args.get("ip_address"),
+            network_types=("direct", "static"),
+            no_shutdown=cmd_args.get("no_shutdown"),
         )
     )
 
