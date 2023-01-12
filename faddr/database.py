@@ -193,7 +193,7 @@ class Database:
 
         logger.debug(f"Inserted device: '{device_data['name']}'")
 
-    def find_networks(self, queries, network_types=None):
+    def find_networks(self, queries, network_types=None, no_shutdown=False):
         """Find provided networks."""
 
         if network_types is None:
@@ -205,11 +205,11 @@ class Database:
         result = {}
 
         for query in queries:
-            result.update(self.find_network(query, network_types))
+            result.update(self.find_network(query, network_types, no_shutdown))
 
         return result
 
-    def find_network(self, query, network_types=None):
+    def find_network(self, query, network_types=None, no_shutdown=False):
         """Find provided network."""
 
         if network_types is None:
@@ -217,6 +217,11 @@ class Database:
         for network_type in network_types:
             if network_type not in ("direct", "static"):
                 raise FaddrDatabaseUnknownQueryType(network_type)
+
+        if no_shutdown:
+            shutdown_status_query = (False,)
+        else:
+            shutdown_status_query = (True, False)
 
         if self.revision_id is None:
             self.get_active_revision()
@@ -254,6 +259,7 @@ class Database:
                     .where(
                         IPAddress.network.in_(networks),
                         Interface.id == IPAddress.interface_id,
+                        Interface.is_disabled.in_(shutdown_status_query),
                         Device.id == Interface.device_id,
                         Device.revision_id == self.revision_id,
                     )
