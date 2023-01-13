@@ -67,6 +67,12 @@ def parse_cmd_args():
         action="store_true",
         help="Print version and exit",
     )
+    parser.add_argument(
+        "-w",
+        "--wide",
+        action="store_true",
+        help="Print results in wide format: with description and separated in and out acls",
+    )
 
     args = parser.parse_args()
     return vars(args)
@@ -80,7 +86,9 @@ def parse_input(input_data):
     return query
 
 
-def make_table(result, row_type, include_description=True, color=True, border=False):
+def make_table(
+    result, row_type, include_description=True, color=True, border=False, wide=False
+):
     """Create rich table according to search results and cli arguments."""
 
     if border:
@@ -104,8 +112,9 @@ def make_table(result, row_type, include_description=True, color=True, border=Fa
     # Prepare header according to passed cli options
     header = []
     header[:] = result.schema["headers"][row_type]
-    if not include_description and row_type == "direct":
-        header.remove("Description")
+    if row_type == "direct":
+        if not include_description and not wide:
+            header.remove("Description")
     if len(result.data.keys()) == 1:
         header.remove("Query")
     for column in header:
@@ -113,8 +122,9 @@ def make_table(result, row_type, include_description=True, color=True, border=Fa
 
     # Filter keys according to passed cli options
     keys[:] = result.schema["keys"][row_type]
-    if not include_description and row_type == "direct":
-        keys.remove("description")
+    if row_type == "direct":
+        if not include_description and not wide:
+            keys.remove("description")
     if len(result.data.keys()) == 1:
         keys.remove("query")
 
@@ -122,7 +132,12 @@ def make_table(result, row_type, include_description=True, color=True, border=Fa
 
 
 def print_result(
-    result, include_description=True, output_format="table", color=True, border=False
+    result,
+    include_description=True,
+    output_format="table",
+    color=True,
+    border=False,
+    wide=False,
 ):
     """Print result to console."""
 
@@ -145,7 +160,7 @@ def print_result(
                 # Create rich table if it doesn't exist
                 if row_type not in tables:
                     tables[row_type], keys[row_type] = make_table(
-                        result, row_type, include_description, color, border
+                        result, row_type, include_description, color, border, wide
                     )
 
                 # Add rows to table
@@ -208,4 +223,5 @@ def main():
         output_format=cmd_args.get("output"),
         color=cmd_args.get("color"),
         border=cmd_args.get("table"),
+        wide=cmd_args.get("wide"),
     )
