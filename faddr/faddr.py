@@ -86,6 +86,49 @@ def parse_input(input_data):
     return query
 
 
+def combine_acls(data, data_type="row"):
+    """Combine `ACL in` and `ACL out` columns into single `ACL in/out` column."""
+
+    combined_data = []
+
+    if data_type == "header" and "ACL in" in data:
+        for key in data:
+            if key == "ACL in":
+                key = "ACL in/out"
+            elif key == "ACL out":
+                continue
+            combined_data.append(key)
+        return combined_data
+
+    elif data_type == "keys" and "acl_in" in data:
+        for key in data:
+            if key == "acl_in":
+                key = "acl_in_out"
+            elif key == "acl_out":
+                continue
+            combined_data.append(key)
+        return combined_data
+
+    elif data_type == "row" and "acl_in" in data:
+        acl_in = data.get("acl_in")
+        if acl_in is None:
+            acl_in = "-"
+        acl_out = data.get("acl_out", "-")
+        if acl_out is None:
+            acl_out = "-"
+
+        if acl_in == "-" and acl_out == "-":
+            acl_in_out = None
+        elif acl_out == "-":
+            acl_in_out = acl_in
+        else:
+            acl_in_out = acl_in + " / " + acl_out
+
+        data["acl_in_out"] = acl_in_out
+
+    return data
+
+
 def make_table(
     result, row_type, include_description=True, color=True, border=False, wide=False
 ):
@@ -117,6 +160,8 @@ def make_table(
             header.remove("Description")
     if len(result.data.keys()) == 1:
         header.remove("Query")
+    if not wide:
+        header = combine_acls(header, data_type="header")
     for column in header:
         table.add_column(column)
 
@@ -127,6 +172,8 @@ def make_table(
             keys.remove("description")
     if len(result.data.keys()) == 1:
         keys.remove("query")
+    if not wide:
+        keys = combine_acls(keys, data_type="keys")
 
     return table, keys
 
@@ -167,6 +214,10 @@ def print_result(
                 row_keys = keys[row_type]
                 if "query" in row_keys:
                     row_data["query"] = query
+
+                # Combine acl cells
+                if not wide:
+                    row_data = combine_acls(row_data, data_type="row")
 
                 # Normalize cell data
                 # cells = [str(row_data.get(key)) for key in row_keys]
