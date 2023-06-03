@@ -155,9 +155,8 @@ def make_table(
     # Prepare header according to passed cli options
     header = []
     header[:] = result.schema["headers"][row_type]
-    if row_type == "direct":
-        if exclude_description:
-            header.remove("Description")
+    if row_type == "direct" and exclude_description:
+        header.remove("Description")
     if len(result.data.keys()) == 1:
         header.remove("Query")
     if not wide:
@@ -167,9 +166,8 @@ def make_table(
 
     # Filter keys according to passed cli options
     keys[:] = result.schema["keys"][row_type]
-    if row_type == "direct":
-        if exclude_description:
-            keys.remove("description")
+    if row_type == "direct" and exclude_description:
+        keys.remove("description")
     if len(result.data.keys()) == 1:
         keys.remove("query")
     if not wide:
