@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10-bullseye
 
 # Set the working directory
 WORKDIR /workspace
@@ -6,6 +6,7 @@ WORKDIR /workspace
 # Install git and other dev tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        man-db \
         build-essential \
         gpg \
         curl \
@@ -15,6 +16,7 @@ RUN apt-get update && \
         pinentry-tty \
         pinentry-curses \
         jq \
+        inetutils-ping \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -49,6 +51,7 @@ RUN mkdir -p ~/.config/fish/functions/ && \
     echo 'command_timeout = 5000' >> ~/.config/starship.toml && \
     printf '[container]\ndisabled = true' >> ~/.config/starship.toml
 COPY --chown=$USER_UID:$USER_GID .devcontainer/configs/*.fish /home/$USERNAME/.config/fish/functions/
+RUN fish -c "fish_update_completions"
 
 # Create folder for vscode extensions volume mount
 RUN mkdir -p /home/$USERNAME/.vscode-server/extensions
@@ -64,7 +67,7 @@ ENV PYTHONUNBUFFERED=1 \
     # poetry settings
     POETRY_NO_INTERACTION=1 \
     POETRY_INSTALLER_MAX_WORKERS=10 \
-    POETRY_VERSION=1.3.2
+    POETRY_VERSION=1.5.1
 
 # Install and config Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
