@@ -38,9 +38,9 @@ def parse_cmd_args():
     )
     parser.add_argument(
         "-d",
-        "--description",
+        "--no-description",
         action="store_true",
-        help="Print description column",
+        help="Print without description column",
     )
     parser.add_argument(
         "-o",
@@ -71,7 +71,7 @@ def parse_cmd_args():
         "-w",
         "--wide",
         action="store_true",
-        help="Print results in wide format: with description and separated in and out acls",
+        help="Print results in wide format: with separated in and out acls",
     )
 
     args = parser.parse_args()
@@ -130,7 +130,7 @@ def combine_acls(data, data_type="row"):
 
 
 def make_table(
-    result, row_type, include_description=True, color=True, border=False, wide=False
+    result, row_type, exclude_description=False, color=True, border=False, wide=False
 ):
     """Create rich table according to search results and cli arguments."""
 
@@ -156,7 +156,7 @@ def make_table(
     header = []
     header[:] = result.schema["headers"][row_type]
     if row_type == "direct":
-        if not include_description and not wide:
+        if exclude_description:
             header.remove("Description")
     if len(result.data.keys()) == 1:
         header.remove("Query")
@@ -168,7 +168,7 @@ def make_table(
     # Filter keys according to passed cli options
     keys[:] = result.schema["keys"][row_type]
     if row_type == "direct":
-        if not include_description and not wide:
+        if exclude_description:
             keys.remove("description")
     if len(result.data.keys()) == 1:
         keys.remove("query")
@@ -180,7 +180,7 @@ def make_table(
 
 def print_result(
     result,
-    include_description=True,
+    exclude_description=False,
     output_format="table",
     color=True,
     border=False,
@@ -207,7 +207,7 @@ def print_result(
                 # Create rich table if it doesn't exist
                 if row_type not in tables:
                     tables[row_type], keys[row_type] = make_table(
-                        result, row_type, include_description, color, border, wide
+                        result, row_type, exclude_description, color, border, wide
                     )
 
                 # Add rows to table
@@ -270,7 +270,7 @@ def main():
 
     print_result(
         result,
-        include_description=cmd_args.get("description"),
+        exclude_description=cmd_args.get("no_description"),
         output_format=cmd_args.get("output"),
         color=cmd_args.get("color"),
         border=cmd_args.get("table"),
