@@ -88,20 +88,28 @@ api_v0 = APIRouter()
 
 
 @api_v0.get("/")
-async def get_network(network: str):
+async def get_network(network: str, include_static: bool = False):
     """Find network"""
     try:
-        query = APINetworkQueryBody.parse_obj({"networks": [network]})
+        query = APINetworkQueryBody.parse_obj(
+            {"networks": [network], "include_static": include_static}
+        )
     except ValidationError as err:
         raise HTTPException(status_code=422, detail=err.errors()) from None
-    result = NetworkResult(database.find_networks(query.networks))
+    network_types = ["direct", "static"] if query.include_static else None
+    result = NetworkResult(
+        database.find_networks(query.networks, network_types=network_types)
+    )
     return result.data
 
 
 @api_v0.post("/")
 async def post_networks(query: APINetworkQueryBody):
     """Find networks"""
-    result = NetworkResult(database.find_networks(query.networks))
+    network_types = ["direct", "static"] if query.include_static else None
+    result = NetworkResult(
+        database.find_networks(query.networks, network_types=network_types)
+    )
     return result.data
 
 

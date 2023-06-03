@@ -152,6 +152,7 @@ class APINetworkQueryBody(BaseModel):
     """REST API network search request."""
 
     networks: List[str]
+    include_static: bool = False
 
     @validator("networks")
     def is_ip(value):  # pylint: disable=no-self-argument,no-self-use
