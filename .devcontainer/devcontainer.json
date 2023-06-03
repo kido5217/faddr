@@ -41,6 +41,7 @@
         "donjayamanne.python-environment-manager",
         "DotJoshJohnson.xml",
         "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
         "jamiewoodio.cisco",
         "magicstack.MagicPython",
         "mechatroner.rainbow-csv",
