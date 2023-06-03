@@ -1,5 +1,5 @@
 {
-  "name": "Python3.10",
+  "name": "CPython3.10",
 
   // Update the 'dockerComposeFile' list if you have more compose files or use different names.
   // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
@@ -15,22 +15,27 @@
 
   "remoteUser": "vscode",
 
-  // "postStartCommand": ["poetry", "install"],
-
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "fish",
-    "terminal.integrated.profiles.linux": {
-      "fish": {
-        "path": "/usr/bin/fish",
-        "args": ["--command=poetry shell"]
-      }
-    }
-  },
   "customizations": {
     "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "fish",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          },
+          "fish": {
+            "path": "/usr/bin/fish"
+          },
+          "fish-poetry-shell": {
+            "path": "/usr/bin/fish",
+            "args": ["--command=poetry shell"]
+          }
+        }
+      },
       "extensions": [
         "aaron-bond.better-comments",
         "andytruett.TextFSM-Syntax",
+        "charliermarsh.ruff",
         "codeout.vscode-junos",
         "DavidAnson.vscode-markdownlint",
         "donjayamanne.python-environment-manager",
