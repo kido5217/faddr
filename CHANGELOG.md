@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2023-06-03
+
+### Added
+
+- Combine `ACL in` and `ACL out` into single `ACL in/out` column in cli output by default.
+
+### Changed
+
+- Print descriptions by default
+
 ## [0.6.0] - 2023-01-12
 
 ### Added
